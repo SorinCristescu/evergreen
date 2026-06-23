@@ -1,0 +1,275 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evergreen · Onboarding — First Plant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@500,600,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+  :root{
+    --ever-100:#d8e9df;--ever-400:#4daf82;--ever-500:#2c694e;--ever-700:#1b4332;--ever-900:#0c1f17;
+    --leaf:#3e7c4f;--fg:#16271e;--fg-muted:#4b6357;--fg-subtle:#7d9488;--accent-tint:rgba(46,109,78,.12);
+    --neu-raised:6px 6px 14px rgba(11,30,21,.13), -6px -6px 13px rgba(255,255,255,.80);
+    --neu-raised-sm:4px 4px 9px rgba(11,30,21,.12), -4px -4px 9px rgba(255,255,255,.78);
+    --neu-pressed:inset 4px 4px 9px rgba(11,30,21,.13), inset -4px -4px 9px rgba(255,255,255,.72);
+    --font-display:'General Sans','Söhne',-apple-system,system-ui,sans-serif;
+    --font-body:'Inter',-apple-system,system-ui,sans-serif;
+    --font-mono:'JetBrains Mono','Berkeley Mono',ui-monospace,monospace;--hit:44px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:var(--font-body);color:var(--fg);background:radial-gradient(120% 80% at 50% -10%, #f1f7f3 0%, transparent 55%),radial-gradient(100% 100% at 50% 120%, #cfe2d7 0%, #e6f0ea 100%);min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(26px,5vh,52px);padding:48px 24px 120px;overflow-x:hidden}
+
+  .studio-head{position:relative;z-index:2;text-align:center;display:flex;flex-direction:column;align-items:center;gap:9px}
+  .studio-head .kicker{font-family:var(--font-mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:#5c8772}
+  .studio-head h1{font-family:var(--font-display);font-weight:600;font-size:clamp(19px,3.2vw,28px);letter-spacing:-.02em;color:var(--ever-700)}
+
+  .gallery{position:relative;z-index:2;display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:center;gap:clamp(32px,6vw,72px)}
+  .device{display:flex;flex-direction:column;align-items:center;gap:18px}
+  .device-cap{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#5c8772}
+
+  .phone{position:relative;background:linear-gradient(150deg,#2c2f30,#16191a 46%,#0a0c0c);box-shadow:0 2px 0 1px rgba(255,255,255,.05) inset,0 55px 80px -42px rgba(11,30,21,.5),0 0 0 1px rgba(0,0,0,.55)}
+  .screen{position:relative;overflow:hidden;width:300px;height:650px;background:var(--ever-100)}
+  .screen *{position:relative}
+  .iphone{width:318px;height:668px;border-radius:56px;padding:9px}.iphone .screen{border-radius:48px}
+  .iphone .island{position:absolute;z-index:40;top:18px;left:50%;transform:translateX(-50%);width:88px;height:27px;border-radius:16px;background:#0a0c0c}
+  .iphone .island::after{content:"";position:absolute;right:11px;top:50%;transform:translateY(-50%);width:9px;height:9px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#26343b,#05070a)}
+  .iphone .home-ind{position:absolute;z-index:40;bottom:9px;left:50%;transform:translateX(-50%);width:120px;height:5px;border-radius:3px;background:rgba(22,39,30,.32)}
+  .pixel{width:312px;height:664px;border-radius:34px;padding:8px;background:linear-gradient(150deg,#3a3d3e,#1b1e1f 46%,#0c0e0e)}.pixel .screen{border-radius:27px}
+  .pixel .punch{position:absolute;z-index:40;top:15px;left:50%;transform:translateX(-50%);width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#23323a,#04060a);box-shadow:0 0 0 2px rgba(255,255,255,.12)}
+  .pixel .nav-pill{position:absolute;z-index:40;bottom:10px;left:50%;transform:translateX(-50%);width:96px;height:5px;border-radius:3px;background:rgba(22,39,30,.28)}
+
+  .statusbar{position:absolute;z-index:30;top:0;left:0;right:0;height:54px;display:flex;align-items:center;justify-content:space-between;padding:20px 26px 0;font-family:var(--font-mono);font-size:12.5px;color:var(--fg)}
+  .pixel .statusbar{padding-top:16px}
+  .statusbar .icons{display:flex;align-items:center;gap:6px}.statusbar svg{display:block}
+
+  .app{position:absolute;inset:0;z-index:10;padding:60px 22px 26px;display:flex;flex-direction:column}
+  .pixel .app{padding-top:54px}
+
+  .topbar{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+  .iconbtn{flex:none;width:40px;height:40px;border-radius:50%;border:0;cursor:pointer;display:flex;align-items:center;justify-content:center;background:var(--ever-100);box-shadow:var(--neu-raised-sm);color:var(--ever-700);transition:box-shadow .14s}
+  .iconbtn:active{box-shadow:var(--neu-pressed)}
+  .progress{flex:1;display:flex;gap:5px;align-items:center}
+  .progress .seg{flex:1;height:5px;border-radius:3px;background:var(--ever-100);box-shadow:var(--neu-pressed);overflow:hidden}
+  .progress .seg .fill{display:block;height:100%;width:100%;border-radius:3px;background:linear-gradient(90deg,var(--ever-500),var(--ever-400));transform:scaleX(0);transform-origin:left center}
+  .stepno{flex:none;font-family:var(--font-mono);font-size:11px;color:var(--fg-muted)}
+
+  .head .eyebrow{font-family:var(--font-mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--ever-500);margin-bottom:7px}
+  .head h1{font-family:var(--font-display);font-weight:600;font-size:25px;line-height:1.12;letter-spacing:-.02em;color:var(--ever-900)}
+  .head p{margin-top:7px;font-size:13px;line-height:1.5;color:var(--fg-muted)}
+  .head p b{color:var(--ever-700);font-weight:600}
+
+  .choices{margin-top:22px;display:flex;flex-direction:column;gap:13px}
+  .choice{display:flex;align-items:center;gap:14px;width:100%;padding:16px;border:0;cursor:pointer;text-align:left;border-radius:18px;background:var(--ever-100);box-shadow:var(--neu-raised);transition:box-shadow .16s,transform .12s;-webkit-tap-highlight-color:transparent}
+  .choice:hover{transform:translateY(-1px)}
+  .choice[aria-pressed=true]{box-shadow:var(--neu-pressed);transform:none}
+  .ch-ic{flex:none;width:50px;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:var(--ever-100);box-shadow:var(--neu-pressed);color:var(--ever-500)}
+  .choice[aria-pressed=true] .ch-ic{box-shadow:var(--neu-raised-sm)}
+  .ch-txt{flex:1;min-width:0}
+  .ch-txt b{display:flex;align-items:center;gap:8px;font-family:var(--font-display);font-weight:600;font-size:16px;color:var(--ever-900);letter-spacing:-.01em}
+  .tag{font-family:var(--font-mono);font-weight:500;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ever-500);background:var(--accent-tint);padding:2px 7px;border-radius:999px}
+  .ch-txt span.d{display:block;margin-top:3px;font-size:12.5px;line-height:1.4;color:var(--fg-muted)}
+  .ch-arr{flex:none;color:var(--fg-subtle)}
+
+  .reassure{margin-top:14px;display:flex;align-items:flex-start;gap:8px;font-size:11.5px;line-height:1.45;color:var(--fg-muted)}
+  .reassure svg{flex:none;margin-top:1px;color:var(--ever-500)}
+
+  .foot{margin-top:auto;display:flex;flex-direction:column;gap:11px}
+  .btn{display:flex;align-items:center;justify-content:center;gap:10px;height:52px;border:0;cursor:pointer;border-radius:15px;background:var(--ever-100);box-shadow:var(--neu-raised);font-family:var(--font-body);font-weight:600;font-size:15px;color:var(--ever-700);transition:box-shadow .14s,transform .14s,opacity .2s;-webkit-tap-highlight-color:transparent}
+  .btn:hover{transform:translateY(-1px)}.btn:active{box-shadow:var(--neu-pressed);transform:translateY(0)}
+  .btn .arr{display:flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--accent-tint);color:var(--ever-500)}
+  .btn[disabled]{opacity:.5;cursor:not-allowed;box-shadow:var(--neu-raised-sm)}.btn[disabled]:hover{transform:none}
+  .skip{align-self:center;border:0;background:transparent;cursor:pointer;font-family:var(--font-body);font-weight:500;font-size:13px;color:var(--fg-muted);padding:4px 10px}
+  .skip:hover{color:var(--ever-700)}
+
+  /* success capstone */
+  .success{position:absolute;inset:0;z-index:20;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;padding:30px;background:radial-gradient(120% 70% at 50% 38%, #e6f1eb 0%, var(--ever-100) 60%)}
+  .success.show{display:flex}
+  .succ-mark{width:96px;height:96px;margin-bottom:14px}
+  .succ-mark svg{width:100%;height:100%;display:block;overflow:visible}
+  .success h2{font-family:var(--font-display);font-weight:600;font-size:25px;color:var(--ever-900);letter-spacing:-.02em}
+  .success p{font-size:13.5px;color:var(--fg-muted);max-width:230px;line-height:1.5}
+  .success .ent{margin-top:20px;width:100%;max-width:230px}
+
+  .replay{position:fixed;z-index:50;bottom:34px;left:50%;transform:translateX(-50%);display:inline-flex;align-items:center;gap:10px;min-height:var(--hit);padding:0 22px;border-radius:999px;cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:14px;color:var(--ever-700);background:var(--ever-100);box-shadow:var(--neu-raised);border:0;transition:transform .16s,box-shadow .16s}
+  .replay:hover{transform:translateX(-50%) translateY(-2px)}.replay:active{transform:translateX(-50%);box-shadow:var(--neu-pressed)}
+  .replay svg{width:17px;height:17px;stroke:var(--ever-500)}
+
+  @media (max-width:740px){
+    .iphone{width:290px;height:610px}.iphone .screen{width:272px;height:592px}
+    .pixel{width:286px;height:608px}.pixel .screen{width:270px;height:592px}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important}}
+</style>
+</head>
+<body>
+
+  <header class="studio-head">
+    <span class="kicker">Evergreen · 08 Onboarding</span>
+    <h1>Per-Location setup — step 6 of 6 · First plant</h1>
+  </header>
+
+  <div class="gallery">
+    <div class="device">
+      <div class="phone iphone">
+        <div class="island"></div>
+        <div class="screen" data-screen-label="08 Onboarding · First plant" data-od-id="onb-firstplant-ios">
+          <div class="statusbar"><span>9:41</span><span class="icons">
+            <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4.5" width="3" height="7.5" rx="1" fill="currentColor"/><rect x="10" y="2" width="3" height="10" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor" opacity=".4"/></svg>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 10.6 9.4 9c-.8-.7-2-.7-2.8 0L8 10.6Z" fill="currentColor"/><path d="M4.6 6.2C6.5 4.4 9.5 4.4 11.4 6.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M2.2 3.6c3.2-3 8.4-3 11.6 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x=".7" y=".7" width="22" height="10.6" rx="3" stroke="currentColor" stroke-opacity=".5"/><rect x="2.4" y="2.4" width="15" height="7.2" rx="1.6" fill="currentColor"/><rect x="24" y="4" width="1.6" height="4" rx=".8" fill="currentColor" opacity=".5"/></svg>
+          </span></div>
+          <div class="app"></div>
+          <div class="home-ind"></div>
+        </div>
+      </div>
+      <span class="device-cap">iPhone 15 Pro</span>
+    </div>
+
+    <div class="device">
+      <div class="phone pixel">
+        <div class="punch"></div>
+        <div class="screen" data-screen-label="08 Onboarding · First plant" data-od-id="onb-firstplant-android">
+          <div class="statusbar"><span>9:41</span><span class="icons">
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M2.2 3.6c3.2-3 8.4-3 11.6 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M4.6 6.2C6.5 4.4 9.5 4.4 11.4 6.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="9.6" r="1.3" fill="currentColor"/></svg>
+            <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4.5" width="3" height="7.5" rx="1" fill="currentColor"/><rect x="10" y="2" width="3" height="10" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor"/></svg>
+            <svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x=".7" y="1.4" width="20" height="9.2" rx="2.4" stroke="currentColor" stroke-opacity=".5"/><rect x="2.2" y="2.9" width="14" height="6.2" rx="1.2" fill="currentColor"/><rect x="21.6" y="4.2" width="1.6" height="3.6" rx=".8" fill="currentColor" opacity=".5"/></svg>
+          </span></div>
+          <div class="app"></div>
+          <div class="nav-pill"></div>
+        </div>
+      </div>
+      <span class="device-cap">Pixel 8 Pro</span>
+    </div>
+  </div>
+
+  <button class="replay" id="replay" aria-label="Replay entrance">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v4h4"/></svg>
+    Replay entrance
+  </button>
+
+<script>
+(function(){
+  const REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const PETALS=['#2c694e','#377a5b','#46866a','#5fa17f','#7cbf9b','#9bd8b9','#a9dfc6','#8ed1b1'];
+  function flowerSVG(){let p='';for(let i=0;i<8;i++)p+=`<ellipse class="petal" cx="120" cy="68" rx="32" ry="57" transform="rotate(${i*45} 120 120)" fill="${PETALS[i]}" fill-opacity="0.86"/>`;
+    return `<g class="flower">${p}<circle class="heart" cx="120" cy="120" r="20" fill="#0c1f17"/><ellipse cx="113" cy="113" rx="6" ry="4.5" fill="rgba(154,215,184,.30)"/></g>`;}
+  const I={
+    back:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
+    arrow:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>',
+    chev:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>',
+    camera:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8a2 2 0 0 1 2-2h1.2a2 2 0 0 0 1.7-1l.5-.8a2 2 0 0 1 1.7-1h1.4a2 2 0 0 1 1.7 1l.5.8a2 2 0 0 0 1.7 1H18a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/><circle cx="12" cy="13" r="3.4"/></svg>',
+    pencil:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>',
+    shield:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 5 6v5c0 4.2 2.9 7.6 7 9 4.1-1.4 7-4.8 7-9V6Z"/><path d="m9.5 12 1.8 1.8 3.4-3.6"/></svg>',
+    check:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
+    spin:'<svg class="spin" width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-opacity=".22" stroke-width="2.4"/><path d="M12 3.5a8.5 8.5 0 0 1 8.5 8.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>'
+  };
+  const SPACE='Living Room';
+
+  function appHTML(){
+    const segs=Array.from({length:6},()=>`<span class="seg done"><span class="fill"></span></span>`).join('');
+    return `
+    <div class="form">
+      <div class="topbar">
+        <button class="iconbtn back" aria-label="Back">${I.back}</button>
+        <div class="progress" aria-label="Step 6 of 6">${segs}</div>
+        <span class="stepno">6/6</span>
+      </div>
+      <div class="head">
+        <div class="eyebrow">Step 6 · First plant</div>
+        <h1>Add your first plant</h1>
+        <p>It’ll land in <b>${SPACE}</b>. Snap a photo to identify it, or add it by hand.</p>
+      </div>
+      <div class="choices" role="radiogroup" aria-label="How to add">
+        <button class="choice" role="radio" aria-pressed="false" data-v="identify" data-cta="Open camera" data-busy="Opening camera…">
+          <span class="ch-ic">${I.camera}</span>
+          <span class="ch-txt"><b>Identify with camera <span class="tag">Recommended</span></b><span class="d">Snap a photo — we’ll name it and build a care plan.</span></span>
+          <span class="ch-arr">${I.chev}</span>
+        </button>
+        <button class="choice" role="radio" aria-pressed="false" data-v="manual" data-cta="Search species" data-busy="Opening species search…">
+          <span class="ch-ic">${I.pencil}</span>
+          <span class="ch-txt"><b>Add it manually</b><span class="d">Know what it is? Search the Species yourself.</span></span>
+          <span class="ch-arr">${I.chev}</span>
+        </button>
+      </div>
+      <div class="reassure">${I.shield}<span>We always show how sure an ID is — never a confident guess. You can re-identify later.</span></div>
+      <div class="foot">
+        <button type="button" class="btn cont" disabled>Choose a way to add <span class="arr">${I.arrow}</span></button>
+        <button type="button" class="skip">Skip for now — I’ll add plants later</button>
+      </div>
+    </div>
+    <div class="success">
+      <div class="succ-mark"><svg viewBox="0 0 240 240">${flowerSVG()}</svg></div>
+      <h2>You’re all set</h2>
+      <p>Your garden is ready and <b>${SPACE}</b> is waiting for its first plant.</p>
+      <button type="button" class="btn ent">Enter your garden <span class="arr">${I.arrow}</span></button>
+    </div>`;
+  }
+
+  const roots=Array.from(document.querySelectorAll('.screen'));
+  roots.forEach(r=>r.querySelector('.app').innerHTML=appHTML());
+
+  function setup(root){
+    const choices=Array.from(root.querySelectorAll('.choice')),cont=root.querySelector('.cont'),
+          form=root.querySelector('.form'),success=root.querySelector('.success'),skip=root.querySelector('.skip');
+    let pick=null;
+
+    choices.forEach(c=>c.addEventListener('click',()=>{
+      choices.forEach(x=>x.setAttribute('aria-pressed','false'));
+      c.setAttribute('aria-pressed','true');pick=c;cont.disabled=false;
+      cont.innerHTML=c.dataset.cta+' <span class="arr">'+I.arrow+'</span>';
+    }));
+
+    function finish(){
+      if(cont.classList.contains('busy'))return;
+      cont.classList.add('busy');
+      const label=pick?pick.dataset.busy:'Finishing setup…';
+      cont.innerHTML='<span class="arr" style="background:transparent">'+I.spin+'</span> '+label;
+      setTimeout(()=>{
+        form.style.display='none';success.classList.add('show');
+        const fl=success.querySelector('.flower'),petals=success.querySelectorAll('.petal'),heart=success.querySelector('.heart');
+        if(REDUCE){gsap.set([petals,heart,success.querySelector('h2'),success.querySelector('p'),success.querySelector('.ent')],{opacity:1,scale:1});return;}
+        gsap.set([petals,heart],{svgOrigin:'120 120'});
+        gsap.timeline({defaults:{ease:'power3.out'}})
+          .fromTo(heart,{scale:0,opacity:0},{scale:1,opacity:1,duration:.6,ease:'back.out(2.2)'})
+          .fromTo(petals,{scale:0,opacity:0},{scale:1,opacity:.86,duration:.7,ease:'back.out(1.7)',stagger:.07},'-=0.3')
+          .fromTo(success.querySelectorAll('h2,p,.ent'),{y:14,opacity:0},{y:0,opacity:1,duration:.5,stagger:.08},'-=0.2')
+          .add(()=>gsap.to(fl,{rotation:5,duration:6,svgOrigin:'120 120',ease:'sine.inOut',yoyo:true,repeat:-1}));
+      },1000);
+    }
+    cont.addEventListener('click',()=>{if(!cont.disabled)finish();});
+    skip.addEventListener('click',()=>{pick=null;finish();});
+    root.querySelector('.back').addEventListener('click',()=>{});
+    root.querySelector('.ent').addEventListener('click',()=>{});
+  }
+
+  function animateIn(root){
+    root.querySelector('.success').classList.remove('show');
+    root.querySelector('.form').style.display='';
+    const cont=root.querySelector('.cont');cont.classList.remove('busy');cont.disabled=true;cont.innerHTML='Choose a way to add <span class="arr">'+I.arrow+'</span>';
+    root.querySelectorAll('.choice').forEach(c=>c.setAttribute('aria-pressed','false'));
+    const segFills=root.querySelectorAll('.progress .seg.done .fill');
+    const seq=[root.querySelector('.head .eyebrow'),root.querySelector('.head h1'),root.querySelector('.head p'),
+      ...root.querySelectorAll('.choice'),root.querySelector('.reassure'),root.querySelector('.foot')];
+    if(REDUCE){gsap.set(seq,{opacity:1,y:0});gsap.set(segFills,{scaleX:1});return;}
+    gsap.set(seq,{opacity:0,y:16});gsap.set(segFills,{scaleX:0});
+    gsap.timeline({defaults:{ease:'power3.out'}})
+      .fromTo(root.querySelector('.topbar'),{opacity:0,y:-8},{opacity:1,y:0,duration:.5})
+      .to(segFills,{scaleX:1,duration:.7,ease:'power2.out'},'-=0.2')
+      .to(seq,{opacity:1,y:0,duration:.55,stagger:.06},'-=0.3');
+  }
+
+  roots.forEach(setup);
+  function play(){roots.forEach(animateIn);}
+  if(document.fonts&&document.fonts.ready){document.fonts.ready.then(play);}else{play();}
+  setTimeout(()=>{if(getComputedStyle(roots[0].querySelector('.foot')).opacity==='0')play();},500);
+  document.getElementById('replay').addEventListener('click',play);
+})();
+</script>
+</body>
+</html>

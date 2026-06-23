@@ -1,0 +1,253 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evergreen · Notifications</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@500,600,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+  :root{
+    --ever-100:#d8e9df;--ever-400:#4daf82;--ever-500:#2c694e;--ever-700:#1b4332;--ever-900:#0c1f17;
+    --leaf:#3e7c4f;--warning:#b5821f;--warn-tint:rgba(181,130,31,.14);--terra:#c76b4f;--info:#2c7a78;
+    --fg:#16271e;--fg-muted:#4b6357;--fg-subtle:#7d9488;--accent-tint:rgba(46,109,78,.12);
+    --neu-raised:6px 6px 14px rgba(11,30,21,.13), -6px -6px 13px rgba(255,255,255,.80);
+    --neu-raised-sm:4px 4px 9px rgba(11,30,21,.12), -4px -4px 9px rgba(255,255,255,.78);
+    --neu-pressed:inset 4px 4px 9px rgba(11,30,21,.13), inset -4px -4px 9px rgba(255,255,255,.72);
+    --font-display:'General Sans','Söhne',-apple-system,system-ui,sans-serif;
+    --font-body:'Inter',-apple-system,system-ui,sans-serif;
+    --font-mono:'JetBrains Mono','Berkeley Mono',ui-monospace,monospace;--hit:44px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:var(--font-body);color:var(--fg);background:radial-gradient(120% 80% at 50% -10%, #f1f7f3 0%, transparent 55%),radial-gradient(100% 100% at 50% 120%, #cfe2d7 0%, #e6f0ea 100%);min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(26px,5vh,52px);padding:48px 24px 120px;overflow-x:hidden}
+
+  .studio-head{position:relative;z-index:2;text-align:center;display:flex;flex-direction:column;align-items:center;gap:9px}
+  .studio-head .kicker{font-family:var(--font-mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:#5c8772}
+  .studio-head h1{font-family:var(--font-display);font-weight:600;font-size:clamp(19px,3.2vw,28px);letter-spacing:-.02em;color:var(--ever-700)}
+
+  .gallery{position:relative;z-index:2;display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:center;gap:clamp(32px,6vw,72px)}
+  .device{display:flex;flex-direction:column;align-items:center;gap:18px}
+  .device-cap{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#5c8772}
+
+  .phone{position:relative;background:linear-gradient(150deg,#2c2f30,#16191a 46%,#0a0c0c);box-shadow:0 2px 0 1px rgba(255,255,255,.05) inset,0 55px 80px -42px rgba(11,30,21,.5),0 0 0 1px rgba(0,0,0,.55)}
+  .screen{position:relative;overflow:hidden;width:300px;height:650px;background:var(--ever-100)}
+  .iphone{width:318px;height:668px;border-radius:56px;padding:9px}.iphone .screen{border-radius:48px}
+  .iphone .island{position:absolute;z-index:60;top:18px;left:50%;transform:translateX(-50%);width:88px;height:27px;border-radius:16px;background:#0a0c0c}
+  .iphone .island::after{content:"";position:absolute;right:11px;top:50%;transform:translateY(-50%);width:9px;height:9px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#26343b,#05070a)}
+  .iphone .home-ind{position:absolute;z-index:60;bottom:9px;left:50%;transform:translateX(-50%);width:120px;height:5px;border-radius:3px;background:rgba(22,39,30,.4)}
+  .pixel{width:312px;height:664px;border-radius:34px;padding:8px;background:linear-gradient(150deg,#3a3d3e,#1b1e1f 46%,#0c0e0e)}.pixel .screen{border-radius:27px}
+  .pixel .punch{position:absolute;z-index:60;top:15px;left:50%;transform:translateX(-50%);width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#23323a,#04060a);box-shadow:0 0 0 2px rgba(255,255,255,.12)}
+  .pixel .nav-pill{position:absolute;z-index:60;bottom:10px;left:50%;transform:translateX(-50%);width:96px;height:5px;border-radius:3px;background:rgba(22,39,30,.34)}
+
+  .statusbar{position:absolute;z-index:55;top:0;left:0;right:0;height:50px;display:flex;align-items:center;justify-content:space-between;padding:18px 26px 0;font-family:var(--font-mono);font-size:12.5px;color:var(--fg);pointer-events:none}
+  .pixel .statusbar{padding-top:15px}
+  .statusbar .icons{display:flex;align-items:center;gap:6px}.statusbar svg{display:block}
+
+  .app{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column}
+
+  .nhd{flex:none;padding:50px 12px 6px;display:flex;align-items:center;gap:8px}
+  .pixel .nhd{padding-top:44px}
+  .iconbtn{width:38px;height:38px;border-radius:50%;border:0;cursor:pointer;display:flex;align-items:center;justify-content:center;background:var(--ever-100);box-shadow:var(--neu-raised-sm);color:var(--ever-700);flex:none;-webkit-tap-highlight-color:transparent}
+  .iconbtn:active{box-shadow:var(--neu-pressed)}
+  .nhd h2{flex:1;font-family:var(--font-display);font-weight:600;font-size:19px;color:var(--ever-900);letter-spacing:-.02em}
+  .markall{border:0;background:transparent;cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:12px;color:var(--ever-500);padding:8px 8px;border-radius:10px;white-space:nowrap}
+  .markall[disabled]{color:var(--fg-subtle);opacity:.6;cursor:default}
+
+  .chips{flex:none;display:flex;gap:7px;padding:8px 14px 10px;overflow-x:auto;scrollbar-width:none}
+  .chips::-webkit-scrollbar{display:none}
+  .chip{flex:none;display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 13px;border:0;cursor:pointer;border-radius:999px;background:var(--ever-100);box-shadow:var(--neu-raised-sm);font-family:var(--font-body);font-weight:500;font-size:12.5px;color:var(--fg-muted);transition:box-shadow .14s,color .14s}
+  .chip[aria-pressed=true]{box-shadow:var(--neu-pressed);color:var(--ever-700);font-weight:600}
+  .chip .cb{min-width:16px;height:16px;padding:0 4px;border-radius:999px;background:var(--accent-tint);color:var(--ever-500);font-family:var(--font-mono);font-size:9px;font-weight:600;display:inline-flex;align-items:center;justify-content:center}
+
+  .content{flex:1;overflow-y:auto;padding:4px 14px 24px;scrollbar-width:none}
+  .content::-webkit-scrollbar{display:none}
+  .sec[hidden]{display:none}
+  .sec-l{display:flex;align-items:center;gap:7px;font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-subtle);margin:16px 4px 9px}
+  .sec-l .ct{margin-left:auto}
+
+  .nrow{display:flex;align-items:flex-start;gap:12px;width:100%;text-align:left;padding:12px;border:0;cursor:pointer;border-radius:15px;background:transparent;-webkit-tap-highlight-color:transparent;transition:background .2s;margin-bottom:4px}
+  .nrow.unread{background:var(--ever-100);box-shadow:var(--neu-raised-sm)}
+  .nrow .ni{width:38px;height:38px;border-radius:11px;flex:none;display:flex;align-items:center;justify-content:center;background:var(--ever-100);box-shadow:var(--neu-pressed);color:var(--ever-500)}
+  .nrow.care .ni{color:var(--ever-500)} .nrow.warn .ni{color:var(--warning)} .nrow.streak .ni{color:var(--terra)} .nrow.sys .ni{color:var(--fg-muted)}
+  .nrow .ntx{flex:1;min-width:0}
+  .nrow .ntx b{font-family:var(--font-display);font-weight:600;font-size:13.5px;color:var(--ever-900);letter-spacing:-.01em}
+  .nrow .ntx b em{font-style:normal;color:var(--ever-700)}
+  .nrow .ntx .det{display:block;font-size:12px;color:var(--fg-muted);margin-top:2px;line-height:1.35}
+  .nrow .ntx .tm{display:block;font-family:var(--font-mono);font-size:9.5px;color:var(--fg-subtle);margin-top:4px}
+  .nrow .dot{width:8px;height:8px;border-radius:50%;background:var(--ever-400);flex:none;margin-top:6px;opacity:0;transition:opacity .2s}
+  .nrow.unread .dot{opacity:1}
+
+  .empty{text-align:center;padding:40px 20px;color:var(--fg-muted);font-size:13px}
+
+  .toast{position:absolute;z-index:62;left:18px;right:18px;bottom:30px;display:flex;align-items:center;gap:10px;padding:12px 15px;border-radius:14px;background:var(--ever-900);color:#eaf3ed;font-size:13px;font-weight:500;opacity:0;transform:translateY(10px);pointer-events:none;transition:opacity .25s,transform .25s;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+  .toast.show{opacity:1;transform:translateY(0)}
+  .toast svg{color:var(--ever-400);flex:none}
+
+  .replay{position:fixed;z-index:50;bottom:34px;left:50%;transform:translateX(-50%);display:inline-flex;align-items:center;gap:10px;min-height:var(--hit);padding:0 22px;border-radius:999px;cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:14px;color:var(--ever-700);background:var(--ever-100);box-shadow:var(--neu-raised);border:0;transition:transform .16s,box-shadow .16s}
+  .replay:hover{transform:translateX(-50%) translateY(-2px)}.replay:active{transform:translateX(-50%);box-shadow:var(--neu-pressed)}
+  .replay svg{width:17px;height:17px;stroke:var(--ever-500)}
+
+  @media (max-width:740px){
+    .iphone{width:290px;height:610px}.iphone .screen{width:272px;height:592px}
+    .pixel{width:286px;height:608px}.pixel .screen{width:270px;height:592px}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important}}
+</style>
+</head>
+<body>
+
+  <header class="studio-head">
+    <span class="kicker">Evergreen · 17 Notifications</span>
+    <h1>Global bell — Care · Community · System (§9)</h1>
+  </header>
+
+  <div class="gallery">
+    <div class="device">
+      <div class="phone iphone">
+        <div class="island"></div>
+        <div class="screen" data-screen-label="17 Notifications" data-od-id="notif-ios">
+          <div class="statusbar"><span>9:41</span><span class="icons">
+            <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4.5" width="3" height="7.5" rx="1" fill="currentColor"/><rect x="10" y="2" width="3" height="10" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor" opacity=".4"/></svg>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 10.6 9.4 9c-.8-.7-2-.7-2.8 0L8 10.6Z" fill="currentColor"/><path d="M4.6 6.2C6.5 4.4 9.5 4.4 11.4 6.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M2.2 3.6c3.2-3 8.4-3 11.6 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x=".7" y=".7" width="22" height="10.6" rx="3" stroke="currentColor" stroke-opacity=".5"/><rect x="2.4" y="2.4" width="15" height="7.2" rx="1.6" fill="currentColor"/><rect x="24" y="4" width="1.6" height="4" rx=".8" fill="currentColor" opacity=".5"/></svg>
+          </span></div>
+          <div class="app"></div>
+          <div class="home-ind"></div>
+        </div>
+      </div>
+      <span class="device-cap">iPhone 15 Pro</span>
+    </div>
+
+    <div class="device">
+      <div class="phone pixel">
+        <div class="punch"></div>
+        <div class="screen" data-screen-label="17 Notifications" data-od-id="notif-android">
+          <div class="statusbar"><span>9:41</span><span class="icons">
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M2.2 3.6c3.2-3 8.4-3 11.6 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M4.6 6.2C6.5 4.4 9.5 4.4 11.4 6.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="9.6" r="1.3" fill="currentColor"/></svg>
+            <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4.5" width="3" height="7.5" rx="1" fill="currentColor"/><rect x="10" y="2" width="3" height="10" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor"/></svg>
+            <svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x=".7" y="1.4" width="20" height="9.2" rx="2.4" stroke="currentColor" stroke-opacity=".5"/><rect x="2.2" y="2.9" width="14" height="6.2" rx="1.2" fill="currentColor"/><rect x="21.6" y="4.2" width="1.6" height="3.6" rx=".8" fill="currentColor" opacity=".5"/></svg>
+          </span></div>
+          <div class="app"></div>
+          <div class="nav-pill"></div>
+        </div>
+      </div>
+      <span class="device-cap">Pixel 8 Pro</span>
+    </div>
+  </div>
+
+  <button class="replay" id="replay" aria-label="Replay entrance">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v4h4"/></svg>
+    Replay
+  </button>
+
+<script>
+(function(){
+  const REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const I={
+    back:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
+    droplet:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 6.4 6 11a6 6 0 0 1-12 0c0-4.6 6-11 6-11Z"/></svg>',
+    fert:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4c-8 0-14 5-14 12a6 6 0 0 0 12 0c1-5 1-8 2-12Z"/><path d="M7 21c0-6 3-10 8-13"/></svg>',
+    flame:'<svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 3-1 4-2 6-1 1.6-2 3-2 5a6 6 0 0 0 12 0c0-2.4-1.4-4.4-2.6-5.6.2 1.6-.6 2.6-1.4 2.6 0-2-1-4-4-8Z"/></svg>',
+    heart:'<svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M12 20s-7-4.4-9.2-8.2A4.6 4.6 0 0 1 12 6.5a4.6 4.6 0 0 1 9.2 5.3C19 15.6 12 20 12 20Z"/></svg>',
+    comment:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4L3 21l1.1-3.6A8.4 8.4 0 1 1 21 11.5Z"/></svg>',
+    follow:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.4"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M18 8v6M21 11h-6"/></svg>',
+    trophy:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v4a5 5 0 0 1-10 0Z"/><path d="M7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3M9 20h6M12 13v3"/></svg>',
+    star:'<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.6 5.4L19 9l-5.4 1.6L12 16l-1.6-5.4L5 9l5.4-1.6L12 2Z"/></svg>',
+    sync:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7M21 4v4h-4"/></svg>',
+    info:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>',
+    check:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>'
+  };
+  const NOTIFS=[
+    {cat:'Care',cls:'warn',ic:'droplet',sub:'<em>Mara</em> needs water',det:'Overdue by 1 day · Living Room',tm:'2h ago',unread:true},
+    {cat:'Care',cls:'care',ic:'fert',sub:'Fertilize <em>Rosemary</em>',det:'Due today · Balcony',tm:'5h ago',unread:true},
+    {cat:'Care',cls:'streak',ic:'flame',sub:'Your streak hit 12 days',det:'Three tasks today keeps it alive.',tm:'1d ago',unread:false},
+    {cat:'Community',cls:'care',ic:'heart',sub:'<em>@fernfiend</em> liked your post',det:'“New leaf unfurling”',tm:'3h ago',unread:true},
+    {cat:'Community',cls:'care',ic:'comment',sub:'<em>@leaf.lydia</em> replied to your swap',det:'Pilea pups ×3 — “See you Saturday!”',tm:'6h ago',unread:true},
+    {cat:'Community',cls:'care',ic:'follow',sub:'<em>@potted.pete</em> followed you',det:'Tap to view their garden',tm:'1d ago',unread:false},
+    {cat:'Community',cls:'care',ic:'trophy',sub:'#BrightWindow ends in 3 days',det:'You’re ranked 14th of 248',tm:'2d ago',unread:false},
+    {cat:'System',cls:'care',ic:'star',sub:'Welcome to evergreen+',det:'Your 7-day trial is active.',tm:'1d ago',unread:false},
+    {cat:'System',cls:'sys',ic:'sync',sub:'Photos synced',det:'3 items uploaded from offline.',tm:'2d ago',unread:false},
+    {cat:'System',cls:'sys',ic:'info',sub:'Community guidelines updated',det:'Review what’s changed.',tm:'3d ago',unread:false}
+  ];
+  const CATS=['Care','Community','System'];
+
+  function rowHTML(n,i){
+    return `<button class="nrow ${n.cls}" data-i="${i}">
+      <span class="ni">${I[n.ic]}</span>
+      <span class="ntx"><b>${n.sub}</b><span class="det">${n.det}</span><span class="tm">${n.tm}</span></span>
+      <span class="dot"></span></button>`;
+  }
+  function appHTML(){
+    const unread=NOTIFS.filter(n=>n.unread).length;
+    const sections=CATS.map(c=>{
+      const rows=NOTIFS.map((n,i)=>[n,i]).filter(([n])=>n.cat===c);
+      const u=rows.filter(([n])=>n.unread).length;
+      return `<div class="sec" data-cat="${c}"><div class="sec-l">${c}<span class="ct">${u?u+' new':''}</span></div>${rows.map(([n,i])=>rowHTML(n,i)).join('')}</div>`;
+    }).join('');
+    return `
+    <div class="nhd">
+      <button class="iconbtn back" aria-label="Back">${I.back}</button>
+      <h2>Notifications</h2>
+      <button class="markall" ${unread?'':'disabled'}>Mark all read</button>
+    </div>
+    <div class="chips" role="group" aria-label="Filter">
+      <button class="chip" aria-pressed="true" data-f="All">All <span class="cb">${unread}</span></button>
+      <button class="chip" aria-pressed="false" data-f="Care">Care</button>
+      <button class="chip" aria-pressed="false" data-f="Community">Community</button>
+      <button class="chip" aria-pressed="false" data-f="System">System</button>
+    </div>
+    <div class="content">${sections}</div>
+    <div class="toast"><span class="tic">${I.check}</span><span class="tmsg"></span></div>`;
+  }
+
+  const roots=Array.from(document.querySelectorAll('.screen'));
+  roots.forEach(r=>r.querySelector('.app').innerHTML=appHTML());
+
+  function setup(root){
+    const chips=Array.from(root.querySelectorAll('.chip')),secs=Array.from(root.querySelectorAll('.sec')),
+          markall=root.querySelector('.markall'),allBadge=root.querySelector('.chip[data-f=All] .cb'),
+          toast=root.querySelector('.toast'),tmsg=root.querySelector('.tmsg');
+    function showToast(m){tmsg.textContent=m;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2200);}
+    function recount(){
+      const u=root.querySelectorAll('.nrow.unread').length;
+      allBadge.textContent=u; allBadge.style.display=u?'':'none';
+      markall.disabled=u===0;
+      secs.forEach(s=>{const su=s.querySelectorAll('.nrow.unread').length;s.querySelector('.ct').textContent=su?su+' new':'';});
+    }
+    chips.forEach(c=>c.addEventListener('click',()=>{
+      chips.forEach(x=>x.setAttribute('aria-pressed','false'));c.setAttribute('aria-pressed','true');
+      const f=c.dataset.f;secs.forEach(s=>s.hidden=f!=='All'&&s.dataset.cat!==f);
+      if(!REDUCE)gsap.fromTo(secs.filter(s=>!s.hidden),{opacity:0,y:10},{opacity:1,y:0,duration:.35,stagger:.05,ease:'power3.out'});
+    }));
+    root.querySelectorAll('.nrow').forEach(r=>r.addEventListener('click',()=>{ if(r.classList.contains('unread')){r.classList.remove('unread');recount();} }));
+    markall.addEventListener('click',()=>{
+      if(markall.disabled)return;
+      root.querySelectorAll('.nrow.unread').forEach(r=>r.classList.remove('unread'));
+      recount();showToast('All caught up — marked as read');
+    });
+    root.querySelector('.back').addEventListener('click',()=>{});
+  }
+
+  function animateIn(root){
+    const hd=root.querySelector('.nhd'),chips=root.querySelector('.chips'),rows=root.querySelectorAll('.sec-l, .nrow');
+    if(REDUCE){gsap.set([hd,chips,rows],{opacity:1,y:0});return;}
+    gsap.set([hd,chips],{opacity:0,y:-8});gsap.set(rows,{opacity:0,y:14});
+    gsap.timeline({defaults:{ease:'power3.out'}})
+      .to([hd,chips],{opacity:1,y:0,duration:.45,stagger:.07})
+      .to(rows,{opacity:1,y:0,duration:.4,stagger:.04},'-=0.15');
+  }
+
+  roots.forEach(setup);
+  function play(){roots.forEach(animateIn);}
+  if(document.fonts&&document.fonts.ready){document.fonts.ready.then(play);}else{play();}
+  setTimeout(()=>{if(getComputedStyle(roots[0].querySelector('.content .nrow')).opacity==='0')play();},500);
+  document.getElementById('replay').addEventListener('click',play);
+})();
+</script>
+</body>
+</html>

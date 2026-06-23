@@ -1,0 +1,391 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evergreen · Community</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@500,600,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+  :root{
+    --ever-100:#d8e9df;--ever-400:#4daf82;--ever-500:#2c694e;--ever-700:#1b4332;--ever-900:#0c1f17;
+    --leaf:#3e7c4f;--warning:#b5821f;--danger:#b3402f;--terra:#c76b4f;
+    --fg:#16271e;--fg-muted:#4b6357;--fg-subtle:#7d9488;--accent-tint:rgba(46,109,78,.12);
+    --neu-raised:6px 6px 14px rgba(11,30,21,.13), -6px -6px 13px rgba(255,255,255,.80);
+    --neu-raised-sm:4px 4px 9px rgba(11,30,21,.12), -4px -4px 9px rgba(255,255,255,.78);
+    --neu-pressed:inset 4px 4px 9px rgba(11,30,21,.13), inset -4px -4px 9px rgba(255,255,255,.72);
+    --font-display:'General Sans','Söhne',-apple-system,system-ui,sans-serif;
+    --font-body:'Inter',-apple-system,system-ui,sans-serif;
+    --font-mono:'JetBrains Mono','Berkeley Mono',ui-monospace,monospace;--hit:44px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:var(--font-body);color:var(--fg);background:radial-gradient(120% 80% at 50% -10%, #f1f7f3 0%, transparent 55%),radial-gradient(100% 100% at 50% 120%, #cfe2d7 0%, #e6f0ea 100%);min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(26px,5vh,52px);padding:48px 24px 120px;overflow-x:hidden}
+
+  .studio-head{position:relative;z-index:2;text-align:center;display:flex;flex-direction:column;align-items:center;gap:9px}
+  .studio-head .kicker{font-family:var(--font-mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:#5c8772}
+  .studio-head h1{font-family:var(--font-display);font-weight:600;font-size:clamp(19px,3.2vw,28px);letter-spacing:-.02em;color:var(--ever-700)}
+
+  .gallery{position:relative;z-index:2;display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:center;gap:clamp(32px,6vw,72px)}
+  .device{display:flex;flex-direction:column;align-items:center;gap:18px}
+  .device-cap{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#5c8772}
+
+  .phone{position:relative;background:linear-gradient(150deg,#2c2f30,#16191a 46%,#0a0c0c);box-shadow:0 2px 0 1px rgba(255,255,255,.05) inset,0 55px 80px -42px rgba(11,30,21,.5),0 0 0 1px rgba(0,0,0,.55)}
+  .screen{position:relative;overflow:hidden;width:300px;height:650px;background:var(--ever-100)}
+  .iphone{width:318px;height:668px;border-radius:56px;padding:9px}.iphone .screen{border-radius:48px}
+  .iphone .island{position:absolute;z-index:60;top:18px;left:50%;transform:translateX(-50%);width:88px;height:27px;border-radius:16px;background:#0a0c0c}
+  .iphone .island::after{content:"";position:absolute;right:11px;top:50%;transform:translateY(-50%);width:9px;height:9px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#26343b,#05070a)}
+  .iphone .home-ind{position:absolute;z-index:60;bottom:9px;left:50%;transform:translateX(-50%);width:120px;height:5px;border-radius:3px;background:rgba(22,39,30,.4)}
+  .pixel{width:312px;height:664px;border-radius:34px;padding:8px;background:linear-gradient(150deg,#3a3d3e,#1b1e1f 46%,#0c0e0e)}.pixel .screen{border-radius:27px}
+  .pixel .punch{position:absolute;z-index:60;top:15px;left:50%;transform:translateX(-50%);width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#23323a,#04060a);box-shadow:0 0 0 2px rgba(255,255,255,.12)}
+  .pixel .nav-pill{position:absolute;z-index:60;bottom:10px;left:50%;transform:translateX(-50%);width:96px;height:5px;border-radius:3px;background:rgba(22,39,30,.34)}
+
+  .statusbar{position:absolute;z-index:55;top:0;left:0;right:0;height:50px;display:flex;align-items:center;justify-content:space-between;padding:18px 26px 0;font-family:var(--font-mono);font-size:12.5px;color:var(--fg);pointer-events:none}
+  .pixel .statusbar{padding-top:15px}
+  .statusbar .icons{display:flex;align-items:center;gap:6px}.statusbar svg{display:block}
+
+  .app{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column}
+
+  .chd{flex:none;padding:52px 18px 6px;display:flex;align-items:center;justify-content:space-between}
+  .pixel .chd{padding-top:46px}
+  .chd h2{font-family:var(--font-display);font-weight:600;font-size:23px;color:var(--ever-900);letter-spacing:-.02em}
+  .chd-actions{display:flex;gap:9px}
+  .iconbtn{position:relative;width:40px;height:40px;border-radius:50%;border:0;cursor:pointer;display:flex;align-items:center;justify-content:center;background:var(--ever-100);box-shadow:var(--neu-raised-sm);color:var(--ever-700)}
+  .iconbtn:active{box-shadow:var(--neu-pressed)}
+  .iconbtn .badge{position:absolute;top:7px;right:8px;min-width:8px;height:8px;border-radius:50%;background:var(--terra);box-shadow:0 0 0 2px var(--ever-100)}
+
+  .ttabs{flex:none;display:flex;padding:6px 18px 0;border-bottom:1px solid rgba(22,39,30,.08)}
+  .ttab{position:relative;border:0;background:transparent;cursor:pointer;padding:8px 4px 11px;margin-right:18px;font-family:var(--font-body);font-weight:600;font-size:14px;color:var(--fg-subtle);-webkit-tap-highlight-color:transparent;transition:color .15s}
+  .ttab[aria-selected=true]{color:var(--ever-900)}
+  .ttab[aria-selected=true]::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2.5px;border-radius:2px;background:var(--ever-500)}
+
+  .content{flex:1;overflow-y:auto;padding:12px 18px 88px;scrollbar-width:none}
+  .content::-webkit-scrollbar{display:none}
+  .pane[hidden]{display:none}
+
+  /* discover/following */
+  .subseg{display:flex;gap:5px;padding:5px;border-radius:14px;background:var(--ever-100);box-shadow:var(--neu-pressed);margin-bottom:14px}
+  .subseg button{flex:1;height:34px;border:0;cursor:pointer;border-radius:10px;background:transparent;font-family:var(--font-body);font-weight:600;font-size:13px;color:var(--fg-muted);-webkit-tap-highlight-color:transparent;transition:box-shadow .15s,color .15s,background .15s}
+  .subseg button[aria-pressed=true]{background:var(--ever-100);box-shadow:var(--neu-raised-sm);color:var(--ever-700)}
+
+  /* post card */
+  .post{border-radius:18px;background:var(--ever-100);box-shadow:var(--neu-raised);overflow:hidden;margin-bottom:14px}
+  .p-top{display:flex;align-items:center;gap:10px;padding:12px 13px 11px}
+  .avatar{width:36px;height:36px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:600;font-size:13px;color:#fff}
+  .p-id{flex:1;min-width:0}
+  .p-id b{display:block;font-family:var(--font-display);font-weight:600;font-size:13.5px;color:var(--ever-900)}
+  .p-id span{font-family:var(--font-mono);font-size:10px;color:var(--fg-subtle)}
+  .p-more{border:0;background:transparent;cursor:pointer;color:var(--fg-subtle);padding:4px;display:flex}
+  .p-img{height:150px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.45)}
+  .p-act{display:flex;align-items:center;gap:16px;padding:11px 14px 5px}
+  .p-act .a{display:flex;align-items:center;gap:6px;border:0;background:transparent;cursor:pointer;color:var(--fg-muted);font-family:var(--font-mono);font-size:12px;font-weight:500;-webkit-tap-highlight-color:transparent}
+  .p-act .a svg{transition:transform .15s}
+  .p-act .a.liked{color:var(--terra)}
+  .p-act .a.saved{color:var(--ever-500)}
+  .p-act .save{margin-left:auto}
+  .p-cap{padding:4px 14px 14px;font-size:13px;line-height:1.5;color:var(--fg)}
+  .p-cap b{font-weight:600;color:var(--ever-700)}
+  .p-cap .tag{color:var(--ever-500);font-weight:600}
+
+  .coldstart{display:flex;flex-direction:column;align-items:center;text-align:center;padding:24px 18px;border-radius:18px;background:var(--ever-100);box-shadow:var(--neu-pressed);margin-top:4px}
+  .coldstart svg{color:var(--ever-500);opacity:.75;margin-bottom:8px}
+  .coldstart b{font-family:var(--font-display);font-weight:600;font-size:14.5px;color:var(--ever-700)}
+  .coldstart span{font-size:12px;color:var(--fg-muted);margin-top:3px;max-width:200px}
+
+  /* swap grid */
+  .sgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .scard{border-radius:16px;background:var(--ever-100);box-shadow:var(--neu-raised);overflow:hidden;display:flex;flex-direction:column}
+  .scard .si{height:96px;flex:none;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.45)}
+  .scard .sb{flex:1;display:flex;flex-direction:column;padding:10px 11px 12px}
+  .scard .tag2{display:inline-block;font-family:var(--font-mono);font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ever-500);background:var(--accent-tint);padding:2px 7px;border-radius:999px;margin-bottom:5px}
+  .scard b{display:block;font-family:var(--font-display);font-weight:600;font-size:13px;color:var(--ever-900)}
+  .scard .seek{font-size:11px;color:var(--fg-muted);margin-top:2px;margin-bottom:9px;line-height:1.3}
+  .scard .smsg{margin-top:auto;align-self:center;height:34px;padding:0 16px;border:0;cursor:pointer;border-radius:999px;background:var(--ever-100);box-shadow:var(--neu-raised-sm);font-family:var(--font-body);font-weight:600;font-size:10px;letter-spacing:-.01em;white-space:nowrap;color:var(--ever-700)}
+  .scard .smsg:active{box-shadow:var(--neu-pressed)}
+
+  /* challenge cards */
+  .chcard{display:flex;align-items:center;gap:13px;padding:14px;border-radius:18px;background:var(--ever-100);box-shadow:var(--neu-raised);margin-bottom:12px}
+  .chcard .ci{width:48px;height:48px;border-radius:14px;flex:none;display:flex;align-items:center;justify-content:center;color:#fff;background:linear-gradient(150deg,#4daf82,#2c694e)}
+  .chcard .cx{flex:1;min-width:0}
+  .chcard .cx b{font-family:var(--font-display);font-weight:600;font-size:14.5px;color:var(--ever-900)}
+  .chcard .cx p{font-size:12px;color:var(--fg-muted);margin-top:1px}
+  .chcard .cx .meta{font-family:var(--font-mono);font-size:10px;color:var(--fg-subtle);margin-top:4px}
+  .chcard .join{flex:none;height:34px;padding:0 15px;border:0;cursor:pointer;border-radius:999px;background:var(--ever-100);box-shadow:var(--neu-raised-sm);font-family:var(--font-body);font-weight:600;font-size:12.5px;color:var(--ever-700)}
+  .chcard .join[aria-pressed=true]{box-shadow:var(--neu-pressed);color:var(--ever-500)}
+
+  /* tab bar */
+  .tabbar{position:absolute;z-index:50;left:10px;right:10px;bottom:16px;height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;border-radius:22px;background:var(--ever-100);box-shadow:var(--neu-raised)}
+  .pixel .tabbar{bottom:18px}
+  .tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;border:0;background:transparent;cursor:pointer;color:var(--fg-subtle);font-family:var(--font-body);font-size:9.5px;font-weight:500;-webkit-tap-highlight-color:transparent;transition:color .15s}
+  .tab[aria-selected=true]{color:var(--ever-700);font-weight:600}
+  .tab[aria-selected=true] svg{color:var(--ever-500)}
+  .tab.spacer{visibility:hidden}
+  .fab{position:absolute;z-index:51;left:50%;top:-18px;transform:translateX(-50%);width:60px;height:60px;border-radius:50%;border:0;cursor:pointer;display:flex;align-items:center;justify-content:center;background:var(--ever-100);box-shadow:var(--neu-raised);color:var(--ever-500);transition:transform .16s,box-shadow .16s;-webkit-tap-highlight-color:transparent}
+  .fab:hover{transform:translateX(-50%) translateY(-2px)}.fab:active{box-shadow:var(--neu-pressed)}
+
+  /* sheets */
+  .scrim{position:absolute;inset:0;z-index:57;background:rgba(11,24,18,.22);opacity:0;pointer-events:none;transition:opacity .22s}
+  .scrim.open{opacity:1;pointer-events:auto}
+  .sheet{position:absolute;z-index:58;left:12px;right:12px;bottom:14px;border-radius:20px;background:var(--ever-100);box-shadow:var(--neu-raised);padding:8px;opacity:0;transform:translateY(14px);pointer-events:none;transition:opacity .22s,transform .22s}
+  .sheet.open{opacity:1;transform:translateY(0);pointer-events:auto}
+  .sheet .mbtn{width:100%;display:flex;align-items:center;gap:13px;padding:13px;border:0;background:transparent;border-radius:12px;cursor:pointer;text-align:left;font-family:var(--font-body);font-size:14.5px;font-weight:500;color:var(--fg)}
+  .sheet .mbtn:hover{background:var(--accent-tint)}
+  .sheet .mbtn.danger{color:var(--danger)}
+  .sheet .mbtn .mi{width:34px;height:34px;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center;background:var(--ever-100);box-shadow:var(--neu-pressed);color:var(--ever-500)}
+  .sheet .mbtn.danger .mi{color:var(--danger)}
+
+  /* compose sheet */
+  .compose{padding:6px 6px 8px}
+  .compose .ch{display:flex;align-items:center;gap:10px;padding:6px 8px 12px}
+  .compose .ch b{font-family:var(--font-display);font-weight:600;font-size:15px;color:var(--ever-900)}
+  .compose .cphoto{height:84px;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;color:var(--ever-500);background:var(--ever-100);box-shadow:var(--neu-pressed);cursor:pointer;font-size:12px;font-weight:600;margin:0 2px 10px}
+  .compose textarea{width:calc(100% - 4px);margin:0 2px;min-height:60px;resize:none;border:0;outline:0;border-radius:14px;padding:12px;background:var(--ever-100);box-shadow:var(--neu-pressed);font-family:var(--font-body);font-size:14px;color:var(--fg)}
+  .compose textarea::placeholder{color:var(--fg-subtle)}
+  .compose .crow{display:flex;align-items:center;gap:9px;padding:11px 2px 0}
+  .compose .ctag{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 13px;border:0;cursor:pointer;border-radius:999px;background:var(--ever-100);box-shadow:var(--neu-raised-sm);font-family:var(--font-body);font-weight:500;font-size:12.5px;color:var(--fg-muted)}
+  .compose .cpost{margin-left:auto;height:42px;padding:0 20px;border:0;cursor:pointer;border-radius:12px;background:var(--ever-100);box-shadow:var(--neu-raised);font-family:var(--font-body);font-weight:600;font-size:14px;color:var(--ever-700)}
+  .compose .cpost:active{box-shadow:var(--neu-pressed)}
+
+  .toast{position:absolute;z-index:62;left:18px;right:18px;bottom:96px;display:flex;align-items:center;gap:10px;padding:13px 15px;border-radius:14px;background:var(--ever-900);color:#eaf3ed;font-size:13px;font-weight:500;opacity:0;transform:translateY(10px);pointer-events:none;transition:opacity .25s,transform .25s;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+  .toast.show{opacity:1;transform:translateY(0)}
+  .toast svg{color:var(--ever-400);flex:none}
+
+  .replay{position:fixed;z-index:50;bottom:34px;left:50%;transform:translateX(-50%);display:inline-flex;align-items:center;gap:10px;min-height:var(--hit);padding:0 22px;border-radius:999px;cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:14px;color:var(--ever-700);background:var(--ever-100);box-shadow:var(--neu-raised);border:0;transition:transform .16s,box-shadow .16s}
+  .replay:hover{transform:translateX(-50%) translateY(-2px)}.replay:active{transform:translateX(-50%);box-shadow:var(--neu-pressed)}
+  .replay svg{width:17px;height:17px;stroke:var(--ever-500)}
+
+  @media (max-width:740px){
+    .iphone{width:290px;height:610px}.iphone .screen{width:272px;height:592px}
+    .pixel{width:286px;height:608px}.pixel .screen{width:270px;height:592px}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important}}
+</style>
+</head>
+<body>
+
+  <header class="studio-head">
+    <span class="kicker">Evergreen · 14 Community</span>
+    <h1>Feed · Swap · Challenges — moderated social</h1>
+  </header>
+
+  <div class="gallery">
+    <div class="device">
+      <div class="phone iphone">
+        <div class="island"></div>
+        <div class="screen" data-screen-label="14 Community" data-od-id="comm-ios">
+          <div class="statusbar"><span>9:41</span><span class="icons">
+            <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4.5" width="3" height="7.5" rx="1" fill="currentColor"/><rect x="10" y="2" width="3" height="10" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor" opacity=".4"/></svg>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 10.6 9.4 9c-.8-.7-2-.7-2.8 0L8 10.6Z" fill="currentColor"/><path d="M4.6 6.2C6.5 4.4 9.5 4.4 11.4 6.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M2.2 3.6c3.2-3 8.4-3 11.6 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x=".7" y=".7" width="22" height="10.6" rx="3" stroke="currentColor" stroke-opacity=".5"/><rect x="2.4" y="2.4" width="15" height="7.2" rx="1.6" fill="currentColor"/><rect x="24" y="4" width="1.6" height="4" rx=".8" fill="currentColor" opacity=".5"/></svg>
+          </span></div>
+          <div class="app"></div>
+          <div class="home-ind"></div>
+        </div>
+      </div>
+      <span class="device-cap">iPhone 15 Pro</span>
+    </div>
+
+    <div class="device">
+      <div class="phone pixel">
+        <div class="punch"></div>
+        <div class="screen" data-screen-label="14 Community" data-od-id="comm-android">
+          <div class="statusbar"><span>9:41</span><span class="icons">
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M2.2 3.6c3.2-3 8.4-3 11.6 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M4.6 6.2C6.5 4.4 9.5 4.4 11.4 6.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="9.6" r="1.3" fill="currentColor"/></svg>
+            <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4.5" width="3" height="7.5" rx="1" fill="currentColor"/><rect x="10" y="2" width="3" height="10" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor"/></svg>
+            <svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x=".7" y="1.4" width="20" height="9.2" rx="2.4" stroke="currentColor" stroke-opacity=".5"/><rect x="2.2" y="2.9" width="14" height="6.2" rx="1.2" fill="currentColor"/><rect x="21.6" y="4.2" width="1.6" height="3.6" rx=".8" fill="currentColor" opacity=".5"/></svg>
+          </span></div>
+          <div class="app"></div>
+          <div class="nav-pill"></div>
+        </div>
+      </div>
+      <span class="device-cap">Pixel 8 Pro</span>
+    </div>
+  </div>
+
+  <button class="replay" id="replay" aria-label="Replay entrance">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v4h4"/></svg>
+    Replay
+  </button>
+
+<script>
+(function(){
+  const REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const I={
+    dm:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4L3 21l1.1-3.6A8.4 8.4 0 1 1 21 11.5Z"/></svg>',
+    bell:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>',
+    more:'<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg>',
+    heart:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-9.2-8.2A4.6 4.6 0 0 1 12 6.5a4.6 4.6 0 0 1 9.2 5.3C19 15.6 12 20 12 20Z"/></svg>',
+    heartF:'<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 20s-7-4.4-9.2-8.2A4.6 4.6 0 0 1 12 6.5a4.6 4.6 0 0 1 9.2 5.3C19 15.6 12 20 12 20Z"/></svg>',
+    comment:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4L3 21l1.1-3.6A8.4 8.4 0 1 1 21 11.5Z"/></svg>',
+    save:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h12v17l-6-4-6 4Z"/></svg>',
+    saveF:'<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h12v17l-6-4-6 4Z"/></svg>',
+    photo:'<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="8.5" cy="9.5" r="1.6"/><path d="m4 17 4.5-4.5 4 4L16 13l4 4"/></svg>',
+    users:'<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 6.2a3 3 0 0 1 0 5.6M18.5 20a5.5 5.5 0 0 0-3-4.9"/></svg>',
+    trophy:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v4a5 5 0 0 1-10 0Z"/><path d="M7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3M9 20h6M12 13v3"/></svg>',
+    flag:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V4h12l-1.5 4L16 12H4"/></svg>',
+    mute:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4Z"/><path d="m16 9 5 5M21 9l-5 5"/></svg>',
+    block:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m5.6 5.6 12.8 12.8"/></svg>',
+    link:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 15 15 9M10 6l1-1a4 4 0 0 1 6 6l-1 1M14 18l-1 1a4 4 0 0 1-6-6l1-1"/></svg>',
+    plus:'<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>',
+    check:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
+    tag:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v5l8 8 6-6-8-8H3Z"/><circle cx="7" cy="11" r="1.3"/></svg>',
+    leaf:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4c-8 0-14 5-14 12a6 6 0 0 0 12 0c1-5 1-8 2-12Z"/><path d="M7 21c0-6 3-10 8-13"/></svg>',
+    t_today:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h7"/><path d="m3.5 6 1 1 1.5-2M3.5 12l1 1 1.5-2M3.5 18l1 1 1.5-2"/></svg>',
+    t_garden:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4c-8 0-14 5-14 12a6 6 0 0 0 12 0c1-5 1-8 2-12Z"/><path d="M7 21c0-6 3-10 8-13"/></svg>',
+    t_comm:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 6.2a3 3 0 0 1 0 5.6M18.5 20a5.5 5.5 0 0 0-3-4.9"/></svg>',
+    t_profile:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg>'
+  };
+  const AV=['linear-gradient(150deg,#4daf82,#2c694e)','linear-gradient(150deg,#c76b4f,#9a4733)','linear-gradient(150deg,#48876a,#23503c)'];
+  const COV=['linear-gradient(150deg,#3a8c66,#1c4d39)','linear-gradient(150deg,#79c6a0,#3a8c66)','linear-gradient(150deg,#48876a,#23503c)','linear-gradient(150deg,#5bb389,#2c6e51)'];
+  const POSTS=[
+    {av:0,in:'FF',h:'@fernfiend',m:'Lisbon · 2h',cov:0,foll:true,cap:'New leaf unfurled this morning — third one this month. Patience pays off.',likes:142,comments:18},
+    {av:1,in:'LD',h:'@leaf.lydia',m:'Porto · 5h',cov:3,foll:false,cap:'Finally rooted my Pilea babies. Swapping a few — DM if you’re local.',likes:88,comments:24},
+    {av:2,in:'PP',h:'@potted.pete',m:'Madrid · 1d',cov:2,foll:false,cap:'Week 3 of the <span class="tag">#BrightWindow</span> challenge. The calathea is loving it.',likes:203,comments:31}
+  ];
+
+  function postHTML(p,i){
+    return `<div class="post" data-i="${i}" data-foll="${p.foll}">
+      <div class="p-top"><span class="avatar" style="background:${AV[p.av]}">${p.in}</span>
+        <span class="p-id"><b>${p.h}</b><span>${p.m}</span></span>
+        <button class="p-more" aria-label="More">${I.more}</button></div>
+      <div class="p-img" style="background:${COV[p.cov]}">${I.photo}</div>
+      <div class="p-act">
+        <button class="a like" aria-pressed="false"><span class="hi">${I.heart}</span><span class="lc">${p.likes}</span></button>
+        <button class="a cmt">${I.comment}<span>${p.comments}</span></button>
+        <button class="a save" aria-pressed="false"><span class="bi">${I.save}</span></button>
+      </div>
+      <div class="p-cap"><b>${p.h}</b> ${p.cap}</div></div>`;
+  }
+
+  function appHTML(){
+    const feed=POSTS.map(postHTML).join('');
+    return `
+    <div class="chd"><h2>Community</h2>
+      <div class="chd-actions"><button class="iconbtn" aria-label="Messages">${I.dm}<span class="badge"></span></button>
+      <button class="iconbtn" aria-label="Notifications">${I.bell}<span class="badge"></span></button></div></div>
+    <div class="ttabs" role="tablist">
+      <button class="ttab" role="tab" aria-selected="true" data-p="feed">Feed</button>
+      <button class="ttab" role="tab" aria-selected="false" data-p="swap">Swap</button>
+      <button class="ttab" role="tab" aria-selected="false" data-p="challenges">Challenges</button>
+    </div>
+    <div class="content">
+      <div class="pane" data-pane="feed">
+        <div class="subseg"><button aria-pressed="true" data-f="discover">Discover</button><button aria-pressed="false" data-f="following">Following</button></div>
+        <div class="feedlist">${feed}</div>
+        <div class="coldstart" hidden>${I.users}<b>Quiet over here</b><span>Follow a few gardeners and their wins will show up in Following.</span></div>
+      </div>
+      <div class="pane" data-pane="swap" hidden>
+        <div class="sgrid">
+          <div class="scard"><div class="si" style="background:${COV[1]}">${I.leaf}</div><div class="sb"><span class="tag2">Offering</span><b>Pilea pups ×3</b><div class="seek">Seeking: any trailing pothos</div><button class="smsg">Message to arrange</button></div></div>
+          <div class="scard"><div class="si" style="background:${COV[0]}">${I.leaf}</div><div class="sb"><span class="tag2">Offering</span><b>Monstera cutting</b><div class="seek">Seeking: ZZ or snake plant</div><button class="smsg">Message to arrange</button></div></div>
+          <div class="scard"><div class="si" style="background:${COV[2]}">${I.leaf}</div><div class="sb"><span class="tag2">Seeking</span><b>String of hearts</b><div class="seek">Offering: spider plant babies</div><button class="smsg">Message to arrange</button></div></div>
+          <div class="scard"><div class="si" style="background:${COV[3]}">${I.leaf}</div><div class="sb"><span class="tag2">Offering</span><b>Basil seedlings</b><div class="seek">Local pickup · Lisbon</div><button class="smsg">Message to arrange</button></div></div>
+        </div>
+      </div>
+      <div class="pane" data-pane="challenges" hidden>
+        <div class="chcard"><span class="ci">${I.trophy}</span><div class="cx"><b>#BrightWindow</b><p>Best growth in 30 days of good light.</p><div class="meta">Ends in 12 days · 248 entries</div></div><button class="join" aria-pressed="false">Join</button></div>
+        <div class="chcard"><span class="ci">${I.trophy}</span><div class="cx"><b>Rescue &amp; Revive</b><p>Bring one back from the brink.</p><div class="meta">Ends in 5 days · 96 entries</div></div><button class="join" aria-pressed="false">Join</button></div>
+        <div class="chcard"><span class="ci">${I.trophy}</span><div class="cx"><b>First Bloom</b><p>Share your plant’s first flower.</p><div class="meta">Ends in 21 days · 174 entries</div></div><button class="join" aria-pressed="false">Join</button></div>
+      </div>
+    </div>
+    <div class="scrim"></div>
+    <div class="sheet" data-sheet="post" role="menu">
+      <button class="mbtn">${'<span class="mi">'+I.link+'</span>'}Copy link</button>
+      <button class="mbtn">${'<span class="mi">'+I.mute+'</span>'}Mute this gardener</button>
+      <button class="mbtn danger">${'<span class="mi">'+I.flag+'</span>'}Report post</button>
+      <button class="mbtn danger">${'<span class="mi">'+I.block+'</span>'}Block gardener</button>
+    </div>
+    <div class="sheet" data-sheet="compose">
+      <div class="compose">
+        <div class="ch"><span class="avatar" style="background:${AV[0]}">SC</span><b>Share with the community</b></div>
+        <button class="cphoto">${I.photo}<span>Add photos</span></button>
+        <textarea placeholder="What’s growing? Share a win, ask for help…"></textarea>
+        <div class="crow"><button class="ctag">${I.tag} Tag a plant</button><button class="cpost">Post</button></div>
+      </div>
+    </div>
+    <div class="toast"><span class="tic">${I.check}</span><span class="tmsg"></span></div>
+    <div class="tabbar">
+      <button class="tab" aria-selected="false">${I.t_today}<span>Today</span></button>
+      <button class="tab" aria-selected="false">${I.t_garden}<span>Garden</span></button>
+      <button class="tab spacer"><span>·</span><span>·</span></button>
+      <button class="tab" aria-selected="true">${I.t_comm}<span>Community</span></button>
+      <button class="tab" aria-selected="false">${I.t_profile}<span>Profile</span></button>
+      <button class="fab" aria-label="Create post">${I.plus}</button>
+    </div>`;
+  }
+
+  const roots=Array.from(document.querySelectorAll('.screen'));
+  roots.forEach(r=>r.querySelector('.app').innerHTML=appHTML());
+
+  function setup(root){
+    const ttabs=Array.from(root.querySelectorAll('.ttab')),panes=Array.from(root.querySelectorAll('.pane')),
+          scrim=root.querySelector('.scrim'),postSheet=root.querySelector('[data-sheet=post]'),
+          composeSheet=root.querySelector('[data-sheet=compose]'),toast=root.querySelector('.toast'),tmsg=root.querySelector('.tmsg');
+    function showToast(m){tmsg.textContent=m;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2400);}
+    function closeSheets(){scrim.classList.remove('open');postSheet.classList.remove('open');composeSheet.classList.remove('open');}
+    function openSheet(el){scrim.classList.add('open');el.classList.add('open');}
+
+    ttabs.forEach(t=>t.addEventListener('click',()=>{
+      ttabs.forEach(x=>x.setAttribute('aria-selected','false'));t.setAttribute('aria-selected','true');
+      panes.forEach(p=>p.hidden=p.dataset.pane!==t.dataset.p);
+      if(!REDUCE)gsap.fromTo(root.querySelector('.pane[data-pane='+t.dataset.p+'] > *'),{opacity:0,y:12},{opacity:1,y:0,duration:.35,stagger:.05,ease:'power3.out'});
+    }));
+    // discover/following
+    const subs=Array.from(root.querySelectorAll('.subseg button')),feedlist=root.querySelector('.feedlist'),cold=root.querySelector('.coldstart');
+    subs.forEach(s=>s.addEventListener('click',()=>{
+      subs.forEach(x=>x.setAttribute('aria-pressed','false'));s.setAttribute('aria-pressed','true');
+      const foll=s.dataset.f==='following';
+      let shown=0;feedlist.querySelectorAll('.post').forEach(p=>{const on=!foll||p.dataset.foll==='true';p.hidden=!on;if(on)shown++;});
+      cold.hidden=!foll;
+    }));
+    // likes/saves
+    root.querySelectorAll('.post').forEach(p=>{
+      const like=p.querySelector('.like'),lc=p.querySelector('.lc'),save=p.querySelector('.save');
+      const base=+lc.textContent;
+      like.addEventListener('click',()=>{const on=like.getAttribute('aria-pressed')==='true';like.setAttribute('aria-pressed',!on);
+        like.classList.toggle('liked',!on);like.querySelector('.hi').innerHTML=!on?I.heartF:I.heart;lc.textContent=base+(!on?1:0);
+        if(!on&&!REDUCE)gsap.fromTo(like.querySelector('.hi'),{scale:.4},{scale:1,duration:.4,ease:'back.out(3)'});});
+      save.addEventListener('click',()=>{const on=save.getAttribute('aria-pressed')==='true';save.setAttribute('aria-pressed',!on);
+        save.classList.toggle('saved',!on);save.querySelector('.bi').innerHTML=!on?I.saveF:I.save;});
+      p.querySelector('.p-more').addEventListener('click',()=>openSheet(postSheet));
+    });
+    postSheet.querySelectorAll('.mbtn').forEach(b=>b.addEventListener('click',()=>{
+      if(b.textContent.trim().includes('Report')){window.location='evergreen-report.html';return;}
+      closeSheets();showToast(b.textContent.trim());}));
+    // join challenges
+    root.querySelectorAll('.join').forEach(j=>j.addEventListener('click',()=>{const on=j.getAttribute('aria-pressed')==='true';j.setAttribute('aria-pressed',!on);j.textContent=!on?'Joined':'Join';}));
+    root.querySelectorAll('.smsg').forEach(s=>s.addEventListener('click',()=>showToast('Opening a message to arrange the swap')));
+    // fab compose
+    root.querySelector('.fab').addEventListener('click',()=>openSheet(composeSheet));
+    composeSheet.querySelector('.cpost').addEventListener('click',()=>{closeSheets();showToast('Posted · in review before it goes live');});
+    composeSheet.querySelector('.cphoto').addEventListener('click',()=>{});
+    composeSheet.querySelector('.ctag').addEventListener('click',()=>{});
+    scrim.addEventListener('click',closeSheets);
+    const tabs=Array.from(root.querySelectorAll('.tabbar .tab:not(.spacer)'));
+    tabs.forEach(t=>t.addEventListener('click',()=>{tabs.forEach(x=>x.setAttribute('aria-selected','false'));t.setAttribute('aria-selected','true');}));
+    root.querySelectorAll('.chd .iconbtn,.cmt').forEach(el=>el.addEventListener('click',()=>{}));
+  }
+
+  function animateIn(root){
+    const hd=root.querySelector('.chd'),tt=root.querySelector('.ttabs'),items=root.querySelectorAll('.pane[data-pane=feed] > *'),bar=root.querySelector('.tabbar');
+    if(REDUCE){gsap.set([hd,tt,items,bar],{opacity:1,y:0});return;}
+    gsap.set([hd,tt],{opacity:0,y:-10});gsap.set(items,{opacity:0,y:18});gsap.set(bar,{opacity:0,y:80});
+    gsap.timeline({defaults:{ease:'power3.out'}})
+      .to([hd,tt],{opacity:1,y:0,duration:.5,stagger:.07})
+      .to(items,{opacity:1,y:0,duration:.5,stagger:.06},'-=0.2')
+      .to(bar,{opacity:1,y:0,duration:.55,ease:'back.out(1.4)'},'-=0.4');
+  }
+
+  roots.forEach(setup);
+  function play(){roots.forEach(animateIn);}
+  if(document.fonts&&document.fonts.ready){document.fonts.ready.then(play);}else{play();}
+  setTimeout(()=>{if(getComputedStyle(roots[0].querySelector('.tabbar')).opacity==='0')play();},500);
+  document.getElementById('replay').addEventListener('click',play);
+})();
+</script>
+</body>
+</html>

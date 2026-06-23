@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evergreen · Identifications</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@500,600,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+  :root{
+    --ever-100:#d8e9df;--ever-400:#4daf82;--ever-500:#2c694e;--ever-700:#1b4332;--ever-900:#0c1f17;
+    --leaf:#3e7c4f;--warning:#b5821f;--warn-tint:rgba(181,130,31,.14);
+    --conf-high:#3e7c4f;--conf-med:#b5821f;--conf-low:#7d9488;
+    --fg:#16271e;--fg-muted:#4b6357;--fg-subtle:#7d9488;--accent-tint:rgba(46,109,78,.12);
+    --neu-raised:6px 6px 14px rgba(11,30,21,.13), -6px -6px 13px rgba(255,255,255,.80);
+    --neu-raised-sm:4px 4px 9px rgba(11,30,21,.12), -4px -4px 9px rgba(255,255,255,.78);
+    --neu-pressed:inset 4px 4px 9px rgba(11,30,21,.13), inset -4px -4px 9px rgba(255,255,255,.72);
+    --font-display:'General Sans','Söhne',-apple-system,system-ui,sans-serif;
+    --font-body:'Inter',-apple-system,system-ui,sans-serif;
+    --font-mono:'JetBrains Mono','Berkeley Mono',ui-monospace,monospace;--hit:44px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:var(--font-body);color:var(--fg);background:radial-gradient(120% 80% at 50% -10%, #f1f7f3 0%, transparent 55%),radial-gradient(100% 100% at 50% 120%, #cfe2d7 0%, #e6f0ea 100%);min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(26px,5vh,52px);padding:48px 24px 120px;overflow-x:hidden}
+  .studio-head{position:relative;z-index:2;text-align:center;display:flex;flex-direction:column;align-items:center;gap:9px}
+  .studio-head .kicker{font-family:var(--font-mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:#5c8772}
+  .studio-head h1{font-family:var(--font-display);font-weight:600;font-size:clamp(19px,3.2vw,28px);letter-spacing:-.02em;color:var(--ever-700)}
+  .gallery{position:relative;z-index:2;display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:center;gap:clamp(32px,6vw,72px)}
+  .device{display:flex;flex-direction:column;align-items:center;gap:18px}
+  .device-cap{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#5c8772}
+  .phone{position:relative;background:linear-gradient(150deg,#2c2f30,#16191a 46%,#0a0c0c);box-shadow:0 2px 0 1px rgba(255,255,255,.05) inset,0 55px 80px -42px rgba(11,30,21,.5),0 0 0 1px rgba(0,0,0,.55)}
+  .screen{position:relative;overflow:hidden;width:300px;height:650px;background:var(--ever-100)}
+  .iphone{width:318px;height:668px;border-radius:56px;padding:9px}.iphone .screen{border-radius:48px}
+  .iphone .island{position:absolute;z-index:60;top:18px;left:50%;transform:translateX(-50%);width:88px;height:27px;border-radius:16px;background:#0a0c0c}
+  .iphone .island::after{content:"";position:absolute;right:11px;top:50%;transform:translateY(-50%);width:9px;height:9px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#26343b,#05070a)}
+  .iphone .home-ind{position:absolute;z-index:60;bottom:9px;left:50%;transform:translateX(-50%);width:120px;height:5px;border-radius:3px;background:rgba(22,39,30,.4)}
+  .pixel{width:312px;height:664px;border-radius:34px;padding:8px;background:linear-gradient(150deg,#3a3d3e,#1b1e1f 46%,#0c0e0e)}.pixel .screen{border-radius:27px}
+  .pixel .punch{position:absolute;z-index:60;top:15px;left:50%;transform:translateX(-50%);width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#23323a,#04060a);box-shadow:0 0 0 2px rgba(255,255,255,.12)}
+  .pixel .nav-pill{position:absolute;z-index:60;bottom:10px;left:50%;transform:translateX(-50%);width:96px;height:5px;border-radius:3px;background:rgba(22,39,30,.34)}
+  .statusbar{position:absolute;z-index:55;top:0;left:0;right:0;height:50px;display:flex;align-items:center;justify-content:space-between;padding:18px 26px 0;font-family:var(--font-mono);font-size:12.5px;color:var(--fg);pointer-events:none}
+  .pixel .statusbar{padding-top:15px}
+  .statusbar .icons{display:flex;align-items:center;gap:6px}.statusbar svg{display:block}
+  .app{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column}
+
+  .hd{flex:none;padding:50px 12px 4px;display:flex;align-items:center;gap:8px}
+  .pixel .hd{padding-top:44px}
+  .iconbtn{width:38px;height:38px;border-radius:50%;border:0;cursor:pointer;display:flex;align-items:center;justify-content:center;background:var(--ever-100);box-shadow:var(--neu-raised-sm);color:var(--ever-700);flex:none;-webkit-tap-highlight-color:transparent}
+  .iconbtn:active{box-shadow:var(--neu-pressed)}
+  .hd h2{flex:1;font-family:var(--font-display);font-weight:600;font-size:18px;color:var(--ever-900);letter-spacing:-.02em}
+  .hd .ct{font-family:var(--font-mono);font-size:11px;color:var(--fg-subtle);padding-right:10px}
+
+  .content{flex:1;overflow-y:auto;padding:8px 16px 26px;scrollbar-width:none}
+  .content::-webkit-scrollbar{display:none}
+  .sec-l{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-subtle);margin:14px 4px 9px}
+  .irow{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:11px;border:0;cursor:pointer;border-radius:15px;background:var(--ever-100);box-shadow:var(--neu-raised);margin-bottom:10px;-webkit-tap-highlight-color:transparent;transition:transform .14s}
+  .irow:hover{transform:translateY(-2px)}
+  .ith{width:46px;height:46px;border-radius:12px;flex:none;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);box-shadow:var(--neu-raised-sm)}
+  .ith.none{background:var(--ever-100)!important;box-shadow:var(--neu-pressed);color:var(--fg-subtle)}
+  .itx{flex:1;min-width:0}
+  .itx b{display:block;font-family:var(--font-display);font-weight:600;font-size:13.5px;color:var(--ever-900);letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .itx b i{font-style:italic;font-weight:500;color:var(--fg-muted);font-size:11px;font-family:var(--font-mono)}
+  .itx .meta{display:flex;align-items:center;gap:7px;margin-top:5px}
+  .conf{display:inline-flex;align-items:center;height:20px;padding:0 8px;border-radius:999px;font-family:var(--font-mono);font-weight:600;font-size:10px}
+  .conf.high{background:rgba(62,124,79,.14);color:var(--conf-high)}
+  .conf.med{background:var(--warn-tint);color:var(--conf-med)}
+  .conf.low{background:rgba(125,148,136,.18);color:var(--conf-low)}
+  .out{font-size:10.5px;color:var(--fg-muted)}
+  .out.added{color:var(--leaf);font-weight:600}
+  .itm{font-family:var(--font-mono);font-size:9.5px;color:var(--fg-subtle);flex:none;align-self:flex-start;padding-top:2px}
+
+  .replay{position:fixed;z-index:50;bottom:34px;left:50%;transform:translateX(-50%);display:inline-flex;align-items:center;gap:10px;min-height:var(--hit);padding:0 22px;border-radius:999px;cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:14px;color:var(--ever-700);background:var(--ever-100);box-shadow:var(--neu-raised);border:0;transition:transform .16s,box-shadow .16s}
+  .replay:hover{transform:translateX(-50%) translateY(-2px)}.replay:active{transform:translateX(-50%);box-shadow:var(--neu-pressed)}
+  .replay svg{width:17px;height:17px;stroke:var(--ever-500)}
+  @media (max-width:740px){.iphone{width:290px;height:610px}.iphone .screen{width:272px;height:592px}.pixel{width:286px;height:608px}.pixel .screen{width:270px;height:592px}}
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important}}
+</style>
+</head>
+<body>
+  <header class="studio-head"><span class="kicker">Evergreen · 20 Identifications</span><h1>Every scan — with the confidence we showed you</h1></header>
+  <div class="gallery">
+    <div class="device"><div class="phone iphone"><div class="island"></div>
+      <div class="screen" data-screen-label="20 ID history" data-od-id="idh-ios"><div class="statusbar"><span>9:41</span><span class="icons"><svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4.5" width="3" height="7.5" rx="1" fill="currentColor"/><rect x="10" y="2" width="3" height="10" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor" opacity=".4"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 10.6 9.4 9c-.8-.7-2-.7-2.8 0L8 10.6Z" fill="currentColor"/><path d="M4.6 6.2C6.5 4.4 9.5 4.4 11.4 6.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M2.2 3.6c3.2-3 8.4-3 11.6 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x=".7" y=".7" width="22" height="10.6" rx="3" stroke="currentColor" stroke-opacity=".5"/><rect x="2.4" y="2.4" width="15" height="7.2" rx="1.6" fill="currentColor"/><rect x="24" y="4" width="1.6" height="4" rx=".8" fill="currentColor" opacity=".5"/></svg></span></div><div class="app"></div><div class="home-ind"></div></div></div><span class="device-cap">iPhone 15 Pro</span></div>
+    <div class="device"><div class="phone pixel"><div class="punch"></div>
+      <div class="screen" data-screen-label="20 ID history" data-od-id="idh-android"><div class="statusbar"><span>9:41</span><span class="icons"><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M2.2 3.6c3.2-3 8.4-3 11.6 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M4.6 6.2C6.5 4.4 9.5 4.4 11.4 6.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="9.6" r="1.3" fill="currentColor"/></svg><svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4.5" width="3" height="7.5" rx="1" fill="currentColor"/><rect x="10" y="2" width="3" height="10" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor"/></svg><svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x=".7" y="1.4" width="20" height="9.2" rx="2.4" stroke="currentColor" stroke-opacity=".5"/><rect x="2.2" y="2.9" width="14" height="6.2" rx="1.2" fill="currentColor"/><rect x="21.6" y="4.2" width="1.6" height="3.6" rx=".8" fill="currentColor" opacity=".5"/></svg></span></div><div class="app"></div><div class="nav-pill"></div></div></div><span class="device-cap">Pixel 8 Pro</span></div>
+  </div>
+  <button class="replay" id="replay" aria-label="Replay"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v4h4"/></svg>Replay</button>
+<script>
+(function(){
+  const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const I={
+    back:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
+    leaf:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4c-8 0-14 5-14 12a6 6 0 0 0 12 0c1-5 1-8 2-12Z"/><path d="M7 21c0-6 3-10 8-13"/></svg>',
+    q:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.2a2.5 2.5 0 0 1 4.5 1.6c0 1.5-2 2-2 3.2M12 17h.01"/></svg>'
+  };
+  const COV=['linear-gradient(150deg,#3a8c66,#1c4d39)','linear-gradient(150deg,#79c6a0,#3a8c66)','linear-gradient(150deg,#48876a,#23503c)','linear-gradient(150deg,#5bb389,#2c6e51)'];
+  const ROWS=[
+    {grp:'Today',name:'Monstera deliciosa',common:'Swiss cheese plant',conf:96,lvl:'high',out:'Added as “Mara”',added:true,tm:'9:12',cov:0},
+    {grp:'This week',name:'Pilea peperomioides',common:'Chinese money plant',conf:91,lvl:'high',out:'Added as “Pancake”',added:true,tm:'Mon',cov:1},
+    {grp:'This week',name:'Best guesses',common:'low confidence',conf:61,lvl:'med',out:'Dismissed — retook photo',added:false,tm:'Mon',cov:-1},
+    {grp:'This week',name:'Goeppertia orbifolia',common:'Calathea orbifolia',conf:88,lvl:'med',out:'Saved to Wishlist',added:false,tm:'Sun',cov:2},
+    {grp:'Earlier',name:'Unidentified',common:'added without ID',conf:0,lvl:'low',out:'Added as “Office fern”',added:true,tm:'Jun 2',cov:-1},
+    {grp:'Earlier',name:'Dracaena trifasciata',common:'Snake plant',conf:94,lvl:'high',out:'Added as “Snake”',added:true,tm:'May 28',cov:3}
+  ];
+  const GRP=['Today','This week','Earlier'];
+  function row(r){
+    const thumb=r.cov<0?`<span class="ith none">${I.q}</span>`:`<span class="ith" style="background:${COV[r.cov]}">${I.leaf}</span>`;
+    const conf=r.conf>0?`<span class="conf ${r.lvl}">${r.conf}%</span>`:`<span class="conf low">no match</span>`;
+    const title=r.name==='Best guesses'||r.name==='Unidentified'?`<b>${r.name} <i>· ${r.common}</i></b>`:`<b>${r.name} <i>· ${r.common}</i></b>`;
+    return `<button class="irow">${thumb}<span class="itx">${title}<span class="meta">${conf}<span class="out${r.added?' added':''}">${r.out}</span></span></span><span class="itm">${r.tm}</span></button>`;
+  }
+  function appHTML(){
+    const secs=GRP.map(g=>{const rs=ROWS.filter(r=>r.grp===g);if(!rs.length)return'';return `<div class="sec-l">${g}</div>${rs.map(row).join('')}`;}).join('');
+    return `<div class="hd"><button class="iconbtn back">${I.back}</button><h2>Identification history</h2><span class="ct">${ROWS.length}</span></div><div class="content">${secs}</div>`;
+  }
+  const roots=Array.from(document.querySelectorAll('.screen'));
+  roots.forEach(r=>r.querySelector('.app').innerHTML=appHTML());
+  roots.forEach(r=>{r.querySelector('.back').addEventListener('click',()=>{});r.querySelectorAll('.irow').forEach(x=>x.addEventListener('click',()=>{}));});
+  function animateIn(root){const hd=root.querySelector('.hd'),items=root.querySelectorAll('.sec-l, .irow');
+    if(REDUCE){gsap.set([hd,items],{opacity:1,y:0});return;}
+    gsap.set(hd,{opacity:0,y:-8});gsap.set(items,{opacity:0,y:14});
+    gsap.timeline({defaults:{ease:'power3.out'}}).to(hd,{opacity:1,y:0,duration:.45}).to(items,{opacity:1,y:0,duration:.42,stagger:.05},'-=0.2');}
+  function play(){roots.forEach(animateIn);}
+  if(document.fonts&&document.fonts.ready){document.fonts.ready.then(play);}else{play();}
+  setTimeout(()=>{if(getComputedStyle(roots[0].querySelector('.irow')).opacity==='0')play();},500);
+  document.getElementById('replay').addEventListener('click',play);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Evergreen — iPhone preview</title>
+    <style>
+      :root {
+        /* iPhone 14 Pro logical size */
+        --screen-w: 390px;
+        --screen-h: 844px;
+        --bezel: 14px;
+        --radius: 56px;
+      }
+      * { box-sizing: border-box; }
+      html, body { height: 100%; margin: 0; }
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #ffffff;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        overflow: hidden;
+      }
+
+      /* the whole device scales down to fit short windows */
+      .stage { transform-origin: center center; }
+
+      .phone {
+        position: relative;
+        width: calc(var(--screen-w) + var(--bezel) * 2);
+        height: calc(var(--screen-h) + var(--bezel) * 2);
+        padding: var(--bezel);
+        background: linear-gradient(160deg, #2a2c30 0%, #0c0d0f 45%, #1a1b1e 100%);
+        border-radius: var(--radius);
+        box-shadow:
+          0 0 0 2px #050505,
+          0 40px 90px rgba(0, 0, 0, 0.55),
+          0 8px 24px rgba(0, 0, 0, 0.45),
+          inset 0 0 2px rgba(255, 255, 255, 0.25);
+      }
+
+      /* the actual screen */
+      .screen {
+        position: relative;
+        width: var(--screen-w);
+        height: var(--screen-h);
+        border-radius: calc(var(--radius) - var(--bezel));
+        overflow: hidden;
+        background: #081811;
+      }
+      iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+        display: block;
+      }
+
+      /* iOS status bar (time + cellular / wi-fi / battery) */
+      .statusbar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 54px;
+        z-index: 6;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 4px 32px 0 34px;
+        color: #0c1f17;
+        pointer-events: none;
+        font-variant-numeric: tabular-nums;
+      }
+      .statusbar .time {
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+      }
+      .statusbar .icons {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .statusbar svg { display: block; fill: currentColor; }
+
+      /* Dynamic Island */
+      .island {
+        position: absolute;
+        top: 11px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 122px;
+        height: 34px;
+        background: #000;
+        border-radius: 20px;
+        z-index: 5;
+        pointer-events: none;
+      }
+
+      /* side buttons */
+      .btn { position: absolute; background: #1c1d20; border-radius: 2px; box-shadow: inset 0 0 1px rgba(255,255,255,0.18); }
+      .btn.silent { left: -2px; top: 116px; width: 3px; height: 26px; }
+      .btn.vol-up { left: -2px; top: 166px; width: 3px; height: 52px; }
+      .btn.vol-down { left: -2px; top: 230px; width: 3px; height: 52px; }
+      .btn.power { right: -2px; top: 190px; width: 3px; height: 84px; }
+
+      .hint {
+        position: fixed;
+        bottom: 14px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        color: rgba(0, 0, 0, 0.4);
+        font-size: 12px;
+        letter-spacing: 0.3px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="stage" id="stage">
+      <div class="phone">
+        <span class="btn silent"></span>
+        <span class="btn vol-up"></span>
+        <span class="btn vol-down"></span>
+        <span class="btn power"></span>
+        <div class="screen">
+          <div class="island"></div>
+          <div class="statusbar">
+            <span class="time" id="clock">9:41</span>
+            <span class="icons">
+              <!-- cellular -->
+              <svg width="18" height="12" viewBox="0 0 18 12" aria-hidden="true">
+                <rect x="0" y="8" width="3" height="4" rx="1" />
+                <rect x="5" y="6" width="3" height="6" rx="1" />
+                <rect x="10" y="3" width="3" height="9" rx="1" />
+                <rect x="15" y="0" width="3" height="12" rx="1" />
+              </svg>
+              <!-- wi-fi -->
+              <svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true">
+                <path d="M8.5 2.2c2.7 0 5.2 1 7 2.8l-1.5 1.5A7.7 7.7 0 0 0 8.5 4.3 7.7 7.7 0 0 0 3 6.5L1.5 5C3.3 3.2 5.8 2.2 8.5 2.2Z" />
+                <path d="M8.5 6c1.6 0 3 .6 4.1 1.7L8.5 11.8 4.4 7.7A5.8 5.8 0 0 1 8.5 6Z" />
+              </svg>
+              <!-- battery -->
+              <svg width="27" height="13" viewBox="0 0 27 13" aria-hidden="true">
+                <rect x="0.5" y="0.5" width="22" height="12" rx="3.2" fill="none" stroke="currentColor" stroke-opacity="0.4" />
+                <rect x="2" y="2" width="17" height="9" rx="1.6" />
+                <rect x="24" y="4" width="2.5" height="5" rx="1" fill-opacity="0.4" />
+              </svg>
+            </span>
+          </div>
+          <iframe
+            id="app"
+            title="Evergreen app"
+            allow="camera; microphone; clipboard-read; clipboard-write; geolocation"
+          ></iframe>
+        </div>
+      </div>
+    </div>
+    <div class="hint">Evergreen — iPhone 14 Pro preview · append <code>?src=/path</code> to deep-link</div>
+
+    <script>
+      // Point the iframe at the app root (or ?src=… to deep-link a specific route).
+      var params = new URLSearchParams(location.search);
+      var src = params.get('src') || '/';
+      document.getElementById('app').src = src;
+
+      // Scale the whole device down so it always fits the window height/width.
+      var stage = document.getElementById('stage');
+      var DEVICE_W = 390 + 28; // screen + bezel*2
+      var DEVICE_H = 844 + 28;
+      function fit() {
+        var pad = 48;
+        var scale = Math.min(1, (window.innerHeight - pad) / DEVICE_H, (window.innerWidth - pad) / DEVICE_W);
+        stage.style.transform = 'scale(' + scale + ')';
+      }
+      window.addEventListener('resize', fit);
+      fit();
+
+      // Live clock in the status bar (HH:MM, 24h-agnostic — drops leading zero like iOS).
+      var clock = document.getElementById('clock');
+      function tick() {
+        var d = new Date();
+        var h = d.getHours();
+        var m = d.getMinutes();
+        clock.textContent = h + ':' + (m < 10 ? '0' + m : m);
+      }
+      tick();
+      setInterval(tick, 15000);
+    </script>
+  </body>
+</html>

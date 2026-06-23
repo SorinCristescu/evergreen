@@ -1,0 +1,341 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evergreen · Today</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@500,600,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+  :root{
+    --ever-100:#d8e9df;--ever-400:#4daf82;--ever-500:#2c694e;--ever-700:#1b4332;--ever-900:#0c1f17;
+    --leaf:#3e7c4f;--warning:#b5821f;--warn-tint:rgba(181,130,31,.14);--danger:#b3402f;--terra:#c76b4f;--sun:#f5c451;
+    --fg:#16271e;--fg-muted:#4b6357;--fg-subtle:#7d9488;--accent-tint:rgba(46,109,78,.12);
+    --neu-raised:6px 6px 14px rgba(11,30,21,.13), -6px -6px 13px rgba(255,255,255,.80);
+    --neu-raised-sm:4px 4px 9px rgba(11,30,21,.12), -4px -4px 9px rgba(255,255,255,.78);
+    --neu-pressed:inset 4px 4px 9px rgba(11,30,21,.13), inset -4px -4px 9px rgba(255,255,255,.72);
+    --font-display:'General Sans','Söhne',-apple-system,system-ui,sans-serif;
+    --font-body:'Inter',-apple-system,system-ui,sans-serif;
+    --font-mono:'JetBrains Mono','Berkeley Mono',ui-monospace,monospace;--hit:44px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:var(--font-body);color:var(--fg);background:radial-gradient(120% 80% at 50% -10%, #f1f7f3 0%, transparent 55%),radial-gradient(100% 100% at 50% 120%, #cfe2d7 0%, #e6f0ea 100%);min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(26px,5vh,52px);padding:48px 24px 120px;overflow-x:hidden}
+
+  .studio-head{position:relative;z-index:2;text-align:center;display:flex;flex-direction:column;align-items:center;gap:9px}
+  .studio-head .kicker{font-family:var(--font-mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:#5c8772}
+  .studio-head h1{font-family:var(--font-display);font-weight:600;font-size:clamp(19px,3.2vw,28px);letter-spacing:-.02em;color:var(--ever-700)}
+
+  .gallery{position:relative;z-index:2;display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:center;gap:clamp(32px,6vw,72px)}
+  .device{display:flex;flex-direction:column;align-items:center;gap:18px}
+  .device-cap{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#5c8772}
+
+  .phone{position:relative;background:linear-gradient(150deg,#2c2f30,#16191a 46%,#0a0c0c);box-shadow:0 2px 0 1px rgba(255,255,255,.05) inset,0 55px 80px -42px rgba(11,30,21,.5),0 0 0 1px rgba(0,0,0,.55)}
+  .screen{position:relative;overflow:hidden;width:300px;height:650px;background:var(--ever-100)}
+  .iphone{width:318px;height:668px;border-radius:56px;padding:9px}.iphone .screen{border-radius:48px}
+  .iphone .island{position:absolute;z-index:60;top:18px;left:50%;transform:translateX(-50%);width:88px;height:27px;border-radius:16px;background:#0a0c0c}
+  .iphone .island::after{content:"";position:absolute;right:11px;top:50%;transform:translateY(-50%);width:9px;height:9px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#26343b,#05070a)}
+  .iphone .home-ind{position:absolute;z-index:60;bottom:9px;left:50%;transform:translateX(-50%);width:120px;height:5px;border-radius:3px;background:rgba(22,39,30,.4)}
+  .pixel{width:312px;height:664px;border-radius:34px;padding:8px;background:linear-gradient(150deg,#3a3d3e,#1b1e1f 46%,#0c0e0e)}.pixel .screen{border-radius:27px}
+  .pixel .punch{position:absolute;z-index:60;top:15px;left:50%;transform:translateX(-50%);width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#23323a,#04060a);box-shadow:0 0 0 2px rgba(255,255,255,.12)}
+  .pixel .nav-pill{position:absolute;z-index:60;bottom:10px;left:50%;transform:translateX(-50%);width:96px;height:5px;border-radius:3px;background:rgba(22,39,30,.34)}
+
+  .statusbar{position:absolute;z-index:55;top:0;left:0;right:0;height:50px;display:flex;align-items:center;justify-content:space-between;padding:18px 26px 0;font-family:var(--font-mono);font-size:12.5px;color:var(--fg);pointer-events:none}
+  .pixel .statusbar{padding-top:15px}
+  .statusbar .icons{display:flex;align-items:center;gap:6px}.statusbar svg{display:block}
+
+  .app{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column}
+
+  .thd{flex:none;padding:52px 18px 8px;display:flex;align-items:flex-end;justify-content:space-between}
+  .pixel .thd{padding-top:46px}
+  .thd .greet{font-family:var(--font-display);font-weight:600;font-size:22px;color:var(--ever-900);letter-spacing:-.02em}
+  .thd .date{font-family:var(--font-mono);font-size:11px;color:var(--fg-subtle);margin-top:3px}
+  .iconbtn{position:relative;width:40px;height:40px;border-radius:50%;border:0;cursor:pointer;display:flex;align-items:center;justify-content:center;background:var(--ever-100);box-shadow:var(--neu-raised-sm);color:var(--ever-700)}
+  .iconbtn:active{box-shadow:var(--neu-pressed)}
+  .iconbtn .badge{position:absolute;top:7px;right:8px;width:8px;height:8px;border-radius:50%;background:var(--warning);box-shadow:0 0 0 2px var(--ever-100)}
+
+  .content{flex:1;overflow-y:auto;padding:10px 18px 88px;scrollbar-width:none}
+  .content::-webkit-scrollbar{display:none}
+
+  /* today + streak module */
+  .todaycard{display:flex;align-items:center;gap:15px;padding:16px;border-radius:20px;background:var(--ever-100);box-shadow:var(--neu-raised)}
+  .ring{position:relative;width:64px;height:64px;flex:none}
+  .ring svg{transform:rotate(-90deg)}
+  .ring .rv{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .ring .rv b{font-family:var(--font-mono);font-weight:600;font-size:15px;color:var(--ever-700);line-height:1}
+  .ring .rv span{font-family:var(--font-mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--fg-subtle);margin-top:1px}
+  .tc-tx{flex:1;min-width:0}
+  .tc-tx b{display:block;font-family:var(--font-display);font-weight:600;font-size:15px;color:var(--ever-900);letter-spacing:-.01em}
+  .tc-tx p{font-size:12px;color:var(--fg-muted);margin-top:2px;line-height:1.4}
+  .streak{margin-top:9px;display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--terra)}
+  .streak svg{flex:none}
+
+  /* weather advisory */
+  .weather{margin-top:14px;display:flex;align-items:center;gap:13px;padding:13px 15px;border-radius:18px;background:var(--ever-100);box-shadow:var(--neu-raised)}
+  .wglyph{flex:none;width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;background:var(--ever-100);box-shadow:var(--neu-pressed)}
+  .wglyph svg{overflow:visible}
+  .wx{flex:1;min-width:0}
+  .wx .wtop{display:flex;align-items:baseline;gap:8px}
+  .wx .temp{font-family:var(--font-mono);font-weight:600;font-size:19px;color:var(--ever-700)}
+  .wx .cond{font-size:12px;color:var(--fg-muted)}
+  .wx .adv{font-size:11.5px;color:var(--fg-muted);margin-top:3px;line-height:1.4}
+  .wx .adv b{color:var(--warning);font-weight:600}
+  .wskip{flex:none;align-self:center;border:0;background:transparent;cursor:pointer;font-family:var(--font-body);font-size:11.5px;font-weight:600;color:var(--ever-500);padding:6px 8px;border-radius:10px;white-space:nowrap}
+  .wskip:active{box-shadow:var(--neu-pressed)}
+
+  .grp{margin-top:20px}
+  .grp-l{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-subtle)}
+  .grp-l .dot{width:7px;height:7px;border-radius:50%}
+  .grp-l.over .dot{background:var(--danger)}.grp-l.over{color:var(--danger)}
+  .grp-l.today .dot{background:var(--ever-500)}
+  .grp-l.soon .dot{background:var(--fg-subtle)}
+  .grp-l .ct{margin-left:auto;color:var(--fg-subtle)}
+
+  .trow{display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:15px;background:var(--ever-100);box-shadow:var(--neu-raised);margin-bottom:9px}
+  .trow .th{width:42px;height:42px;border-radius:11px;flex:none;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);box-shadow:var(--neu-raised-sm)}
+  .trow .ttx{flex:1;min-width:0}
+  .trow .ttx b{display:flex;align-items:center;gap:6px;font-family:var(--font-display);font-weight:600;font-size:14px;color:var(--ever-900)}
+  .trow .ttx b .ti{color:var(--ever-500);display:flex}
+  .trow .ttx span{display:block;font-family:var(--font-mono);font-size:10.5px;color:var(--fg-subtle);margin-top:2px}
+  .trow.over .ti{color:var(--danger)!important}
+  .trow .tcheck{width:30px;height:30px;flex:none;border:0;cursor:pointer;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;background:transparent;box-shadow:inset 0 0 0 2px rgba(22,39,30,.16);transition:background .16s,box-shadow .16s;-webkit-tap-highlight-color:transparent}
+  .trow .tcheck svg{opacity:0;transition:opacity .14s}
+  .trow.done .tcheck{background:var(--ever-500);box-shadow:none}.trow.done .tcheck svg{opacity:1}
+  .trow.done .ttx b{text-decoration:line-through;color:var(--fg-subtle)}
+  .trow.done .ttx b .ti{color:var(--fg-subtle)!important}
+
+  .alldone{display:none;flex-direction:column;align-items:center;text-align:center;padding:22px;border-radius:18px;background:var(--ever-100);box-shadow:var(--neu-pressed);margin-top:6px}
+  .alldone.show{display:flex}
+  .alldone svg{color:var(--leaf);margin-bottom:8px}
+  .alldone b{font-family:var(--font-display);font-weight:600;font-size:15px;color:var(--ever-700)}
+  .alldone span{font-size:12px;color:var(--fg-muted);margin-top:3px}
+
+  /* tab bar */
+  .tabbar{position:absolute;z-index:50;left:10px;right:10px;bottom:16px;height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;border-radius:22px;background:var(--ever-100);box-shadow:var(--neu-raised)}
+  .pixel .tabbar{bottom:18px}
+  .tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;border:0;background:transparent;cursor:pointer;color:var(--fg-subtle);font-family:var(--font-body);font-size:9.5px;font-weight:500;-webkit-tap-highlight-color:transparent;transition:color .15s}
+  .tab[aria-selected=true]{color:var(--ever-700);font-weight:600}
+  .tab[aria-selected=true] svg{color:var(--ever-500)}
+  .tab.spacer{visibility:hidden}
+  .fab{position:absolute;z-index:51;left:50%;top:-18px;transform:translateX(-50%);width:60px;height:60px;border-radius:50%;border:0;cursor:pointer;display:flex;align-items:center;justify-content:center;background:var(--ever-100);box-shadow:var(--neu-raised);color:var(--ever-500);transition:transform .16s,box-shadow .16s;-webkit-tap-highlight-color:transparent}
+  .fab:hover{transform:translateX(-50%) translateY(-2px)}.fab:active{box-shadow:var(--neu-pressed)}
+
+  .scrim{position:absolute;inset:0;z-index:57;background:rgba(11,24,18,.18);opacity:0;pointer-events:none;transition:opacity .2s}
+  .scrim.open{opacity:1;pointer-events:auto}
+  .sheet{position:absolute;z-index:58;left:14px;right:14px;bottom:88px;border-radius:18px;background:var(--ever-100);box-shadow:var(--neu-raised);padding:7px;opacity:0;transform:translateY(10px);pointer-events:none;transition:opacity .2s,transform .2s}
+  .sheet.open{opacity:1;transform:translateY(0);pointer-events:auto}
+  .sheet button{width:100%;display:flex;align-items:center;gap:12px;padding:12px 13px;border:0;background:transparent;border-radius:12px;cursor:pointer;text-align:left;font-family:var(--font-body);font-size:14px;font-weight:500;color:var(--fg)}
+  .sheet button:hover{background:var(--accent-tint)}
+  .sheet .si{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:var(--ever-100);box-shadow:var(--neu-pressed);color:var(--ever-500);flex:none}
+  .sheet .st2{display:block;font-size:11.5px;color:var(--fg-muted);font-weight:400}
+
+  .replay{position:fixed;z-index:50;bottom:34px;left:50%;transform:translateX(-50%);display:inline-flex;align-items:center;gap:10px;min-height:var(--hit);padding:0 22px;border-radius:999px;cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:14px;color:var(--ever-700);background:var(--ever-100);box-shadow:var(--neu-raised);border:0;transition:transform .16s,box-shadow .16s}
+  .replay:hover{transform:translateX(-50%) translateY(-2px)}.replay:active{transform:translateX(-50%);box-shadow:var(--neu-pressed)}
+  .replay svg{width:17px;height:17px;stroke:var(--ever-500)}
+
+  @media (max-width:740px){
+    .iphone{width:290px;height:610px}.iphone .screen{width:272px;height:592px}
+    .pixel{width:286px;height:608px}.pixel .screen{width:270px;height:592px}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important}}
+</style>
+</head>
+<body>
+
+  <header class="studio-head">
+    <span class="kicker">Evergreen · 12 Today</span>
+    <h1>Daily care home — urgency-grouped, advisory weather</h1>
+  </header>
+
+  <div class="gallery">
+    <div class="device">
+      <div class="phone iphone">
+        <div class="island"></div>
+        <div class="screen" data-screen-label="12 Today" data-od-id="today-ios">
+          <div class="statusbar"><span>9:41</span><span class="icons">
+            <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4.5" width="3" height="7.5" rx="1" fill="currentColor"/><rect x="10" y="2" width="3" height="10" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor" opacity=".4"/></svg>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 10.6 9.4 9c-.8-.7-2-.7-2.8 0L8 10.6Z" fill="currentColor"/><path d="M4.6 6.2C6.5 4.4 9.5 4.4 11.4 6.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M2.2 3.6c3.2-3 8.4-3 11.6 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x=".7" y=".7" width="22" height="10.6" rx="3" stroke="currentColor" stroke-opacity=".5"/><rect x="2.4" y="2.4" width="15" height="7.2" rx="1.6" fill="currentColor"/><rect x="24" y="4" width="1.6" height="4" rx=".8" fill="currentColor" opacity=".5"/></svg>
+          </span></div>
+          <div class="app"></div>
+          <div class="home-ind"></div>
+        </div>
+      </div>
+      <span class="device-cap">iPhone 15 Pro</span>
+    </div>
+
+    <div class="device">
+      <div class="phone pixel">
+        <div class="punch"></div>
+        <div class="screen" data-screen-label="12 Today" data-od-id="today-android">
+          <div class="statusbar"><span>9:41</span><span class="icons">
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M2.2 3.6c3.2-3 8.4-3 11.6 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M4.6 6.2C6.5 4.4 9.5 4.4 11.4 6.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="9.6" r="1.3" fill="currentColor"/></svg>
+            <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4.5" width="3" height="7.5" rx="1" fill="currentColor"/><rect x="10" y="2" width="3" height="10" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor"/></svg>
+            <svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x=".7" y="1.4" width="20" height="9.2" rx="2.4" stroke="currentColor" stroke-opacity=".5"/><rect x="2.2" y="2.9" width="14" height="6.2" rx="1.2" fill="currentColor"/><rect x="21.6" y="4.2" width="1.6" height="3.6" rx=".8" fill="currentColor" opacity=".5"/></svg>
+          </span></div>
+          <div class="app"></div>
+          <div class="nav-pill"></div>
+        </div>
+      </div>
+      <span class="device-cap">Pixel 8 Pro</span>
+    </div>
+  </div>
+
+  <button class="replay" id="replay" aria-label="Replay entrance">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v4h4"/></svg>
+    Replay
+  </button>
+
+<script>
+(function(){
+  const REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const I={
+    bell:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>',
+    flame:'<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 3-1 4-2 6-1 1.6-2 3-2 5a6 6 0 0 0 12 0c0-2.4-1.4-4.4-2.6-5.6.2 1.6-.6 2.6-1.4 2.6 0-2-1-4-4-8Z"/></svg>',
+    check:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
+    bigcheck:'<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>',
+    droplet:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 6.4 6 11a6 6 0 0 1-12 0c0-4.6 6-11 6-11Z"/></svg>',
+    mist:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 16h14M7 20h10M9 8c0-2 1.5-3 3-3s3 1 3 3"/><path d="M4 12h.01M8 12h.01M12 12h.01M16 12h.01M20 12h.01"/></svg>',
+    fert:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4c-8 0-14 5-14 12a6 6 0 0 0 12 0c1-5 1-8 2-12Z"/><path d="M7 21c0-6 3-10 8-13"/></svg>',
+    rotate:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v4h-4"/></svg>',
+    photo:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="8.5" cy="9.5" r="1.6"/><path d="m4 17 4.5-4.5 4 4L16 13l4 4"/></svg>',
+    scan:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/></svg>',
+    pencil:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>',
+    t_today:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h7"/><path d="m3.5 6 1 1 1.5-2M3.5 12l1 1 1.5-2M3.5 18l1 1 1.5-2"/></svg>',
+    t_garden:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4c-8 0-14 5-14 12a6 6 0 0 0 12 0c1-5 1-8 2-12Z"/><path d="M7 21c0-6 3-10 8-13"/></svg>',
+    t_comm:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 6.2a3 3 0 0 1 0 5.6M18.5 20a5.5 5.5 0 0 0-3-4.9"/></svg>',
+    t_profile:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg>',
+    camera:'<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8a2 2 0 0 1 2-2h1.2a2 2 0 0 0 1.7-1l.5-.8a2 2 0 0 1 1.7-1h1.4a2 2 0 0 1 1.7 1l.5.8a2 2 0 0 0 1.7 1H18a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/><circle cx="12" cy="13" r="3.4"/></svg>'
+  };
+  function sunGlyph(){return `<svg width="30" height="30" viewBox="0 0 40 40"><g class="rays" stroke="#f5c451" stroke-width="2.4" stroke-linecap="round">`+
+    Array.from({length:8},(_,i)=>{const a=i*45*Math.PI/180,x=20+Math.cos(a)*15,y=20+Math.sin(a)*15,x2=20+Math.cos(a)*18,y2=20+Math.sin(a)*18;return `<line x1="${x.toFixed(1)}" y1="${y.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}"/>`;}).join('')+
+    `</g><circle cx="20" cy="20" r="8.5" fill="#f5c451"/></svg>`;}
+  const COV=['linear-gradient(150deg,#3a8c66,#1c4d39)','linear-gradient(150deg,#5bb389,#2c6e51)','linear-gradient(150deg,#2c694e,#15382a)','linear-gradient(150deg,#79c6a0,#3a8c66)','linear-gradient(150deg,#48876a,#23503c)','linear-gradient(150deg,#8fd0b2,#4daf82)'];
+  const TASKS=[
+    {g:'over',ic:'droplet',t:'Water Mara',sub:'Living Room · 1 day overdue',c:0},
+    {g:'over',ic:'droplet',t:'Water Basil',sub:'Balcony · overdue',c:4},
+    {g:'today',ic:'mist',t:'Mist Fiddle',sub:'Living Room · today',c:1},
+    {g:'today',ic:'fert',t:'Fertilize Rosemary',sub:'Balcony · today',c:5},
+    {g:'soon',ic:'rotate',t:'Rotate Pancake',sub:'Living Room · tomorrow',c:3},
+    {g:'soon',ic:'droplet',t:'Water Snake',sub:'Office · in 2 days',c:2}
+  ];
+  const GROUPS=[['over','Overdue'],['today','Due today'],['soon','Coming up']];
+  const TOTAL=TASKS.length;
+
+  function rowHTML(t,i){
+    return `<div class="trow ${t.g==='over'?'over':''}" data-i="${i}" data-g="${t.g}">
+      <span class="th" style="background:${COV[t.c]}">${I.photo}</span>
+      <span class="ttx"><b><span class="ti">${I[t.ic]}</span>${t.t}</b><span>${t.sub}</span></span>
+      <button class="tcheck" aria-label="Mark done">${I.check}</button></div>`;
+  }
+
+  function appHTML(){
+    const groups=GROUPS.map(([g,label])=>{
+      const rows=TASKS.map((t,i)=>[t,i]).filter(([t])=>t.g===g);
+      const cnt=rows.length;
+      return `<div class="grp" data-grp="${g}"><div class="grp-l ${g}"><span class="dot"></span>${label}<span class="ct">${cnt}</span></div>${rows.map(([t,i])=>rowHTML(t,i)).join('')}</div>`;
+    }).join('');
+    const C=2*Math.PI*26;
+    return `
+    <div class="thd">
+      <div><div class="greet">Good morning</div><div class="date">Tuesday, June 9</div></div>
+      <button class="iconbtn" aria-label="Notifications">${I.bell}<span class="badge"></span></button>
+    </div>
+    <div class="content">
+      <div class="todaycard">
+        <div class="ring"><svg width="64" height="64" viewBox="0 0 64 64">
+          <circle cx="32" cy="32" r="26" fill="none" stroke="rgba(22,39,30,.10)" stroke-width="6"/>
+          <circle class="rprog" cx="32" cy="32" r="26" fill="none" stroke="url(#tg)" stroke-width="6" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C}"/>
+          <defs><linearGradient id="tg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2c694e"/><stop offset="1" stop-color="#4daf82"/></linearGradient></defs>
+        </svg><div class="rv"><b class="rn">0/${TOTAL}</b><span>today</span></div></div>
+        <div class="tc-tx"><b class="lead">${TOTAL} tasks to tend</b><p>Two are overdue — a quick pass and you’re set.</p>
+          <span class="streak">${I.flame} 12-day streak · best 21</span></div>
+      </div>
+      <div class="weather">
+        <div class="wglyph">${sunGlyph()}</div>
+        <div class="wx"><div class="wtop"><span class="temp">19°</span><span class="cond">Clear in Lisbon</span></div>
+          <div class="adv"><b>Rain expected 3pm</b> — outdoor watering can wait.</div></div>
+        <button class="wskip">Skip<br>outdoor</button>
+      </div>
+      ${groups}
+      <div class="alldone">${I.bigcheck}<b>All caught up for today</b><span>Your streak is safe. We’ll nudge you tomorrow.</span></div>
+    </div>
+    <div class="scrim"></div>
+    <div class="sheet" role="menu">
+      <button data-a="identify"><span class="si">${I.scan}</span><span>Identify with camera<span class="st2">Snap a photo to name it</span></span></button>
+      <button data-a="manual"><span class="si">${I.pencil}</span><span>Add manually<span class="st2">Search the Species yourself</span></span></button>
+    </div>
+    <div class="tabbar">
+      <button class="tab" aria-selected="true">${I.t_today}<span>Today</span></button>
+      <button class="tab" aria-selected="false">${I.t_garden}<span>Garden</span></button>
+      <button class="tab spacer"><span>·</span><span>·</span></button>
+      <button class="tab" aria-selected="false">${I.t_comm}<span>Community</span></button>
+      <button class="tab" aria-selected="false">${I.t_profile}<span>Profile</span></button>
+      <button class="fab" aria-label="Add a plant">${I.camera}</button>
+    </div>`;
+  }
+
+  const roots=Array.from(document.querySelectorAll('.screen'));
+  roots.forEach(r=>r.querySelector('.app').innerHTML=appHTML());
+
+  function setup(root){
+    const C=2*Math.PI*26,prog=root.querySelector('.rprog'),rn=root.querySelector('.rn'),
+          lead=root.querySelector('.lead'),streak=root.querySelector('.streak'),alldone=root.querySelector('.alldone');
+    function refresh(){
+      const done=root.querySelectorAll('.trow.done').length;
+      const frac=done/TOTAL;
+      gsap.to(prog,{strokeDashoffset:C*(1-frac),duration:.5,ease:'power2.out'});
+      rn.textContent=done+'/'+TOTAL;
+      const left=TOTAL-done;
+      lead.textContent=left===0?'All tasks done':left+' task'+(left>1?'s':'')+' to tend';
+      alldone.classList.toggle('show',left===0);
+      if(left===0&&!REDUCE)gsap.fromTo(streak.querySelector('svg'),{scale:1},{scale:1.4,duration:.3,yoyo:true,repeat:1,ease:'power2.out'});
+    }
+    root.querySelectorAll('.trow').forEach(r=>r.querySelector('.tcheck').addEventListener('click',()=>{
+      const on=r.classList.toggle('done');
+      if(on&&!REDUCE)gsap.fromTo(r.querySelector('.tcheck'),{scale:.5},{scale:1,duration:.34,ease:'back.out(2.4)'});
+      refresh();
+    }));
+    // weather advisory — advisory only, never auto-skips
+    const wskip=root.querySelector('.wskip');
+    wskip.addEventListener('click',()=>{
+      wskip.innerHTML='Asked<br>tomorrow';wskip.style.color='var(--fg-subtle)';
+      const adv=root.querySelector('.adv');adv.innerHTML='Outdoor tasks kept — we never skip them for you.';
+      setTimeout(()=>{wskip.innerHTML='Skip<br>outdoor';wskip.style.color='';adv.innerHTML='<b>Rain expected 3pm</b> — outdoor watering can wait.';},2600);
+    });
+    // weather glyph idle
+    const rays=root.querySelector('.rays');if(rays&&!REDUCE)gsap.to(rays,{rotation:360,duration:16,svgOrigin:'20 20',repeat:-1,ease:'none'});
+    // fab sheet
+    const sheet=root.querySelector('.sheet'),scrim=root.querySelector('.scrim'),fab=root.querySelector('.fab');
+    function close(){sheet.classList.remove('open');scrim.classList.remove('open');}
+    fab.addEventListener('click',()=>{sheet.classList.contains('open')?close():(sheet.classList.add('open'),scrim.classList.add('open'));});
+    scrim.addEventListener('click',close);sheet.querySelectorAll('button').forEach(b=>b.addEventListener('click',close));
+    const tabs=Array.from(root.querySelectorAll('.tabbar .tab:not(.spacer)'));
+    tabs.forEach(t=>t.addEventListener('click',()=>{tabs.forEach(x=>x.setAttribute('aria-selected','false'));t.setAttribute('aria-selected','true');}));
+    root.querySelector('.iconbtn').addEventListener('click',()=>{});
+  }
+
+  function animateIn(root){
+    const cards=[root.querySelector('.todaycard'),root.querySelector('.weather'),...root.querySelectorAll('.grp')];
+    const bar=root.querySelector('.tabbar'),hd=root.querySelector('.thd');
+    if(REDUCE){gsap.set([hd,cards,bar],{opacity:1,y:0});return;}
+    gsap.set(hd,{opacity:0,y:-10});gsap.set(cards,{opacity:0,y:18});gsap.set(bar,{opacity:0,y:80});
+    gsap.timeline({defaults:{ease:'power3.out'}})
+      .to(hd,{opacity:1,y:0,duration:.5})
+      .to(cards,{opacity:1,y:0,duration:.5,stagger:.07},'-=0.25')
+      .to(bar,{opacity:1,y:0,duration:.55,ease:'back.out(1.4)'},'-=0.4');
+  }
+
+  roots.forEach(setup);
+  function play(){roots.forEach(animateIn);}
+  if(document.fonts&&document.fonts.ready){document.fonts.ready.then(play);}else{play();}
+  setTimeout(()=>{if(getComputedStyle(roots[0].querySelector('.tabbar')).opacity==='0')play();},500);
+  document.getElementById('replay').addEventListener('click',play);
+})();
+</script>
+</body>
+</html>

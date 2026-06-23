@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evergreen · Account</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@500,600,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+  :root{
+    --ever-100:#d8e9df;--ever-400:#4daf82;--ever-500:#2c694e;--ever-700:#1b4332;--ever-900:#0c1f17;
+    --leaf:#3e7c4f;--danger:#b3402f;--danger-tint:rgba(179,64,47,.12);--fg:#16271e;--fg-muted:#4b6357;--fg-subtle:#7d9488;--accent-tint:rgba(46,109,78,.12);
+    --neu-raised:6px 6px 14px rgba(11,30,21,.13), -6px -6px 13px rgba(255,255,255,.80);
+    --neu-raised-sm:4px 4px 9px rgba(11,30,21,.12), -4px -4px 9px rgba(255,255,255,.78);
+    --neu-pressed:inset 4px 4px 9px rgba(11,30,21,.13), inset -4px -4px 9px rgba(255,255,255,.72);
+    --font-display:'General Sans','Söhne',-apple-system,system-ui,sans-serif;
+    --font-body:'Inter',-apple-system,system-ui,sans-serif;
+    --font-mono:'JetBrains Mono','Berkeley Mono',ui-monospace,monospace;--hit:44px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:var(--font-body);color:var(--fg);background:radial-gradient(120% 80% at 50% -10%, #f1f7f3 0%, transparent 55%),radial-gradient(100% 100% at 50% 120%, #cfe2d7 0%, #e6f0ea 100%);min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(26px,5vh,52px);padding:48px 24px 120px;overflow-x:hidden}
+  .studio-head{position:relative;z-index:2;text-align:center;display:flex;flex-direction:column;align-items:center;gap:9px}
+  .studio-head .kicker{font-family:var(--font-mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:#5c8772}
+  .studio-head h1{font-family:var(--font-display);font-weight:600;font-size:clamp(19px,3.2vw,28px);letter-spacing:-.02em;color:var(--ever-700)}
+  .gallery{position:relative;z-index:2;display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:center;gap:clamp(32px,6vw,72px)}
+  .device{display:flex;flex-direction:column;align-items:center;gap:18px}
+  .device-cap{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#5c8772}
+  .phone{position:relative;background:linear-gradient(150deg,#2c2f30,#16191a 46%,#0a0c0c);box-shadow:0 2px 0 1px rgba(255,255,255,.05) inset,0 55px 80px -42px rgba(11,30,21,.5),0 0 0 1px rgba(0,0,0,.55)}
+  .screen{position:relative;overflow:hidden;width:300px;height:650px;background:var(--ever-100)}
+  .iphone{width:318px;height:668px;border-radius:56px;padding:9px}.iphone .screen{border-radius:48px}
+  .iphone .island{position:absolute;z-index:60;top:18px;left:50%;transform:translateX(-50%);width:88px;height:27px;border-radius:16px;background:#0a0c0c}
+  .iphone .island::after{content:"";position:absolute;right:11px;top:50%;transform:translateY(-50%);width:9px;height:9px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#26343b,#05070a)}
+  .iphone .home-ind{position:absolute;z-index:60;bottom:9px;left:50%;transform:translateX(-50%);width:120px;height:5px;border-radius:3px;background:rgba(22,39,30,.4)}
+  .pixel{width:312px;height:664px;border-radius:34px;padding:8px;background:linear-gradient(150deg,#3a3d3e,#1b1e1f 46%,#0c0e0e)}.pixel .screen{border-radius:27px}
+  .pixel .punch{position:absolute;z-index:60;top:15px;left:50%;transform:translateX(-50%);width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#23323a,#04060a);box-shadow:0 0 0 2px rgba(255,255,255,.12)}
+  .pixel .nav-pill{position:absolute;z-index:60;bottom:10px;left:50%;transform:translateX(-50%);width:96px;height:5px;border-radius:3px;background:rgba(22,39,30,.34)}
+  .statusbar{position:absolute;z-index:55;top:0;left:0;right:0;height:50px;display:flex;align-items:center;justify-content:space-between;padding:18px 26px 0;font-family:var(--font-mono);font-size:12.5px;color:var(--fg);pointer-events:none}
+  .pixel .statusbar{padding-top:15px}
+  .statusbar .icons{display:flex;align-items:center;gap:6px}.statusbar svg{display:block}
+  .app{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column}
+
+  .hd{flex:none;padding:50px 12px 4px;display:flex;align-items:center;gap:8px}
+  .pixel .hd{padding-top:44px}
+  .iconbtn{width:38px;height:38px;border-radius:50%;border:0;cursor:pointer;display:flex;align-items:center;justify-content:center;background:var(--ever-100);box-shadow:var(--neu-raised-sm);color:var(--ever-700);flex:none;-webkit-tap-highlight-color:transparent}
+  .iconbtn:active{box-shadow:var(--neu-pressed)}
+  .hd h2{flex:1;font-family:var(--font-display);font-weight:600;font-size:19px;color:var(--ever-900);letter-spacing:-.02em}
+
+  .content{flex:1;overflow-y:auto;padding:8px 16px 26px;scrollbar-width:none}
+  .content::-webkit-scrollbar{display:none}
+  .who{display:flex;align-items:center;gap:13px;padding:14px;border-radius:16px;background:var(--ever-100);box-shadow:var(--neu-raised);margin:8px 0 16px}
+  .who .av{width:48px;height:48px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:600;font-size:17px;color:#fff;background:linear-gradient(150deg,#4daf82,#2c694e)}
+  .who .wx b{display:block;font-family:var(--font-display);font-weight:600;font-size:15px;color:var(--ever-900)}
+  .who .wx span{font-family:var(--font-mono);font-size:11px;color:var(--fg-muted)}
+  .sec-l{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-subtle);margin:6px 4px 9px}
+  .card{border-radius:16px;background:var(--ever-100);box-shadow:var(--neu-raised);overflow:hidden;margin-bottom:18px}
+  .row{display:flex;align-items:center;gap:13px;padding:13px 14px;width:100%;text-align:left;border:0;background:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .row+.row{border-top:1px solid rgba(22,39,30,.07)}
+  .row .ri{width:36px;height:36px;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center;background:var(--ever-100);box-shadow:var(--neu-pressed);color:var(--ever-500)}
+  .row .rx{flex:1;min-width:0}
+  .row .rx b{display:block;font-family:var(--font-display);font-weight:600;font-size:13.5px;color:var(--ever-900);letter-spacing:-.01em}
+  .row .rx span{display:block;font-size:11px;color:var(--fg-muted);margin-top:1px}
+  .row .rt{font-family:var(--font-mono);font-size:10.5px;color:var(--leaf);flex:none}
+  .row .rt.muted{color:var(--fg-subtle)}
+  .row .chev{color:var(--fg-subtle);flex:none}
+  .row.danger .rx b{color:var(--danger)} .row.danger .ri{color:var(--danger)}
+  .conn{flex:none;height:28px;padding:0 13px;border:0;cursor:pointer;border-radius:999px;background:var(--ever-100);box-shadow:var(--neu-raised-sm);font-family:var(--font-body);font-weight:600;font-size:11px;color:var(--ever-700)}
+  .conn:active{box-shadow:var(--neu-pressed)}
+  .conn.ghost{box-shadow:none;color:var(--fg-muted)}
+
+  .scrim{position:absolute;inset:0;z-index:57;background:rgba(11,24,18,.3);opacity:0;pointer-events:none;transition:opacity .22s}
+  .scrim.open{opacity:1;pointer-events:auto}
+  .dialog{position:absolute;z-index:58;left:24px;right:24px;top:50%;transform:translateY(-46%) scale(.96);opacity:0;pointer-events:none;border-radius:22px;background:var(--ever-100);box-shadow:var(--neu-raised);padding:22px 20px;text-align:center;transition:opacity .22s,transform .22s}
+  .dialog.open{opacity:1;transform:translateY(-50%) scale(1);pointer-events:auto}
+  .dialog .dic{width:52px;height:52px;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;background:var(--danger-tint);color:var(--danger)}
+  .dialog h3{font-family:var(--font-display);font-weight:600;font-size:18px;color:var(--ever-900);letter-spacing:-.02em}
+  .dialog p{font-size:12.5px;line-height:1.5;color:var(--fg-muted);margin-top:7px}
+  .dialog .acts{margin-top:18px;display:flex;flex-direction:column;gap:9px}
+  .dbtn{height:46px;border:0;cursor:pointer;border-radius:13px;font-family:var(--font-body);font-weight:600;font-size:14px}
+  .dbtn.del{background:var(--danger);color:#fff;box-shadow:0 6px 16px -6px rgba(179,64,47,.5)}
+  .dbtn.keep{background:var(--ever-100);box-shadow:var(--neu-raised-sm);color:var(--ever-700)}
+
+  .toast{position:absolute;z-index:62;left:18px;right:18px;bottom:30px;display:flex;align-items:center;gap:10px;padding:12px 15px;border-radius:14px;background:var(--ever-900);color:#eaf3ed;font-size:13px;font-weight:500;opacity:0;transform:translateY(10px);pointer-events:none;transition:opacity .25s,transform .25s;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+  .toast.show{opacity:1;transform:translateY(0)}
+  .toast svg{color:var(--ever-400);flex:none}
+
+  .replay{position:fixed;z-index:50;bottom:34px;left:50%;transform:translateX(-50%);display:inline-flex;align-items:center;gap:10px;min-height:var(--hit);padding:0 22px;border-radius:999px;cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:14px;color:var(--ever-700);background:var(--ever-100);box-shadow:var(--neu-raised);border:0;transition:transform .16s,box-shadow .16s}
+  .replay:hover{transform:translateX(-50%) translateY(-2px)}.replay:active{transform:translateX(-50%);box-shadow:var(--neu-pressed)}
+  .replay svg{width:17px;height:17px;stroke:var(--ever-500)}
+  @media (max-width:740px){.iphone{width:290px;height:610px}.iphone .screen{width:272px;height:592px}.pixel{width:286px;height:608px}.pixel .screen{width:270px;height:592px}}
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important}}
+</style>
+</head>
+<body>
+  <header class="studio-head"><span class="kicker">Evergreen · 22 Account</span><h1>Identity, data export, and a careful delete</h1></header>
+  <div class="gallery">
+    <div class="device"><div class="phone iphone"><div class="island"></div>
+      <div class="screen" data-screen-label="22 Account" data-od-id="acct-ios"><div class="statusbar"><span>9:41</span><span class="icons"><svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4.5" width="3" height="7.5" rx="1" fill="currentColor"/><rect x="10" y="2" width="3" height="10" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor" opacity=".4"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 10.6 9.4 9c-.8-.7-2-.7-2.8 0L8 10.6Z" fill="currentColor"/><path d="M4.6 6.2C6.5 4.4 9.5 4.4 11.4 6.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M2.2 3.6c3.2-3 8.4-3 11.6 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x=".7" y=".7" width="22" height="10.6" rx="3" stroke="currentColor" stroke-opacity=".5"/><rect x="2.4" y="2.4" width="15" height="7.2" rx="1.6" fill="currentColor"/><rect x="24" y="4" width="1.6" height="4" rx=".8" fill="currentColor" opacity=".5"/></svg></span></div><div class="app"></div><div class="home-ind"></div></div></div><span class="device-cap">iPhone 15 Pro</span></div>
+    <div class="device"><div class="phone pixel"><div class="punch"></div>
+      <div class="screen" data-screen-label="22 Account" data-od-id="acct-android"><div class="statusbar"><span>9:41</span><span class="icons"><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M2.2 3.6c3.2-3 8.4-3 11.6 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M4.6 6.2C6.5 4.4 9.5 4.4 11.4 6.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="9.6" r="1.3" fill="currentColor"/></svg><svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4.5" width="3" height="7.5" rx="1" fill="currentColor"/><rect x="10" y="2" width="3" height="10" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor"/></svg><svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x=".7" y="1.4" width="20" height="9.2" rx="2.4" stroke="currentColor" stroke-opacity=".5"/><rect x="2.2" y="2.9" width="14" height="6.2" rx="1.2" fill="currentColor"/><rect x="21.6" y="4.2" width="1.6" height="3.6" rx=".8" fill="currentColor" opacity=".5"/></svg></span></div><div class="app"></div><div class="nav-pill"></div></div></div><span class="device-cap">Pixel 8 Pro</span></div>
+  </div>
+  <button class="replay" id="replay" aria-label="Replay"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v4h4"/></svg>Replay</button>
+<script>
+(function(){
+  const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const I={
+    back:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
+    chev:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>',
+    mail:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m4 7 8 6 8-6"/></svg>',
+    g:'<span style="font-family:var(--font-display);font-weight:700;font-size:15px;color:var(--ever-700)">G</span>',
+    apple:'<svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 12.04c-.03-2.6 2.12-3.84 2.22-3.9-1.21-1.78-3.09-2.02-3.76-2.05-1.6-.16-3.12.94-3.93.94-.81 0-2.06-.92-3.39-.89-1.74.02-3.35 1.01-4.25 2.57-1.81 3.14-.46 7.79 1.3 10.34.86 1.25 1.89 2.65 3.24 2.6 1.3-.05 1.79-.84 3.36-.84 1.56 0 2.01.84 3.38.81 1.39-.02 2.28-1.27 3.13-2.52.98-1.45 1.39-2.85 1.41-2.92-.03-.01-2.71-1.04-2.74-4.12M14.62 4.45c.72-.86 1.2-2.07 1.07-3.27-1.03.04-2.28.69-3.01 1.55-.66.76-1.24 1.98-1.08 3.15 1.14.09 2.31-.58 3.02-1.43"/></svg>',
+    star:'<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.6 5.4L19 9l-5.4 1.6L12 16l-1.6-5.4L5 9l5.4-1.6L12 2Z"/></svg>',
+    download:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M8 11l4 4 4-4M5 20h14"/></svg>',
+    pwd:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>',
+    trash:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>',
+    warn:'<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 2 18a1.7 1.7 0 0 0 1.5 2.6h17A1.7 1.7 0 0 0 22 18L13.7 3.9a1.7 1.7 0 0 0-3 0Z"/><path d="M12 9v4M12 17h.01"/></svg>',
+    check:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>'
+  };
+  function appHTML(){return `
+    <div class="hd"><button class="iconbtn back">${I.back}</button><h2>Account</h2></div>
+    <div class="content">
+      <div class="who"><span class="av">SC</span><span class="wx"><b>Sorin C.</b><span>sorin.t.cristescu@gmail.com</span></span></div>
+      <div class="sec-l">Sign-in methods</div>
+      <div class="card">
+        <div class="row"><span class="ri">${I.mail}</span><span class="rx"><b>Email · magic link</b><span>sorin.t.cristescu@gmail.com</span></span><span class="rt">Primary</span></div>
+        <div class="row"><span class="ri">${I.g}</span><span class="rx"><b>Google</b><span>Connected</span></span><button class="conn ghost">Disconnect</button></div>
+        <div class="row"><span class="ri">${I.apple}</span><span class="rx"><b>Apple</b><span>Not connected</span></span><button class="conn">Connect</button></div>
+      </div>
+      <div class="sec-l">Subscription</div>
+      <div class="card"><button class="row"><span class="ri">${I.star}</span><span class="rx"><b>evergreen+ · trial</b><span>6 days left · manage in store</span></span><span class="chev">${I.chev}</span></button></div>
+      <div class="sec-l">Your data</div>
+      <div class="card">
+        <button class="row export"><span class="ri">${I.download}</span><span class="rx"><b>Export my data</b><span>Plants, journals & photos as a zip</span></span><span class="chev">${I.chev}</span></button>
+        <button class="row"><span class="ri">${I.pwd}</span><span class="rx"><b>Change sign-in email</b></span><span class="chev">${I.chev}</span></button>
+      </div>
+      <div class="sec-l">Danger zone</div>
+      <div class="card"><button class="row danger delete"><span class="ri">${I.trash}</span><span class="rx"><b>Delete account</b><span>Permanently remove your account & data</span></span><span class="chev">${I.chev}</span></button></div>
+    </div>
+    <div class="scrim"></div>
+    <div class="dialog" role="alertdialog">
+      <div class="dic">${I.warn}</div>
+      <h3>Delete your account?</h3>
+      <p>This erases your plants, journals, photos and posts for good. We can’t undo it. Consider exporting your data first.</p>
+      <div class="acts"><button class="dbtn del">Delete everything</button><button class="dbtn keep">Keep my account</button></div>
+    </div>
+    <div class="toast"><span class="tic">${I.check}</span><span class="tmsg"></span></div>`;}
+  const roots=Array.from(document.querySelectorAll('.screen'));
+  roots.forEach(r=>r.querySelector('.app').innerHTML=appHTML());
+  function setup(root){
+    const scrim=root.querySelector('.scrim'),dlg=root.querySelector('.dialog'),toast=root.querySelector('.toast'),tmsg=root.querySelector('.tmsg');
+    function showToast(m){tmsg.textContent=m;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2400);}
+    const close=()=>{scrim.classList.remove('open');dlg.classList.remove('open');};
+    root.querySelector('.delete').addEventListener('click',()=>{scrim.classList.add('open');dlg.classList.add('open');});
+    scrim.addEventListener('click',close);
+    dlg.querySelector('.keep').addEventListener('click',close);
+    dlg.querySelector('.del').addEventListener('click',()=>{close();showToast('Account scheduled for deletion · check your email');});
+    root.querySelector('.export').addEventListener('click',()=>showToast('Preparing your export — we’ll email a link'));
+    root.querySelectorAll('.conn').forEach(c=>c.addEventListener('click',()=>showToast(c.classList.contains('ghost')?'Google disconnected':'Connecting Apple…')));
+    root.querySelector('.back').addEventListener('click',()=>{});
+  }
+  roots.forEach(setup);
+  function animateIn(root){const hd=root.querySelector('.hd'),items=root.querySelectorAll('.who, .sec-l, .card');
+    root.querySelector('.scrim').classList.remove('open');root.querySelector('.dialog').classList.remove('open');
+    if(REDUCE){gsap.set([hd,items],{opacity:1,y:0});return;}
+    gsap.set(hd,{opacity:0,y:-8});gsap.set(items,{opacity:0,y:16});
+    gsap.timeline({defaults:{ease:'power3.out'}}).to(hd,{opacity:1,y:0,duration:.45}).to(items,{opacity:1,y:0,duration:.46,stagger:.05},'-=0.2');}
+  function play(){roots.forEach(animateIn);}
+  if(document.fonts&&document.fonts.ready){document.fonts.ready.then(play);}else{play();}
+  setTimeout(()=>{if(getComputedStyle(roots[0].querySelector('.who')).opacity==='0')play();},500);
+  document.getElementById('replay').addEventListener('click',play);
+})();
+</script>
+</body>
+</html>

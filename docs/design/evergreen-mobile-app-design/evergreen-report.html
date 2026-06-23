@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evergreen · Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@500,600,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+  :root{
+    --ever-100:#d8e9df;--ever-400:#4daf82;--ever-500:#2c694e;--ever-700:#1b4332;--ever-900:#0c1f17;
+    --leaf:#3e7c4f;--danger:#b3402f;--fg:#16271e;--fg-muted:#4b6357;--fg-subtle:#7d9488;--accent-tint:rgba(46,109,78,.12);
+    --neu-raised:6px 6px 14px rgba(11,30,21,.13), -6px -6px 13px rgba(255,255,255,.80);
+    --neu-raised-sm:4px 4px 9px rgba(11,30,21,.12), -4px -4px 9px rgba(255,255,255,.78);
+    --neu-pressed:inset 4px 4px 9px rgba(11,30,21,.13), inset -4px -4px 9px rgba(255,255,255,.72);
+    --font-display:'General Sans','Söhne',-apple-system,system-ui,sans-serif;
+    --font-body:'Inter',-apple-system,system-ui,sans-serif;
+    --font-mono:'JetBrains Mono','Berkeley Mono',ui-monospace,monospace;--hit:44px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:var(--font-body);color:var(--fg);background:radial-gradient(120% 80% at 50% -10%, #f1f7f3 0%, transparent 55%),radial-gradient(100% 100% at 50% 120%, #cfe2d7 0%, #e6f0ea 100%);min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(26px,5vh,52px);padding:48px 24px 120px;overflow-x:hidden}
+  .studio-head{position:relative;z-index:2;text-align:center;display:flex;flex-direction:column;align-items:center;gap:9px}
+  .studio-head .kicker{font-family:var(--font-mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:#5c8772}
+  .studio-head h1{font-family:var(--font-display);font-weight:600;font-size:clamp(19px,3.2vw,28px);letter-spacing:-.02em;color:var(--ever-700)}
+  .gallery{position:relative;z-index:2;display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:center;gap:clamp(32px,6vw,72px)}
+  .device{display:flex;flex-direction:column;align-items:center;gap:18px}
+  .device-cap{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#5c8772}
+  .phone{position:relative;background:linear-gradient(150deg,#2c2f30,#16191a 46%,#0a0c0c);box-shadow:0 2px 0 1px rgba(255,255,255,.05) inset,0 55px 80px -42px rgba(11,30,21,.5),0 0 0 1px rgba(0,0,0,.55)}
+  .screen{position:relative;overflow:hidden;width:300px;height:650px;background:var(--ever-100)}
+  .iphone{width:318px;height:668px;border-radius:56px;padding:9px}.iphone .screen{border-radius:48px}
+  .iphone .island{position:absolute;z-index:60;top:18px;left:50%;transform:translateX(-50%);width:88px;height:27px;border-radius:16px;background:#0a0c0c}
+  .iphone .island::after{content:"";position:absolute;right:11px;top:50%;transform:translateY(-50%);width:9px;height:9px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#26343b,#05070a)}
+  .iphone .home-ind{position:absolute;z-index:60;bottom:9px;left:50%;transform:translateX(-50%);width:120px;height:5px;border-radius:3px;background:rgba(22,39,30,.4)}
+  .pixel{width:312px;height:664px;border-radius:34px;padding:8px;background:linear-gradient(150deg,#3a3d3e,#1b1e1f 46%,#0c0e0e)}.pixel .screen{border-radius:27px}
+  .pixel .punch{position:absolute;z-index:60;top:15px;left:50%;transform:translateX(-50%);width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#23323a,#04060a);box-shadow:0 0 0 2px rgba(255,255,255,.12)}
+  .pixel .nav-pill{position:absolute;z-index:60;bottom:10px;left:50%;transform:translateX(-50%);width:96px;height:5px;border-radius:3px;background:rgba(22,39,30,.34)}
+  .statusbar{position:absolute;z-index:55;top:0;left:0;right:0;height:50px;display:flex;align-items:center;justify-content:space-between;padding:18px 26px 0;font-family:var(--font-mono);font-size:12.5px;color:var(--fg);pointer-events:none}
+  .pixel .statusbar{padding-top:15px}
+  .statusbar .icons{display:flex;align-items:center;gap:6px}.statusbar svg{display:block}
+  .app{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column}
+  .form{flex:1;min-height:0;display:flex;flex-direction:column}
+
+  .hd{flex:none;padding:50px 12px 4px;display:flex;align-items:center;gap:8px}
+  .pixel .hd{padding-top:44px}
+  .iconbtn{width:38px;height:38px;border-radius:50%;border:0;cursor:pointer;display:flex;align-items:center;justify-content:center;background:var(--ever-100);box-shadow:var(--neu-raised-sm);color:var(--ever-700);flex:none;-webkit-tap-highlight-color:transparent}
+  .iconbtn:active{box-shadow:var(--neu-pressed)}
+  .hd h2{flex:1;font-family:var(--font-display);font-weight:600;font-size:18px;color:var(--ever-900);letter-spacing:-.02em}
+
+  .content{flex:1;min-height:0;overflow-y:auto;padding:8px 16px 24px;scrollbar-width:none;display:flex;flex-direction:column}
+  .content::-webkit-scrollbar{display:none}
+  .intro{font-size:12.5px;line-height:1.5;color:var(--fg-muted);margin:6px 4px 14px}
+  .subject{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:14px;background:var(--ever-100);box-shadow:var(--neu-raised);margin:6px 0 14px}
+  .subject .sav{position:relative;width:42px;height:42px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:600;font-size:14px;color:#fff;background:linear-gradient(150deg,#48876a,#23503c)}
+  .subject .sav .th{position:absolute;right:-3px;bottom:-3px;width:20px;height:20px;border-radius:6px;background:linear-gradient(150deg,#79c6a0,#3a8c66);box-shadow:0 0 0 2.5px var(--ever-100);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.85)}
+  .subject .sx{flex:1;min-width:0}
+  .subject .sx .k{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--danger)}
+  .subject .sx b{display:block;font-family:var(--font-display);font-weight:600;font-size:14px;color:var(--ever-900);letter-spacing:-.01em}
+  .subject .sx span{display:block;font-size:11.5px;color:var(--fg-muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sec-l{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-subtle);margin:4px 4px 9px}
+  .reasons{display:flex;flex-direction:column;gap:9px}
+  .reason{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px 14px;border:0;cursor:pointer;border-radius:14px;background:var(--ever-100);box-shadow:var(--neu-raised-sm);-webkit-tap-highlight-color:transparent;transition:box-shadow .15s}
+  .reason[aria-checked=true]{box-shadow:var(--neu-pressed)}
+  .reason b{flex:1;font-family:var(--font-display);font-weight:600;font-size:13.5px;color:var(--ever-900);letter-spacing:-.01em}
+  .reason .rad{width:20px;height:20px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:inset 0 0 0 2px rgba(22,39,30,.18)}
+  .reason .rad svg{opacity:0;transition:opacity .14s}
+  .reason[aria-checked=true] .rad{background:var(--ever-500);box-shadow:none}.reason[aria-checked=true] .rad svg{opacity:1}
+
+  .field{margin-top:16px}
+  .field textarea{width:100%;min-height:74px;resize:none;border:0;outline:0;border-radius:14px;padding:12px 14px;background:var(--ever-100);box-shadow:var(--neu-pressed);font-family:var(--font-body);font-size:13.5px;color:var(--fg)}
+  .field textarea::placeholder{color:var(--fg-subtle)}
+  .blockrow{display:flex;align-items:center;gap:12px;margin-top:14px;padding:12px 14px;border-radius:14px;background:var(--ever-100);box-shadow:var(--neu-raised-sm)}
+  .blockrow .bx{flex:1}
+  .blockrow .bx b{display:block;font-family:var(--font-display);font-weight:600;font-size:13px;color:var(--ever-900)}
+  .blockrow .bx span{display:block;font-size:11px;color:var(--fg-muted);margin-top:1px}
+  .toggle{position:relative;width:46px;height:27px;border-radius:999px;flex:none;cursor:pointer;border:0;background:var(--ever-100);box-shadow:var(--neu-pressed);transition:background .2s}
+  .toggle .knob{position:absolute;top:3px;left:3px;width:21px;height:21px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .22s cubic-bezier(.16,1,.3,1)}
+  .toggle[aria-pressed=true]{background:var(--danger)}
+  .toggle[aria-pressed=true] .knob{transform:translateX(19px)}
+
+  .foot{margin-top:auto;padding-top:14px}
+  .btn{width:100%;display:flex;align-items:center;justify-content:center;gap:9px;height:52px;border:0;cursor:pointer;border-radius:15px;background:var(--ever-100);box-shadow:var(--neu-raised);font-family:var(--font-body);font-weight:600;font-size:15px;color:var(--ever-700);transition:box-shadow .14s,opacity .2s}
+  .btn:active{box-shadow:var(--neu-pressed)}
+  .btn[disabled]{opacity:.5;cursor:not-allowed;box-shadow:var(--neu-raised-sm)}
+  .note{text-align:center;font-size:11px;color:var(--fg-subtle);margin-top:8px}
+
+  .success{position:absolute;inset:0;z-index:20;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;padding:34px;background:var(--ever-100)}
+  .success.show{display:flex}
+  .sic{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--accent-tint);color:var(--ever-500);box-shadow:var(--neu-raised);margin-bottom:14px}
+  .success h3{font-family:var(--font-display);font-weight:600;font-size:21px;color:var(--ever-900);letter-spacing:-.02em}
+  .success p{font-size:13px;color:var(--fg-muted);max-width:230px;line-height:1.5}
+  .success .done{margin-top:20px;width:100%;max-width:220px}
+
+  .replay{position:fixed;z-index:50;bottom:34px;left:50%;transform:translateX(-50%);display:inline-flex;align-items:center;gap:10px;min-height:var(--hit);padding:0 22px;border-radius:999px;cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:14px;color:var(--ever-700);background:var(--ever-100);box-shadow:var(--neu-raised);border:0;transition:transform .16s,box-shadow .16s}
+  .replay:hover{transform:translateX(-50%) translateY(-2px)}.replay:active{transform:translateX(-50%);box-shadow:var(--neu-pressed)}
+  .replay svg{width:17px;height:17px;stroke:var(--ever-500)}
+  @media (max-width:740px){.iphone{width:290px;height:610px}.iphone .screen{width:272px;height:592px}.pixel{width:286px;height:608px}.pixel .screen{width:270px;height:592px}}
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important}}
+</style>
+</head>
+<body>
+  <header class="studio-head"><span class="kicker">Evergreen · 27 Report abuse</span><h1>Moderation report — reason, details, block</h1></header>
+  <div class="gallery">
+    <div class="device"><div class="phone iphone"><div class="island"></div>
+      <div class="screen" data-screen-label="27 Report" data-od-id="report-ios"><div class="statusbar"><span>9:41</span><span class="icons"><svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4.5" width="3" height="7.5" rx="1" fill="currentColor"/><rect x="10" y="2" width="3" height="10" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor" opacity=".4"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 10.6 9.4 9c-.8-.7-2-.7-2.8 0L8 10.6Z" fill="currentColor"/><path d="M4.6 6.2C6.5 4.4 9.5 4.4 11.4 6.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M2.2 3.6c3.2-3 8.4-3 11.6 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x=".7" y=".7" width="22" height="10.6" rx="3" stroke="currentColor" stroke-opacity=".5"/><rect x="2.4" y="2.4" width="15" height="7.2" rx="1.6" fill="currentColor"/><rect x="24" y="4" width="1.6" height="4" rx=".8" fill="currentColor" opacity=".5"/></svg></span></div><div class="app"></div><div class="home-ind"></div></div></div><span class="device-cap">iPhone 15 Pro</span></div>
+    <div class="device"><div class="phone pixel"><div class="punch"></div>
+      <div class="screen" data-screen-label="27 Report" data-od-id="report-android"><div class="statusbar"><span>9:41</span><span class="icons"><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M2.2 3.6c3.2-3 8.4-3 11.6 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M4.6 6.2C6.5 4.4 9.5 4.4 11.4 6.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="9.6" r="1.3" fill="currentColor"/></svg><svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4.5" width="3" height="7.5" rx="1" fill="currentColor"/><rect x="10" y="2" width="3" height="10" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor"/></svg><svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x=".7" y="1.4" width="20" height="9.2" rx="2.4" stroke="currentColor" stroke-opacity=".5"/><rect x="2.2" y="2.9" width="14" height="6.2" rx="1.2" fill="currentColor"/><rect x="21.6" y="4.2" width="1.6" height="3.6" rx=".8" fill="currentColor" opacity=".5"/></svg></span></div><div class="app"></div><div class="nav-pill"></div></div></div><span class="device-cap">Pixel 8 Pro</span></div>
+  </div>
+  <button class="replay" id="replay" aria-label="Replay"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v4h4"/></svg>Replay</button>
+<script>
+(function(){
+  const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const back='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>';
+  const check='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+  const bigcheck='<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 5 6v5c0 4.2 2.9 7.6 7 9 4.1-1.4 7-4.8 7-9V6Z"/><path d="m9.5 12 1.8 1.8 3.4-3.6"/></svg>';
+  const REASONS=['Harassment or bullying','Spam or scam','Inappropriate content','Impersonation','False or harmful info','Something else'];
+  function appHTML(){
+    const rs=REASONS.map((r,i)=>`<button class="reason" role="radio" aria-checked="false" data-i="${i}"><b>${r}</b><span class="rad">${check}</span></button>`).join('');
+    return `
+    <div class="form">
+      <div class="hd"><button class="iconbtn back">${back}</button><h2>Report</h2></div>
+      <div class="content">
+        <div class="subject"><span class="sav">PP<span class="th"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="8.5" cy="9.5" r="1.6"/><path d="m4 17 4.5-4.5 4 4L16 13l4 4"/></svg></span></span><span class="sx"><span class="k">Reporting a post</span><b>@potted.pete</b><span>“Week 3 of the #BrightWindow challenge…”</span></span></div>
+        <p class="intro">Reports are confidential — @potted.pete won’t know you reported them. Tell us what’s happening.</p>
+        <div class="sec-l">Why are you reporting this?</div>
+        <div class="reasons" role="radiogroup">${rs}</div>
+        <div class="field"><textarea placeholder="Add any details that help (optional)…"></textarea></div>
+        <div class="blockrow"><span class="bx"><b>Also block @potted.pete</b><span>You won’t see each other again.</span></span><button class="toggle" aria-pressed="false" aria-label="Block @potted.pete"><span class="knob"></span></button></div>
+        <div class="foot"><button class="btn submit" disabled>Submit report</button><p class="note">Most reports are reviewed within 24 hours.</p></div>
+      </div>
+    </div>
+    <div class="success">
+      <div class="sic">${bigcheck}</div>
+      <h3>Thanks for looking out</h3>
+      <p>Our moderation team will review this report. We’ll act if it breaks our community rules.</p>
+      <button class="btn done">Done</button>
+    </div>`;
+  }
+  const roots=Array.from(document.querySelectorAll('.screen'));
+  roots.forEach(r=>r.querySelector('.app').innerHTML=appHTML());
+  function setup(root){
+    const reasons=Array.from(root.querySelectorAll('.reason')),submit=root.querySelector('.submit'),
+          form=root.querySelector('.form'),success=root.querySelector('.success');
+    reasons.forEach(rs=>rs.addEventListener('click',()=>{reasons.forEach(x=>x.setAttribute('aria-checked','false'));rs.setAttribute('aria-checked','true');submit.disabled=false;}));
+    root.querySelector('.toggle').addEventListener('click',()=>{const t=root.querySelector('.toggle');t.setAttribute('aria-pressed',t.getAttribute('aria-pressed')!=='true');});
+    submit.addEventListener('click',()=>{if(submit.disabled)return;form.style.display='none';success.classList.add('show');
+      if(!REDUCE){gsap.fromTo(success.querySelector('.sic'),{scale:0,opacity:0},{scale:1,opacity:1,duration:.55,ease:'back.out(2)'});
+        gsap.fromTo(success.querySelectorAll('h3,p,.done'),{y:14,opacity:0},{y:0,opacity:1,duration:.5,stagger:.08,delay:.1});}});
+    root.querySelector('.done').addEventListener('click',()=>{});
+    root.querySelector('.back').addEventListener('click',()=>{});
+  }
+  roots.forEach(setup);
+  function animateIn(root){root.querySelector('.success').classList.remove('show');root.querySelector('.form').style.display='';
+    const sub=root.querySelector('.submit');sub.disabled=true;root.querySelectorAll('.reason').forEach(x=>x.setAttribute('aria-checked','false'));
+    const hd=root.querySelector('.hd'),items=root.querySelectorAll('.intro, .sec-l, .reason, .field, .blockrow, .foot');
+    if(REDUCE){gsap.set([hd,items],{opacity:1,y:0});return;}
+    gsap.set(hd,{opacity:0,y:-8});gsap.set(items,{opacity:0,y:14});
+    gsap.timeline({defaults:{ease:'power3.out'}}).to(hd,{opacity:1,y:0,duration:.45}).to(items,{opacity:1,y:0,duration:.42,stagger:.045},'-=0.2');}
+  function play(){roots.forEach(animateIn);}
+  if(document.fonts&&document.fonts.ready){document.fonts.ready.then(play);}else{play();}
+  setTimeout(()=>{if(getComputedStyle(roots[0].querySelector('.reasons .reason')).opacity==='0')play();},500);
+  document.getElementById('replay').addEventListener('click',play);
+})();
+</script>
+</body>
+</html>

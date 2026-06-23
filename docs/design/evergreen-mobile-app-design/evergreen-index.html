@@ -1,0 +1,194 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evergreen · Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@500,600,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+  :root{
+    --ever-100:#d8e9df;--ever-400:#4daf82;--ever-500:#2c694e;--ever-700:#1b4332;--ever-900:#0c1f17;
+    --leaf:#3e7c4f;--terra:#c76b4f;--fg:#16271e;--fg-muted:#4b6357;--fg-subtle:#7d9488;--accent-tint:rgba(46,109,78,.12);
+    --neu-raised:7px 7px 16px rgba(11,30,21,.13), -7px -7px 15px rgba(255,255,255,.82);
+    --neu-raised-sm:4px 4px 9px rgba(11,30,21,.12), -4px -4px 9px rgba(255,255,255,.8);
+    --neu-pressed:inset 4px 4px 9px rgba(11,30,21,.13), inset -4px -4px 9px rgba(255,255,255,.72);
+    --font-display:'General Sans','Söhne',-apple-system,system-ui,sans-serif;
+    --font-body:'Inter',-apple-system,system-ui,sans-serif;
+    --font-mono:'JetBrains Mono','Berkeley Mono',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--font-body);color:var(--fg);min-height:100%;
+    background:radial-gradient(110% 60% at 50% -5%, #f1f7f3 0%, transparent 55%),radial-gradient(100% 100% at 50% 120%, #cfe2d7 0%, #e7f0ea 100%);
+    background-attachment:fixed;padding:clamp(40px,7vw,80px) clamp(20px,5vw,72px) 90px}
+
+  /* hero */
+  .hero{max-width:760px;margin:0 auto clamp(36px,6vw,64px);text-align:center;display:flex;flex-direction:column;align-items:center}
+  .markbox{position:relative;width:96px;height:96px;margin-bottom:18px}
+  .halo{position:absolute;inset:-42%;border-radius:50%;background:radial-gradient(circle,rgba(77,175,130,.3),transparent 62%);filter:blur(12px);opacity:0}
+  .mark{position:relative;width:100%;height:100%;display:block;overflow:visible}
+  .eyebrow{font-family:var(--font-mono);font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--ever-500);margin-bottom:9px}
+  .wordmark{font-family:var(--font-display);font-weight:600;font-size:clamp(40px,8vw,58px);line-height:1;letter-spacing:-.03em;text-transform:lowercase}
+  .wordmark .green{color:var(--ever-500)}.wordmark .ever{color:var(--ever-900)}
+  .hero p{margin-top:16px;max-width:520px;font-size:clamp(14px,1.6vw,16px);line-height:1.6;color:var(--fg-muted)}
+  .meta{margin-top:20px;display:flex;flex-wrap:wrap;gap:9px;justify-content:center}
+  .pill{display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 15px;border-radius:999px;background:var(--ever-100);box-shadow:var(--neu-raised-sm);font-family:var(--font-mono);font-size:11.5px;color:var(--fg-muted)}
+  .pill svg{color:var(--ever-500)}
+
+  /* sections */
+  .flow{max-width:1180px;margin:0 auto}
+  .sec{margin-bottom:clamp(34px,5vw,52px)}
+  .sec-h{display:flex;align-items:baseline;gap:12px;margin-bottom:18px;padding-bottom:0}
+  .sec-h b{font-family:var(--font-display);font-weight:600;font-size:clamp(18px,2.4vw,22px);color:var(--ever-900);letter-spacing:-.02em}
+  .sec-h span{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--fg-subtle)}
+  .sec-h .line{flex:1;height:1px;background:linear-gradient(90deg,rgba(22,39,30,.14),transparent)}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:clamp(14px,1.6vw,20px)}
+  .card{display:flex;flex-direction:column;border-radius:20px;background:var(--ever-100);box-shadow:var(--neu-raised);overflow:hidden;text-decoration:none;color:inherit;cursor:pointer;transition:transform .2s cubic-bezier(.16,1,.3,1),box-shadow .2s;will-change:transform}
+  .card:hover{transform:translateY(-4px)}
+  .card:active{box-shadow:var(--neu-pressed)}
+  .thumb{position:relative;height:128px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .thumb .num{position:absolute;left:14px;top:10px;font-family:var(--font-mono);font-size:11px;font-weight:600;color:rgba(255,255,255,.85);letter-spacing:.04em}
+  .thumb .gi{color:rgba(255,255,255,.92);filter:drop-shadow(0 2px 6px rgba(0,0,0,.2))}
+  .thumb.dark .gi,.thumb.dark .num{color:rgba(234,243,237,.92)}
+  .cbody{padding:13px 15px 16px}
+  .cbody b{font-family:var(--font-display);font-weight:600;font-size:15px;color:var(--ever-900);letter-spacing:-.01em;display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .cbody b .arr{color:var(--ever-500);opacity:0;transform:translateX(-4px);transition:opacity .18s,transform .18s}
+  .card:hover .arr{opacity:1;transform:translateX(0)}
+  .cbody p{font-size:12px;line-height:1.45;color:var(--fg-muted);margin-top:5px}
+
+  footer{max-width:1180px;margin:8px auto 0;padding-top:26px;border-top:1px solid rgba(22,39,30,.1);text-align:center;font-size:12px;color:var(--fg-subtle);line-height:1.6}
+  footer b{color:var(--ever-700);font-weight:600}
+
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;transition-duration:.001ms!important}}
+</style>
+</head>
+<body>
+
+  <div class="hero">
+    <div class="markbox"><div class="halo"></div><svg class="mark" viewBox="0 0 240 240"></svg></div>
+    <div class="eyebrow">Mobile prototype · Vision Design System</div>
+    <div class="wordmark"><span class="ever">ever</span><span class="green">green</span></div>
+    <p>Plant care + community + AI — the daily home for plant people. Identify, care, diagnose, and connect. Fifteen animated screens, previewed across iPhone &amp; Pixel.</p>
+    <div class="meta">
+      <span class="pill" id="pillCount"></span>
+      <span class="pill"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 19h2"/></svg>iPhone + Pixel</span>
+      <span class="pill"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3v4M3 5h4M6 17v4M4 19h4M13 3l2.5 6.5L22 12l-6.5 2.5L13 21l-2.5-6.5L4 12l6.5-2.5Z"/></svg>GSAP motion</span>
+      <span class="pill"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>One neumorphic material</span>
+    </div>
+  </div>
+
+  <div class="flow" id="flow"></div>
+
+  <footer>
+    Built on the <b>Evergreen Vision Design System</b> — one neumorphic material, Evergreen-100 surface, single terracotta spark reserved for streaks.<br>
+    Tap any card to open the screen. Each opens both device frames with a Replay control.
+  </footer>
+
+<script>
+(function(){
+  const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const PETALS=['#2c694e','#377a5b','#46866a','#5fa17f','#7cbf9b','#9bd8b9','#a9dfc6','#8ed1b1'];
+  function flowerSVG(){let p='';for(let i=0;i<8;i++)p+=`<ellipse class="petal" cx="120" cy="68" rx="32" ry="57" transform="rotate(${i*45} 120 120)" fill="${PETALS[i]}" fill-opacity="0.88"/>`;
+    return `<g class="flower">${p}<circle class="heart" cx="120" cy="120" r="20" fill="#0c1f17"/><ellipse cx="113" cy="113" rx="6" ry="4.5" fill="rgba(154,215,184,.3)"/></g>`;}
+  document.querySelector('.mark').innerHTML=flowerSVG();
+
+  const G={
+    flower:'<svg width="40" height="40" viewBox="0 0 40 40" fill="currentColor"><g>'+Array.from({length:8},(_,i)=>`<ellipse cx="20" cy="11" rx="5.4" ry="9.5" transform="rotate(${i*45} 20 20)" opacity="0.9"/>`).join('')+'<circle cx="20" cy="20" r="3.4" fill="#0c1f17"/></g></svg>',
+    key:'<svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="4.5"/><path d="M11 11l8 8M16 16l2-2M18 18l2-2"/></svg>',
+    pin:'<svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 5-8 12-8 12s-8-7-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="2.6"/></svg>',
+    cloud:'<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17a4 4 0 0 1 .4-8A5 5 0 0 1 17 10a3.5 3.5 0 0 1-.5 7Z"/><circle cx="12" cy="12" r="0"/></svg>',
+    level:'<svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20v-7"/><path d="M12 13c0-2.5-2-4.5-5-4.5 0 3 2 4.5 5 4.5Z"/><path d="M12 13c0-2.8 2.2-5 5-5 0 3.2-2.2 5-5 5Z"/></svg>',
+    goals:'<svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="0.6" fill="currentColor"/></svg>',
+    room:'<svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 9-7 9 7"/><path d="M5 10v9h14v-9"/><path d="M10 19v-5h4v5"/></svg>',
+    camera:'<svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8a2 2 0 0 1 2-2h1.2a2 2 0 0 0 1.7-1l.5-.8a2 2 0 0 1 1.7-1h1.4a2 2 0 0 1 1.7 1l.5.8a2 2 0 0 0 1.7 1H18a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/><circle cx="12" cy="13" r="3.4"/></svg>',
+    spark:'<svg width="38" height="38" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8L12 2Z"/></svg>',
+    leaf:'<svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4c-8 0-14 5-14 12a6 6 0 0 0 12 0c1-5 1-8 2-12Z"/><path d="M7 21c0-6 3-10 8-13"/></svg>',
+    pot:'<svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9h14l-1.5 11h-11Z"/><path d="M12 9c0-3 2-5 5-5 0 3-2 5-5 5ZM12 9C12 6 10 4 7 4c0 3 2 5 5 5Z"/></svg>',
+    list:'<svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h7"/><path d="m3.5 6 1 1 1.5-2M3.5 12l1 1 1.5-2M3.5 18l1 1 1.5-2"/></svg>',
+    users:'<svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 6.2a3 3 0 0 1 0 5.6M18.5 20a5.5 5.5 0 0 0-3-4.9"/></svg>',
+    user:'<svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg>'
+  };
+  const GR={green:'linear-gradient(150deg,#3a8c66,#1c4d39)',deep:'linear-gradient(150deg,#2c694e,#0e2419)',mint:'linear-gradient(150deg,#5bb389,#2c6e51)',sage:'linear-gradient(150deg,#48876a,#23503c)',dark:'linear-gradient(150deg,#16352b,#0a140e)',terra:'linear-gradient(150deg,#c76b4f,#7c3a26)'};
+
+  const SECTIONS=[
+    {title:'First run',tag:'Sign-in first',items:[
+      {n:'01',t:'Splash',d:'Animated logo bloom on a modern dark canvas.',f:'evergreen-splash.html',g:'flower',bg:'dark',dark:true},
+      {n:'02',t:'Login',d:'Google · Apple · email magic-link, no anonymous path.',f:'evergreen-login.html',g:'key',bg:'green'}
+    ]},
+    {title:'Onboarding',tag:'Per-location setup · 6 steps',items:[
+      {n:'03',t:'Name',d:'Name your first Location — Home, Studio, Holiday house.',f:'evergreen-onboarding-name.html',g:'pin',bg:'mint'},
+      {n:'04',t:'Climate',d:'Location primer + city search → live climate preview.',f:'evergreen-onboarding-climate.html',g:'cloud',bg:'sage'},
+      {n:'05',t:'Level',d:'Beginner / some / expert — stored per Location.',f:'evergreen-onboarding-level.html',g:'level',bg:'green'},
+      {n:'06',t:'Goals',d:'Keep alive · grow · learn · share — multi-select.',f:'evergreen-onboarding-goals.html',g:'goals',bg:'mint'},
+      {n:'07',t:'Place & Space',d:'Pick a Place, then a Space within it.',f:'evergreen-onboarding-place-space.html',g:'room',bg:'sage'},
+      {n:'08',t:'First plant',d:'Identify or add manually → the “all set” bloom.',f:'evergreen-onboarding-first-plant.html',g:'camera',bg:'green'},
+      {n:'09',t:'Welcome',d:'One-time welcome framing the product loop.',f:'evergreen-welcome.html',g:'spark',bg:'deep'}
+    ]},
+    {title:'Daily app',tag:'5 tabs + smart camera FAB',items:[
+      {n:'12',t:'Today',d:'Urgency-grouped tasks, streak ring, weather advisory.',f:'evergreen-today.html',g:'list',bg:'mint'},
+      {n:'10',t:'Garden',d:'Location switcher, Place chips, plants by Space.',f:'evergreen-garden.html',g:'leaf',bg:'green'},
+      {n:'11',t:'Plant detail',d:'Care cockpit — carousel, tabs, treatment, tasks.',f:'evergreen-plant-detail.html',g:'pot',bg:'sage'},
+      {n:'13',t:'Capture & Identify',d:'Camera → confidence-gated ID & Dr. Plant.',f:'evergreen-capture-identify.html',g:'camera',bg:'dark',dark:true},
+      {n:'14',t:'Community',d:'Feed · Swap · Challenges, moderated, with compose.',f:'evergreen-community.html',g:'users',bg:'mint'},
+      {n:'15',t:'Profile',d:'Stats, evergreen+ paywall, locations, dark toggle.',f:'evergreen-profile.html',g:'user',bg:'sage'}
+    ]},
+    {title:'Social & alerts',tag:'DMs and the global bell',items:[
+      {n:'16',t:'Messages',d:'1:1 chat with swap context, composer & moderation.',f:'evergreen-messages.html',g:'users',bg:'mint'},
+      {n:'17',t:'Notifications',d:'Care · Community · System, with mark-all-read.',f:'evergreen-notifications.html',g:'spark',bg:'green'}
+    ]},
+    {title:'Profile & settings',tag:'the Me hub, deep-linked',items:[
+      {n:'18',t:'Memorial',d:'Archived plants, kept with care — never deleted.',f:'evergreen-memorial.html',g:'leaf',bg:'sage'},
+      {n:'19',t:'Wishlist',d:'Species you’re hoping to grow next.',f:'evergreen-wishlist.html',g:'spark',bg:'mint'},
+      {n:'20',t:'Identifications',d:'Past scans with confidence & outcome.',f:'evergreen-identification-history.html',g:'camera',bg:'green'},
+      {n:'21',t:'Permissions',d:'Camera, location, notifications & photos.',f:'evergreen-permissions.html',g:'key',bg:'sage'},
+      {n:'22',t:'Account',d:'Sign-in methods, data export & delete.',f:'evergreen-account.html',g:'user',bg:'deep'},
+      {n:'23',t:'About & legal',d:'Version, legal links and contact.',f:'evergreen-about.html',g:'flower',bg:'dark',dark:true}
+    ]},
+    {title:'Legal & feedback',tag:'About links · ⋮ menus',items:[
+      {n:'24',t:'Terms of Service',d:'Plain-language reader with scroll progress.',f:'evergreen-terms.html',g:'list',bg:'sage'},
+      {n:'25',t:'Privacy Policy',d:'Reader with a data-at-a-glance card.',f:'evergreen-privacy.html',g:'key',bg:'green'},
+      {n:'26',t:'Acknowledgements',d:'Warm credits to the plant community.',f:'evergreen-acknowledgements.html',g:'flower',bg:'mint'},
+      {n:'27',t:'Report abuse',d:'Opened from a ⋮ menu — names the reported subject.',f:'evergreen-report.html',g:'goals',bg:'deep'},
+      {n:'29',t:'Blocked accounts',d:'Manage and unblock people — from About.',f:'evergreen-blocked.html',g:'key',bg:'sage'},
+      {n:'28',t:'Rate Evergreen',d:'Star rating with smart App Store / feedback routing.',f:'evergreen-rate.html',g:'spark',bg:'green'}
+    ]}
+  ];
+
+  const arr='<svg class="arr" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>';
+  let total=0;
+  const flow=document.getElementById('flow');
+  flow.innerHTML=SECTIONS.map(s=>{
+    const cards=s.items.map(it=>{total++;return `<a class="card" href="${it.f}">
+      <div class="thumb${it.dark?' dark':''}" style="background:${GR[it.bg]}"><span class="num">${it.n}</span><span class="gi">${G[it.g]}</span></div>
+      <div class="cbody"><b>${it.t}${arr}</b><p>${it.d}</p></div></a>`;}).join('');
+    return `<section class="sec"><div class="sec-h"><b>${s.title}</b><span>${s.tag}</span><span class="line"></span></div><div class="grid">${cards}</div></section>`;
+  }).join('');
+  document.getElementById('pillCount').innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>'+total+' screens';
+
+  // animate
+  const fl=document.querySelector('.flower'),petals=document.querySelectorAll('.petal'),heart=document.querySelector('.heart');
+  const cards=document.querySelectorAll('.card');
+  function play(){
+    if(REDUCE){gsap.set(['.halo',petals,heart,'.eyebrow','.wordmark','.hero p','.meta',cards],{opacity:1,y:0,scale:1});return;}
+    gsap.set([petals,heart],{svgOrigin:'120 120'});
+    gsap.timeline({defaults:{ease:'power3.out'}})
+      .fromTo('.halo',{scale:.4,opacity:0},{scale:1,opacity:1,duration:.9,ease:'power2.out'},0)
+      .fromTo(heart,{scale:0,opacity:0},{scale:1,opacity:1,duration:.6,ease:'back.out(2.2)'},.1)
+      .fromTo(petals,{scale:0,opacity:0},{scale:1,opacity:.88,duration:.7,ease:'back.out(1.7)',stagger:.06},'-=0.3')
+      .fromTo(['.eyebrow','.wordmark','.hero p','.meta'],{y:16,opacity:0},{y:0,opacity:1,duration:.55,stagger:.08},'-=0.2')
+      .fromTo(cards,{y:22,opacity:0},{y:0,opacity:1,duration:.5,stagger:.035},'-=0.2')
+      .add(()=>gsap.to(fl,{rotation:5,duration:6,svgOrigin:'120 120',ease:'sine.inOut',yoyo:true,repeat:-1}));
+  }
+  gsap.set(['.halo',petals,heart,'.eyebrow','.wordmark','.hero p','.meta',cards],{opacity:0});
+  if(document.fonts&&document.fonts.ready){document.fonts.ready.then(play);}else{play();}
+  setTimeout(()=>{if(getComputedStyle(document.querySelector('.wordmark')).opacity==='0')play();},500);
+})();
+</script>
+</body>
+</html>

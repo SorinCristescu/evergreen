@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Evergreen — Customer Journey Map</title>
+<style>
+  :root {
+    --ever-900: #0c1f17;
+    --ever-800: #112a1f;
+    --ever-700: #16352a;
+    --ever-500: #2c694e;
+    --ever-400: #3e7c4f;
+    --ever-300: #5bb389;
+    --ever-100: #d8e9df;
+    --terra: #c76b4f;
+    --gold: #d9a441;
+    --ink: #eaf3ec;
+    --muted: #9fb6a8;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: radial-gradient(1200px 600px at 20% -10%, #16352576, transparent),
+                var(--ever-900);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    padding: 32px 28px 56px;
+  }
+  header { max-width: 1100px; margin: 0 auto 8px; }
+  h1 { font-size: 26px; margin: 0 0 4px; letter-spacing: .2px; }
+  .tagline { color: var(--ever-300); font-weight: 600; margin: 0 0 14px; }
+  .legend { display: flex; gap: 18px; flex-wrap: wrap; font-size: 12.5px; color: var(--muted); margin-bottom: 6px; }
+  .legend span { display: inline-flex; align-items: center; gap: 7px; }
+  .dot { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
+  .dot.phase { background: var(--ever-500); }
+  .dot.router { background: var(--gold); transform: rotate(45deg); border-radius: 2px; }
+  .dot.gate { background: var(--terra); border-radius: 999px; }
+  .hint { color: var(--muted); font-size: 12.5px; margin: 6px 0 0; }
+
+  .track {
+    display: flex; align-items: stretch; gap: 0;
+    overflow-x: auto; padding: 26px 4px 30px;
+    scroll-snap-type: x proximity;
+  }
+  .arrow {
+    align-self: center; flex: 0 0 auto;
+    color: var(--ever-300); font-size: 26px; padding: 0 6px; opacity: .8;
+  }
+  .phase {
+    flex: 0 0 auto; width: 232px; scroll-snap-align: start;
+    background: linear-gradient(180deg, var(--ever-800), var(--ever-700));
+    border: 1px solid #1f4332; border-radius: 18px;
+    padding: 14px 14px 16px; display: flex; flex-direction: column; gap: 9px;
+    box-shadow: 0 10px 28px rgba(0,0,0,.35);
+  }
+  .phase.no-shot { width: 200px; background: linear-gradient(180deg, #13281f, #0f2017); border-style: dashed; }
+  .pnum {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px; border-radius: 9px;
+    background: var(--ever-500); color: #eafaef; font-weight: 700; font-size: 13px;
+  }
+  .phead { display: flex; align-items: center; gap: 10px; }
+  .pname { font-weight: 700; font-size: 14.5px; line-height: 1.2; }
+  .emotion { color: var(--ever-300); font-size: 11.5px; font-style: italic; min-height: 28px; }
+  .shots { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
+  .shots a { display: block; line-height: 0; }
+  .shots img {
+    width: 96px; height: auto; border-radius: 9px;
+    border: 1px solid #24503b; background: #0a140e;
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .shots img:hover { transform: scale(1.04); box-shadow: 0 8px 20px rgba(0,0,0,.5); }
+  .shots.single img { width: 150px; }
+  .placeholder {
+    border: 1px dashed #2c5a42; border-radius: 9px; color: var(--muted);
+    font-size: 11.5px; padding: 14px 10px; text-align: center; background: #0c1c14;
+  }
+  .gate {
+    margin-top: 2px; align-self: flex-start;
+    background: rgba(199,107,79,.16); color: #f0b39f;
+    border: 1px solid rgba(199,107,79,.4); border-radius: 999px;
+    font-size: 10.5px; font-weight: 700; padding: 3px 9px;
+  }
+
+  /* care-state router node */
+  .router {
+    flex: 0 0 auto; width: 210px; align-self: center;
+    display: flex; flex-direction: column; gap: 10px;
+    background: linear-gradient(180deg, #2a230f, #1c1809);
+    border: 1px solid rgba(217,164,65,.45); border-radius: 16px; padding: 14px;
+    box-shadow: 0 10px 28px rgba(0,0,0,.35);
+  }
+  .router .rtitle { display:flex; align-items:center; gap:8px; font-weight:700; font-size:13px; color: var(--gold); }
+  .router .diamond { width: 13px; height: 13px; background: var(--gold); transform: rotate(45deg); border-radius: 2px; }
+  .router .branch { font-size: 11.5px; color: var(--ink); background: rgba(217,164,65,.10); border:1px solid rgba(217,164,65,.25); border-radius: 9px; padding: 7px 9px; }
+  .router .branch b { color: var(--ever-300); }
+
+  footer { max-width: 1100px; margin: 26px auto 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+  footer code { color: var(--ever-300); }
+  a { color: inherit; text-decoration: none; }
+</style>
+</head>
+<body>
+  <header>
+    <h1>🌿 Evergreen — Customer Journey Map</h1>
+    <p class="tagline">Identify. Care. Diagnose. Connect.</p>
+    <div class="legend">
+      <span><i class="dot phase"></i> Journey phase</span>
+      <span><i class="dot router"></i> care-state router (branch)</span>
+      <span><i class="dot gate"></i> Evergreen+ paywall gate</span>
+    </div>
+    <p class="hint">Scroll horizontally to follow the flow · click any screen to open it full-size.</p>
+  </header>
+
+  <div class="track" id="track"></div>
+
+  <footer>
+    <p><b>How to read this map.</b> Each card is one phase of the end-to-end experience, in order, left to right.
+    After <b>Phase 4 · Welcome</b>, the <code>care-state router</code> decides where every subsequent launch lands —
+    Today (something due), Garden (caught up), or the first-plant screen (no plants yet).
+    The terracotta <span style="color:#f0b39f">Evergreen+</span> badges mark where a free-tier cap raises the contextual Paywall (Phase 11).</p>
+    <p>Companion narrative: <a href="./customer-journey.md"><code>customer-journey.md</code></a>. Screens live in <code>./evergreen-screens/</code>.</p>
+  </footer>
+
+<script>
+  var S = "evergreen-screens/";
+  var phases = [
+    { n: "0", name: "Discovery & Download", emotion: "Curious / Hopeful — “this might actually work”", shots: [] },
+    { n: "1", name: "First Launch & Auth", emotion: "Relieved (no password)", shots: [S+"splash-screen.png", S+"auth-screens/sign-in-with-email-1.png"] },
+    { n: "2", name: "Location Onboarding · 6 steps", emotion: "Engaged / Slightly uncertain (“what is a Space?”)", shots: [S+"onboarding-screens/onboarding-step-1.png", S+"onboarding-screens/onboarding-step-3.png", S+"onboarding-screens/onboarding-step-5.png", S+"onboarding-screens/onboarding-step-6.png"] },
+    { n: "3", name: "Identification & Add to Garden", emotion: "Delighted / Trusting (the AI knew it)", shots: [S+"add-first-plant-screens/add-first-plant-photo-identify.png", S+"add-first-plant-screens/add-first-plant-identify.png"] },
+    { n: "4", name: "Welcome & First Impression", emotion: "Oriented", shots: [] },
+    { n: "5", name: "Daily Care Ritual · Today", emotion: "Motivated / Slightly anxious about the streak", shots: [S+"today-screen.png", S+"weather-screen.png"] },
+    { n: "6", name: "Garden Exploration", emotion: "Proud (my collection, organised)", shots: [S+"garden-screen.png"] },
+    { n: "7", name: "Plant Detail & Ongoing Care", emotion: "Attached (this plant has a history now)", shots: [S+"plant-details-screens/plant-details-care.png", S+"plant-details-screens/plant-details-about.png", S+"plant-details-screens/plant-details-timeline.png", S+"plant-details-screens/plant-details-journal.png"] },
+    { n: "8", name: "Dr. Plant · Diagnosis", emotion: "Relieved / Grateful (I know what’s wrong)", shots: [S+"plant-details-screens/plant-details-dr-plant-diagnose.png", S+"plant-details-screens/plant-details-care-treatment.png"], gate: "Evergreen+ · Diagnose" },
+    { n: "9", name: "Community & Social", emotion: "Social / Seen", shots: [S+"community-screens/community-feed.png", S+"community-screens/community-challenges.png", S+"community-screens/community-add-post.png"], gate: "Evergreen+ · Post" },
+    { n: "10", name: "Profile, Settings & Growth", emotion: "Reflective / In control", shots: [S+"profile-screens/profile-1.png", S+"profile-screens/profile-account.png"] },
+    { n: "11", name: "Subscription & Paywall", emotion: "Considered (I see the value) → Committed", shots: [] },
+    { n: "12", name: "Long-term Retention", emotion: "Habitual / Proud", shots: [S+"today-screen.png", S+"garden-screen.png"] }
+  ];
+
+  function shotsHtml(arr) {
+    if (!arr.length) return '<div class="placeholder">Screen not captured<br>(see narrative)</div>';
+    var cls = arr.length === 1 ? "shots single" : "shots";
+    return '<div class="' + cls + '">' + arr.map(function (s) {
+      return '<a href="' + s + '" target="_blank" rel="noopener"><img loading="lazy" src="' + s + '" alt=""></a>';
+    }).join("") + '</div>';
+  }
+
+  function phaseHtml(p) {
+    var html = '<div class="phase' + (p.shots.length ? '' : ' no-shot') + '">';
+    html += '<div class="phead"><span class="pnum">' + p.n + '</span><span class="pname">' + p.name + '</span></div>';
+    html += '<div class="emotion">' + p.emotion + '</div>';
+    html += shotsHtml(p.shots);
+    if (p.gate) html += '<span class="gate">→ ' + p.gate + '</span>';
+    html += '</div>';
+    return html;
+  }
+
+  var routerHtml =
+    '<div class="router">' +
+      '<div class="rtitle"><span class="diamond"></span> care-state router</div>' +
+      '<div class="branch">Overdue / due today → <b>Today</b></div>' +
+      '<div class="branch">Caught up → <b>Garden</b></div>' +
+      '<div class="branch">0 plants → <b>First-plant</b></div>' +
+    '</div>';
+
+  var arrow = '<div class="arrow">→</div>';
+  var parts = [];
+  phases.forEach(function (p, i) {
+    parts.push(phaseHtml(p));
+    if (p.n === "4") { parts.push(arrow); parts.push(routerHtml); }
+    if (i < phases.length - 1) parts.push(arrow);
+  });
+  document.getElementById("track").innerHTML = parts.join("");
+</script>
+</body>
+</html>

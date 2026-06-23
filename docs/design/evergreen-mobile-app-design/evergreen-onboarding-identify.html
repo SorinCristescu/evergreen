@@ -1,0 +1,357 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evergreen · Onboarding — Identify</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@500,600,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+  :root{
+    --ever-100:#d8e9df;--ever-400:#4daf82;--ever-500:#2c694e;--ever-700:#1b4332;--ever-900:#0c1f17;
+    --leaf:#3e7c4f;--warning:#b5821f;--warn-tint:rgba(181,130,31,.16);
+    --conf-high:#3e7c4f;--conf-med:#b5821f;--conf-low:#7d9488;
+    --fg:#16271e;--fg-muted:#4b6357;--fg-subtle:#7d9488;--accent-tint:rgba(46,109,78,.12);
+    --neu-raised:6px 6px 14px rgba(11,30,21,.13), -6px -6px 13px rgba(255,255,255,.80);
+    --neu-raised-sm:4px 4px 9px rgba(11,30,21,.12), -4px -4px 9px rgba(255,255,255,.78);
+    --neu-pressed:inset 4px 4px 9px rgba(11,30,21,.13), inset -4px -4px 9px rgba(255,255,255,.72);
+    --font-display:'General Sans','Söhne',-apple-system,system-ui,sans-serif;
+    --font-body:'Inter',-apple-system,system-ui,sans-serif;
+    --font-mono:'JetBrains Mono','Berkeley Mono',ui-monospace,monospace;--hit:44px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:var(--font-body);color:var(--fg);background:radial-gradient(120% 80% at 50% -10%, #f1f7f3 0%, transparent 55%),radial-gradient(100% 100% at 50% 120%, #cfe2d7 0%, #e6f0ea 100%);min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(26px,5vh,52px);padding:48px 24px 120px;overflow-x:hidden}
+
+  .studio-head{position:relative;z-index:2;text-align:center;display:flex;flex-direction:column;align-items:center;gap:9px}
+  .studio-head .kicker{font-family:var(--font-mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:#5c8772}
+  .studio-head h1{font-family:var(--font-display);font-weight:600;font-size:clamp(19px,3.2vw,28px);letter-spacing:-.02em;color:var(--ever-700)}
+
+  .gallery{position:relative;z-index:2;display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:center;gap:clamp(32px,6vw,72px)}
+  .device{display:flex;flex-direction:column;align-items:center;gap:18px}
+  .device-cap{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#5c8772}
+
+  .phone{position:relative;background:linear-gradient(150deg,#2c2f30,#16191a 46%,#0a0c0c);box-shadow:0 2px 0 1px rgba(255,255,255,.05) inset,0 55px 80px -42px rgba(11,30,21,.5),0 0 0 1px rgba(0,0,0,.55)}
+  .screen{position:relative;overflow:hidden;width:300px;height:650px;background:#0a140e}
+  .iphone{width:318px;height:668px;border-radius:56px;padding:9px}.iphone .screen{border-radius:48px}
+  .iphone .island{position:absolute;z-index:60;top:18px;left:50%;transform:translateX(-50%);width:88px;height:27px;border-radius:16px;background:#000}
+  .iphone .island::after{content:"";position:absolute;right:11px;top:50%;transform:translateY(-50%);width:9px;height:9px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#26343b,#05070a)}
+  .iphone .home-ind{position:absolute;z-index:60;bottom:9px;left:50%;transform:translateX(-50%);width:120px;height:5px;border-radius:3px;background:rgba(255,255,255,.55)}
+  .pixel{width:312px;height:664px;border-radius:34px;padding:8px;background:linear-gradient(150deg,#3a3d3e,#1b1e1f 46%,#0c0e0e)}.pixel .screen{border-radius:27px}
+  .pixel .punch{position:absolute;z-index:60;top:15px;left:50%;transform:translateX(-50%);width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#23323a,#04060a);box-shadow:0 0 0 2px rgba(255,255,255,.12)}
+  .pixel .nav-pill{position:absolute;z-index:60;bottom:10px;left:50%;transform:translateX(-50%);width:96px;height:5px;border-radius:3px;background:rgba(255,255,255,.6)}
+
+  .statusbar{position:absolute;z-index:55;top:0;left:0;right:0;height:50px;display:flex;align-items:center;justify-content:space-between;padding:18px 26px 0;font-family:var(--font-mono);font-size:12.5px;color:#fff;pointer-events:none;text-shadow:0 1px 3px rgba(0,0,0,.4)}
+  .pixel .statusbar{padding-top:15px}
+  .statusbar .icons{display:flex;align-items:center;gap:6px}.statusbar svg{display:block}
+
+  .app{position:absolute;inset:0;z-index:10}
+
+  .view{position:absolute;inset:0;overflow:hidden;
+    background:radial-gradient(45% 40% at 28% 30%,rgba(77,175,130,.5),transparent 62%),radial-gradient(55% 50% at 74% 64%,rgba(27,67,50,.85),transparent 60%),radial-gradient(40% 35% at 60% 22%,rgba(101,165,134,.4),transparent 60%),linear-gradient(160deg,#16352576,#0a140e 70%,#060d09)}
+  .view::after{content:"";position:absolute;inset:0;background:radial-gradient(70% 60% at 50% 45%,transparent 55%,rgba(0,0,0,.5) 100%)}
+
+  .ctop{position:absolute;z-index:20;top:46px;left:14px;right:14px;display:flex;align-items:center;justify-content:space-between}
+  .pixel .ctop{top:42px}
+  .cbtn{width:38px;height:38px;border-radius:50%;border:0;cursor:pointer;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.16);backdrop-filter:blur(6px);color:#fff;-webkit-tap-highlight-color:transparent}
+  .cbtn:active{background:rgba(255,255,255,.3)}
+  .stepchip{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 13px;border-radius:999px;background:rgba(0,0,0,.42);backdrop-filter:blur(6px);color:#fff;font-family:var(--font-mono);font-size:11px;letter-spacing:.04em}
+  .stepchip .dots{display:flex;gap:3px}
+  .stepchip .dots i{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.4)}
+  .stepchip .dots i.on{background:var(--ever-400)}
+  .skip{border:0;background:transparent;cursor:pointer;color:rgba(255,255,255,.85);font-family:var(--font-body);font-weight:600;font-size:13px;padding:6px 4px}
+
+  .reticle{position:absolute;z-index:15;top:50%;left:50%;width:208px;height:208px;margin:-104px 0 0 -104px}
+  .reticle i{position:absolute;width:30px;height:30px;border:2.5px solid rgba(255,255,255,.9);border-radius:4px}
+  .reticle i:nth-child(1){top:0;left:0;border-right:0;border-bottom:0;border-top-left-radius:14px}
+  .reticle i:nth-child(2){top:0;right:0;border-left:0;border-bottom:0;border-top-right-radius:14px}
+  .reticle i:nth-child(3){bottom:0;left:0;border-right:0;border-top:0;border-bottom-left-radius:14px}
+  .reticle i:nth-child(4){bottom:0;right:0;border-left:0;border-top:0;border-bottom-right-radius:14px}
+  .rhint{position:absolute;z-index:15;top:50%;left:50%;transform:translate(-50%,124px);width:220px;text-align:center;color:rgba(255,255,255,.92);font-size:12.5px;line-height:1.4;text-shadow:0 1px 4px rgba(0,0,0,.5)}
+
+  .scan{position:absolute;inset:0;z-index:30;display:none;background:rgba(6,13,9,.5);backdrop-filter:blur(1px)}
+  .scan.show{display:block}
+  .scanline{position:absolute;left:46px;right:46px;top:30%;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,var(--ever-400),transparent);box-shadow:0 0 16px 3px rgba(77,175,130,.6)}
+  .scantext{position:absolute;left:0;right:0;bottom:38%;text-align:center;color:#fff;font-family:var(--font-mono);font-size:12px;letter-spacing:.1em}
+  .flash-fx{position:absolute;inset:0;z-index:40;background:#fff;opacity:0;pointer-events:none}
+
+  .cbottom{position:absolute;z-index:20;left:0;right:0;bottom:26px;display:flex;flex-direction:column;align-items:center;gap:16px}
+  .pixel .cbottom{bottom:30px}
+  .clabel{display:inline-flex;align-items:center;gap:7px;color:rgba(255,255,255,.85);font-size:12px;font-weight:500;background:rgba(0,0,0,.35);backdrop-filter:blur(6px);height:30px;padding:0 13px;border-radius:999px}
+  .clabel svg{color:var(--ever-400)}
+  .shutterrow{display:flex;align-items:center;justify-content:center;gap:44px}
+  .smini{width:42px;height:42px;border-radius:11px;border:1.5px solid rgba(255,255,255,.5);cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;overflow:hidden;background:linear-gradient(150deg,#3a8c66,#1c4d39)}
+  .shutter{position:relative;width:70px;height:70px;border-radius:50%;border:0;cursor:pointer;background:transparent;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent}
+  .shutter::before{content:"";position:absolute;width:70px;height:70px;border-radius:50%;border:4px solid rgba(255,255,255,.9)}
+  .shutter span{width:56px;height:56px;border-radius:50%;background:#fff;transition:transform .12s}
+  .shutter:active span{transform:scale(.88)}
+  .sflip{width:42px;height:42px;border-radius:50%;border:0;cursor:pointer;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.16);backdrop-filter:blur(6px);color:#fff}
+  .manual{border:0;background:transparent;cursor:pointer;color:rgba(255,255,255,.78);font-family:var(--font-body);font-weight:600;font-size:12.5px;padding:4px}
+  .manual u{text-underline-offset:3px}
+
+  /* result sheet */
+  .scrim{position:absolute;inset:0;z-index:48;background:rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .25s}
+  .scrim.open{opacity:1;pointer-events:auto}
+  .sheet{position:absolute;z-index:49;left:0;right:0;bottom:0;max-height:88%;overflow-y:auto;border-radius:26px 26px 0 0;background:var(--ever-100);box-shadow:0 -16px 40px rgba(0,0,0,.3);padding:10px 18px calc(22px + env(safe-area-inset-bottom));transform:translateY(100%);transition:transform .34s cubic-bezier(.16,1,.3,1);scrollbar-width:none}
+  .sheet::-webkit-scrollbar{display:none}
+  .sheet.open{transform:translateY(0)}
+  .handle{width:40px;height:5px;border-radius:3px;background:rgba(22,39,30,.18);margin:4px auto 14px}
+
+  .rhead{display:flex;align-items:center;gap:13px;margin-bottom:13px}
+  .rthumb{width:58px;height:58px;border-radius:14px;flex:none;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.55);background:linear-gradient(150deg,#3a8c66,#1c4d39);box-shadow:var(--neu-raised-sm)}
+  .rh-tx{flex:1;min-width:0}
+  .rh-tx .k{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-subtle)}
+  .rh-tx b{display:block;font-family:var(--font-display);font-weight:600;font-size:19px;color:var(--ever-900);letter-spacing:-.02em;margin-top:2px}
+  .rh-tx .cn{font-size:12px;color:var(--fg-muted);margin-top:1px}
+  .confpill{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 11px;border-radius:999px;font-family:var(--font-mono);font-weight:600;font-size:11.5px;background:rgba(62,124,79,.14);color:var(--conf-high)}
+  .confpill.med{background:var(--warn-tint);color:var(--conf-med)}
+  .confpill.low{background:rgba(125,148,136,.18);color:var(--conf-low)}
+
+  .carePrev{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+  .cp{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:14px;background:var(--ever-100);box-shadow:var(--neu-pressed)}
+  .cp .ci{color:var(--ever-500);flex:none}
+  .cp .cl{font-family:var(--font-mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-subtle)}
+  .cp .cv{font-family:var(--font-display);font-weight:600;font-size:12.5px;color:var(--ever-900);margin-top:1px}
+
+  .destination{display:flex;align-items:center;gap:9px;padding:11px 13px;border-radius:13px;background:var(--ever-100);box-shadow:var(--neu-pressed);margin-bottom:14px;font-size:12.5px;color:var(--fg-muted)}
+  .destination svg{color:var(--ever-500);flex:none}
+  .destination b{color:var(--ever-700);font-weight:600}
+
+  .btn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;height:50px;border:0;cursor:pointer;border-radius:15px;background:var(--ever-100);box-shadow:var(--neu-raised);font-family:var(--font-body);font-weight:600;font-size:15px;color:var(--ever-700);transition:box-shadow .14s;-webkit-tap-highlight-color:transparent;margin-bottom:9px}
+  .btn:active{box-shadow:var(--neu-pressed)}
+  .btn .arr{display:flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--accent-tint);color:var(--ever-500)}
+  .btn.sec{box-shadow:var(--neu-raised-sm);font-size:14px;height:46px}
+  .btn.done{color:var(--leaf)}
+  .ghostlink{display:block;width:100%;text-align:center;border:0;background:transparent;cursor:pointer;font-family:var(--font-body);font-weight:500;font-size:13px;color:var(--fg-muted);padding:8px;margin-top:2px}
+  .ghostlink:hover{color:var(--ever-700)}
+
+  .honest{display:flex;gap:8px;align-items:flex-start;font-size:11.5px;line-height:1.45;color:var(--fg-muted);margin:2px 0 14px}
+  .honest svg{flex:none;margin-top:1px;color:var(--ever-500)}
+  .cand{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:14px;background:var(--ever-100);box-shadow:var(--neu-raised);margin-bottom:9px;cursor:pointer}
+  .cand .cth{width:44px;height:44px;border-radius:11px;flex:none;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);box-shadow:var(--neu-raised-sm)}
+  .cand .ctx{flex:1;min-width:0}
+  .cand .ctx b{display:block;font-family:var(--font-display);font-weight:600;font-size:14px;color:var(--ever-900)}
+  .cand .ctx span{font-size:11px;color:var(--fg-subtle)}
+  .escape{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:6px}
+  .escape .btn{margin:0;height:44px;font-size:13px}
+  .escape .wide{grid-column:1 / -1}
+
+  /* success completion */
+  .success{position:absolute;inset:0;z-index:52;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;padding:30px;background:radial-gradient(120% 70% at 50% 38%, #e6f1eb 0%, var(--ever-100) 60%)}
+  .success.show{display:flex}
+  .succ-mark{width:96px;height:96px;margin-bottom:14px}
+  .succ-mark svg{width:100%;height:100%;display:block;overflow:visible}
+  .success h2{font-family:var(--font-display);font-weight:600;font-size:25px;color:var(--ever-900);letter-spacing:-.02em}
+  .success p{font-size:13.5px;color:var(--fg-muted);max-width:240px;line-height:1.5}
+  .success p b{color:var(--ever-700);font-weight:600}
+  .success .ent{margin-top:20px;width:100%;max-width:240px}
+
+  .replay{position:fixed;z-index:50;bottom:34px;left:50%;transform:translateX(-50%);display:inline-flex;align-items:center;gap:10px;min-height:var(--hit);padding:0 22px;border-radius:999px;cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:14px;color:var(--ever-700);background:var(--ever-100);box-shadow:var(--neu-raised);border:0;transition:transform .16s,box-shadow .16s}
+  .replay:hover{transform:translateX(-50%) translateY(-2px)}.replay:active{transform:translateX(-50%);box-shadow:var(--neu-pressed)}
+  .replay svg{width:17px;height:17px;stroke:var(--ever-500)}
+
+  @media (max-width:740px){
+    .iphone{width:290px;height:610px}.iphone .screen{width:272px;height:592px}
+    .pixel{width:286px;height:608px}.pixel .screen{width:270px;height:592px}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important}}
+</style>
+</head>
+<body>
+
+  <header class="studio-head">
+    <span class="kicker">Evergreen · 08b Onboarding</span>
+    <h1>Step 6 → Identify with camera → all set</h1>
+  </header>
+
+  <div class="gallery">
+    <div class="device">
+      <div class="phone iphone">
+        <div class="island"></div>
+        <div class="screen" data-screen-label="08b Onboarding · Identify" data-od-id="onb-identify-ios">
+          <div class="statusbar"><span>9:41</span><span class="icons">
+            <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4.5" width="3" height="7.5" rx="1" fill="currentColor"/><rect x="10" y="2" width="3" height="10" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor" opacity=".5"/></svg>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 10.6 9.4 9c-.8-.7-2-.7-2.8 0L8 10.6Z" fill="currentColor"/><path d="M4.6 6.2C6.5 4.4 9.5 4.4 11.4 6.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M2.2 3.6c3.2-3 8.4-3 11.6 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x=".7" y=".7" width="22" height="10.6" rx="3" stroke="currentColor" stroke-opacity=".6"/><rect x="2.4" y="2.4" width="15" height="7.2" rx="1.6" fill="currentColor"/><rect x="24" y="4" width="1.6" height="4" rx=".8" fill="currentColor" opacity=".6"/></svg>
+          </span></div>
+          <div class="app"></div>
+          <div class="home-ind"></div>
+        </div>
+      </div>
+      <span class="device-cap">iPhone 15 Pro</span>
+    </div>
+
+    <div class="device">
+      <div class="phone pixel">
+        <div class="punch"></div>
+        <div class="screen" data-screen-label="08b Onboarding · Identify" data-od-id="onb-identify-android">
+          <div class="statusbar"><span>9:41</span><span class="icons">
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M2.2 3.6c3.2-3 8.4-3 11.6 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M4.6 6.2C6.5 4.4 9.5 4.4 11.4 6.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="9.6" r="1.3" fill="currentColor"/></svg>
+            <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4.5" width="3" height="7.5" rx="1" fill="currentColor"/><rect x="10" y="2" width="3" height="10" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor"/></svg>
+            <svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x=".7" y="1.4" width="20" height="9.2" rx="2.4" stroke="currentColor" stroke-opacity=".6"/><rect x="2.2" y="2.9" width="14" height="6.2" rx="1.2" fill="currentColor"/><rect x="21.6" y="4.2" width="1.6" height="3.6" rx=".8" fill="currentColor" opacity=".6"/></svg>
+          </span></div>
+          <div class="app"></div>
+          <div class="nav-pill"></div>
+        </div>
+      </div>
+      <span class="device-cap">Pixel 8 Pro</span>
+    </div>
+  </div>
+
+  <button class="replay" id="replay" aria-label="Reset">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v4h4"/></svg>
+    Reset
+  </button>
+
+<script>
+(function(){
+  const REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const PETALS=['#2c694e','#377a5b','#46866a','#5fa17f','#7cbf9b','#9bd8b9','#a9dfc6','#8ed1b1'];
+  function flowerSVG(){let p='';for(let i=0;i<8;i++)p+=`<ellipse class="petal" cx="120" cy="68" rx="32" ry="57" transform="rotate(${i*45} 120 120)" fill="${PETALS[i]}" fill-opacity="0.86"/>`;
+    return `<g class="flower">${p}<circle class="heart" cx="120" cy="120" r="20" fill="#0c1f17"/><ellipse cx="113" cy="113" rx="6" ry="4.5" fill="rgba(154,215,184,.30)"/></g>`;}
+  const I={
+    close:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
+    flip:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h13l-2-2M21 17H8l2 2"/><path d="M3 7v4M21 17v-4"/></svg>',
+    img:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="8.5" cy="9.5" r="1.6"/><path d="m4 17 4.5-4.5 4 4L16 13l4 4"/></svg>',
+    scan:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/></svg>',
+    leaf:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4c-8 0-14 5-14 12a6 6 0 0 0 12 0c1-5 1-8 2-12Z"/><path d="M7 21c0-6 3-10 8-13"/></svg>',
+    arrow:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>',
+    check:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
+    sun:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 3v1.5M12 19.5V21M3 12h1.5M19.5 12H21M5.6 5.6l1 1M17.4 17.4l1 1M18.4 5.6l-1 1M6.6 17.4l-1 1"/></svg>',
+    drop:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 6.4 6 11a6 6 0 0 1-12 0c0-4.6 6-11 6-11Z"/></svg>',
+    pin:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 5-8 12-8 12s-8-7-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="2.4"/></svg>',
+    shield:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 5 6v5c0 4.2 2.9 7.6 7 9 4.1-1.4 7-4.8 7-9V6Z"/><path d="m9.5 12 1.8 1.8 3.4-3.6"/></svg>',
+    spark:'<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.6 5.4L19 9l-5.4 1.6L12 16l-1.6-5.4L5 9l5.4-1.6L12 2Z"/></svg>',
+    search:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2"/></svg>',
+    retake:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v4h4"/></svg>',
+    spin:'<svg class="spin" width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-opacity=".22" stroke-width="2.4"/><path d="M12 3.5a8.5 8.5 0 0 1 8.5 8.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>'
+  };
+  const GREEN='linear-gradient(150deg,#3a8c66,#1c4d39)';
+  const SPACE='Living Room';
+  const CARE=`<div class="carePrev"><div class="cp"><span class="ci">${I.sun}</span><div><div class="cl">Light</div><div class="cv">Bright indirect</div></div></div><div class="cp"><span class="ci">${I.drop}</span><div><div class="cl">Water</div><div class="cv">Every 7 days</div></div></div></div>`;
+  const DEST=`<div class="destination">${I.pin}<span>Will be added to <b>${SPACE}</b> · your first space</span></div>`;
+
+  function appHTML(){
+    return `
+    <div class="view"></div>
+    <div class="ctop">
+      <button class="cbtn back" aria-label="Back to chooser">${I.close}</button>
+      <span class="stepchip">First plant · 6/6 <span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></span>
+      <button class="skip">Skip</button>
+    </div>
+    <div class="reticle"><i></i><i></i><i></i><i></i></div>
+    <div class="rhint">Center your plant in the frame — good light helps us identify it.</div>
+    <div class="scan"><div class="scanline"></div><div class="scantext">Identifying…</div></div>
+    <div class="flash-fx"></div>
+    <div class="cbottom">
+      <span class="clabel">${I.scan} Identify your first plant</span>
+      <div class="shutterrow">
+        <button class="smini" aria-label="Choose from gallery">${I.img}</button>
+        <button class="shutter" aria-label="Capture"><span></span></button>
+        <button class="sflip" aria-label="Flip camera">${I.flip}</button>
+      </div>
+      <button class="manual">Prefer to <u>add it manually</u> instead?</button>
+    </div>
+    <div class="scrim"></div>
+    <div class="sheet"><div class="handle"></div><div class="sheet-body"></div></div>
+    <div class="success">
+      <div class="succ-mark"><svg viewBox="0 0 240 240">${flowerSVG()}</svg></div>
+      <h2 class="succ-h">You’re all set</h2>
+      <p class="succ-p"></p>
+      <button type="button" class="btn ent">Enter your garden <span class="arr">${I.arrow}</span></button>
+    </div>`;
+  }
+
+  const SHEETS={
+    id:`<div class="rhead"><div class="rthumb">${I.leaf}</div><div class="rh-tx"><div class="k">We found a match</div><b>Monstera deliciosa</b><div class="cn">Swiss cheese plant</div></div></div>
+      <div class="confpill" style="margin-bottom:13px">${I.spark} 96% confident</div>
+      ${CARE}${DEST}
+      <button class="btn add">Add to my garden <span class="arr">${I.arrow}</span></button>
+      <button class="ghostlink tolow">Not quite right? See other matches</button>`,
+    low:`<div class="rhead"><div class="rthumb">${I.leaf}</div><div class="rh-tx"><div class="k">Not sure yet</div><b>Best guesses</b><div class="cn">Pick the closest, or try again</div></div></div>
+      <div class="honest">${I.shield}<span>We’d rather be honest than confidently wrong. None of these passed our confidence bar.</span></div>
+      <div class="cand"><span class="cth" style="background:${GREEN}">${I.leaf}</span><span class="ctx"><b>Monstera deliciosa</b><span>Swiss cheese plant</span></span><span class="confpill med">61%</span></div>
+      <div class="cand"><span class="cth" style="background:linear-gradient(150deg,#5bb389,#2c6e51)">${I.leaf}</span><span class="ctx"><b>Monstera adansonii</b><span>Swiss cheese vine</span></span><span class="confpill low">24%</span></div>
+      <div class="cand"><span class="cth" style="background:linear-gradient(150deg,#48876a,#23503c)">${I.leaf}</span><span class="ctx"><b>Philodendron hederaceum</b><span>Heartleaf</span></span><span class="confpill low">9%</span></div>
+      <div class="escape">
+        <button class="btn sec retake">${I.retake} Retake</button>
+        <button class="btn sec search">${I.search} Search</button>
+        <button class="btn sec wide addanon">Add without identifying</button>
+      </div>`
+  };
+
+  const roots=Array.from(document.querySelectorAll('.screen'));
+  roots.forEach(r=>r.querySelector('.app').innerHTML=appHTML());
+
+  function setup(root){
+    const scan=root.querySelector('.scan'),scanline=root.querySelector('.scanline'),flash=root.querySelector('.flash-fx'),
+          sheet=root.querySelector('.sheet'),scrim=root.querySelector('.scrim'),body=root.querySelector('.sheet-body'),
+          shutter=root.querySelector('.shutter'),success=root.querySelector('.success'),succP=root.querySelector('.succ-p');
+    let busy=false;
+
+    function openSheet(state){body.innerHTML=SHEETS[state];scrim.classList.add('open');sheet.classList.add('open');wire(state);}
+    function closeSheet(){sheet.classList.remove('open');scrim.classList.remove('open');}
+    function complete(species){
+      closeSheet();
+      succP.innerHTML=species?`<b>${species}</b> landed in <b>${SPACE}</b>. Your care plan is ready.`:`Added to <b>${SPACE}</b> as “Unidentified”. You can identify it later.`;
+      success.classList.add('show');
+      const fl=success.querySelector('.flower'),petals=success.querySelectorAll('.petal'),heart=success.querySelector('.heart');
+      if(REDUCE){gsap.set([petals,heart,success.querySelector('h2'),succP,success.querySelector('.ent')],{opacity:1,scale:1});return;}
+      gsap.set([petals,heart],{svgOrigin:'120 120'});
+      gsap.timeline({defaults:{ease:'power3.out'}})
+        .fromTo(heart,{scale:0,opacity:0},{scale:1,opacity:1,duration:.6,ease:'back.out(2.2)'})
+        .fromTo(petals,{scale:0,opacity:0},{scale:1,opacity:.86,duration:.7,ease:'back.out(1.7)',stagger:.07},'-=0.3')
+        .fromTo(success.querySelectorAll('h2,.succ-p,.ent'),{y:14,opacity:0},{y:0,opacity:1,duration:.5,stagger:.08},'-=0.2')
+        .add(()=>gsap.to(fl,{rotation:5,duration:6,svgOrigin:'120 120',ease:'sine.inOut',yoyo:true,repeat:-1}));
+    }
+    function wire(state){
+      const q=s=>body.querySelector(s);
+      if(state==='id'){
+        q('.tolow').addEventListener('click',()=>openSheet('low'));
+        q('.add').addEventListener('click',e=>{const b=e.currentTarget;b.classList.add('done');b.innerHTML='<span class="arr">'+I.check+'</span> Added to '+SPACE;setTimeout(()=>complete('Monstera deliciosa'),650);});
+      }else{
+        q('.retake').addEventListener('click',closeSheet);
+        q('.search').addEventListener('click',closeSheet);
+        q('.addanon').addEventListener('click',()=>complete(null));
+      }
+    }
+    function capture(){
+      if(busy)return;busy=true;
+      gsap.to(flash,{opacity:.85,duration:.08,onComplete:()=>gsap.to(flash,{opacity:0,duration:.3})});
+      scan.classList.add('show');
+      if(!REDUCE)gsap.fromTo(scanline,{top:'28%'},{top:'68%',duration:.7,repeat:1,yoyo:true,ease:'sine.inOut'});
+      setTimeout(()=>{scan.classList.remove('show');busy=false;openSheet('id');},REDUCE?0:1350);
+    }
+    shutter.addEventListener('click',capture);
+    root.querySelector('.smini').addEventListener('click',capture);
+    scrim.addEventListener('click',closeSheet);
+    root.querySelector('.manual').addEventListener('click',()=>complete(null));
+    root.querySelectorAll('.back,.skip,.sflip,.ent').forEach(el=>el&&el.addEventListener('click',()=>{}));
+    if(!REDUCE)gsap.to(root.querySelector('.reticle'),{scale:1.04,duration:1.8,transformOrigin:'50% 50%',ease:'sine.inOut',yoyo:true,repeat:-1});
+  }
+
+  function animateIn(root){
+    root.querySelector('.sheet').classList.remove('open');root.querySelector('.scrim').classList.remove('open');root.querySelector('.success').classList.remove('show');
+    const ctop=root.querySelector('.ctop'),ret=root.querySelector('.reticle'),hint=root.querySelector('.rhint'),bottom=root.querySelector('.cbottom');
+    if(REDUCE){gsap.set([ctop,ret,hint,bottom],{opacity:1});return;}
+    gsap.set(ret,{opacity:0,scale:.8});gsap.set([ctop,hint],{opacity:0});gsap.set(bottom,{opacity:0,y:30});
+    gsap.timeline({defaults:{ease:'power3.out'}})
+      .to(ctop,{opacity:1,duration:.5})
+      .to(ret,{opacity:1,scale:1,duration:.6,ease:'back.out(1.6)'},'-=0.3')
+      .to(hint,{opacity:1,duration:.5},'-=0.3')
+      .to(bottom,{opacity:1,y:0,duration:.55},'-=0.35');
+  }
+
+  roots.forEach(setup);
+  function play(){roots.forEach(animateIn);}
+  if(document.fonts&&document.fonts.ready){document.fonts.ready.then(play);}else{play();}
+  setTimeout(()=>{if(getComputedStyle(roots[0].querySelector('.cbottom')).opacity==='0')play();},500);
+  document.getElementById('replay').addEventListener('click',play);
+})();
+</script>
+</body>
+</html>

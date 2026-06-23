@@ -1,20 +1,15 @@
-allowBuilds:
-  msgpackr-extract: set this to true or false
-minimumReleaseAgeExclude:
-  - '@expo/cli@56.1.14'
-  - '@expo/fingerprint@0.19.4'
-  - '@expo/inline-modules@0.0.11'
-  - '@expo/metro-runtime@56.0.14'
-  - '@expo/prebuild-config@56.0.15'
-  - '@expo/router-server@56.0.13'
-  - '@expo/ui@56.0.16'
-  - expo-asset@56.0.16
-  - expo-constants@56.0.17
-  - expo-image@56.0.10
-  - expo-modules-autolinking@56.0.15
-  - expo-modules-core@56.0.15
-  - expo-modules-jsi@56.0.8
-  - expo-router@56.2.9
-  - expo-server@56.0.5
-  - expo-symbols@56.0.6
-  - expo@56.0.9
+# Build scripts are disabled globally via .npmrc (ignore-scripts=true). These are explicitly
+# acknowledged so pnpm doesn't error with ERR_PNPM_IGNORED_BUILDS. (esbuild still works for the
+# Convex CLI — it loads its platform binary from its optional dependency, no build step needed.)
+ignoredBuiltDependencies:
+  - msgpackr-extract
+  - browser-tabs-lock
+  - bufferutil
+  - core-js
+  - esbuild
+  - utf-8-validate
+
+# Clerk's @clerk/expo pins peer `expo <56`; SDK 56 (RN 0.85 / React 19) is API-compatible.
+peerDependencyRules:
+  allowedVersions:
+    expo: '56'

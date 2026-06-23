@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evergreen · Memorial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@500,600,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+  :root{
+    --ever-100:#d8e9df;--ever-400:#4daf82;--ever-500:#2c694e;--ever-700:#1b4332;--ever-900:#0c1f17;
+    --leaf:#3e7c4f;--fg:#16271e;--fg-muted:#4b6357;--fg-subtle:#7d9488;--accent-tint:rgba(46,109,78,.12);
+    --neu-raised:6px 6px 14px rgba(11,30,21,.13), -6px -6px 13px rgba(255,255,255,.80);
+    --neu-raised-sm:4px 4px 9px rgba(11,30,21,.12), -4px -4px 9px rgba(255,255,255,.78);
+    --neu-pressed:inset 4px 4px 9px rgba(11,30,21,.13), inset -4px -4px 9px rgba(255,255,255,.72);
+    --font-display:'General Sans','Söhne',-apple-system,system-ui,sans-serif;
+    --font-body:'Inter',-apple-system,system-ui,sans-serif;
+    --font-mono:'JetBrains Mono','Berkeley Mono',ui-monospace,monospace;--hit:44px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:var(--font-body);color:var(--fg);background:radial-gradient(120% 80% at 50% -10%, #f1f7f3 0%, transparent 55%),radial-gradient(100% 100% at 50% 120%, #cfe2d7 0%, #e6f0ea 100%);min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(26px,5vh,52px);padding:48px 24px 120px;overflow-x:hidden}
+  .studio-head{position:relative;z-index:2;text-align:center;display:flex;flex-direction:column;align-items:center;gap:9px}
+  .studio-head .kicker{font-family:var(--font-mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:#5c8772}
+  .studio-head h1{font-family:var(--font-display);font-weight:600;font-size:clamp(19px,3.2vw,28px);letter-spacing:-.02em;color:var(--ever-700)}
+  .gallery{position:relative;z-index:2;display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:center;gap:clamp(32px,6vw,72px)}
+  .device{display:flex;flex-direction:column;align-items:center;gap:18px}
+  .device-cap{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#5c8772}
+  .phone{position:relative;background:linear-gradient(150deg,#2c2f30,#16191a 46%,#0a0c0c);box-shadow:0 2px 0 1px rgba(255,255,255,.05) inset,0 55px 80px -42px rgba(11,30,21,.5),0 0 0 1px rgba(0,0,0,.55)}
+  .screen{position:relative;overflow:hidden;width:300px;height:650px;background:var(--ever-100)}
+  .iphone{width:318px;height:668px;border-radius:56px;padding:9px}.iphone .screen{border-radius:48px}
+  .iphone .island{position:absolute;z-index:60;top:18px;left:50%;transform:translateX(-50%);width:88px;height:27px;border-radius:16px;background:#0a0c0c}
+  .iphone .island::after{content:"";position:absolute;right:11px;top:50%;transform:translateY(-50%);width:9px;height:9px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#26343b,#05070a)}
+  .iphone .home-ind{position:absolute;z-index:60;bottom:9px;left:50%;transform:translateX(-50%);width:120px;height:5px;border-radius:3px;background:rgba(22,39,30,.4)}
+  .pixel{width:312px;height:664px;border-radius:34px;padding:8px;background:linear-gradient(150deg,#3a3d3e,#1b1e1f 46%,#0c0e0e)}.pixel .screen{border-radius:27px}
+  .pixel .punch{position:absolute;z-index:60;top:15px;left:50%;transform:translateX(-50%);width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#23323a,#04060a);box-shadow:0 0 0 2px rgba(255,255,255,.12)}
+  .pixel .nav-pill{position:absolute;z-index:60;bottom:10px;left:50%;transform:translateX(-50%);width:96px;height:5px;border-radius:3px;background:rgba(22,39,30,.34)}
+  .statusbar{position:absolute;z-index:55;top:0;left:0;right:0;height:50px;display:flex;align-items:center;justify-content:space-between;padding:18px 26px 0;font-family:var(--font-mono);font-size:12.5px;color:var(--fg);pointer-events:none}
+  .pixel .statusbar{padding-top:15px}
+  .statusbar .icons{display:flex;align-items:center;gap:6px}.statusbar svg{display:block}
+  .app{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column}
+
+  .hd{flex:none;padding:50px 12px 4px;display:flex;align-items:center;gap:8px}
+  .pixel .hd{padding-top:44px}
+  .iconbtn{width:38px;height:38px;border-radius:50%;border:0;cursor:pointer;display:flex;align-items:center;justify-content:center;background:var(--ever-100);box-shadow:var(--neu-raised-sm);color:var(--ever-700);flex:none;-webkit-tap-highlight-color:transparent}
+  .iconbtn:active{box-shadow:var(--neu-pressed)}
+  .hd h2{flex:1;font-family:var(--font-display);font-weight:600;font-size:19px;color:var(--ever-900);letter-spacing:-.02em}
+  .hd .ct{font-family:var(--font-mono);font-size:11px;color:var(--fg-subtle);padding-right:10px}
+
+  .content{flex:1;overflow-y:auto;padding:6px 16px 26px;scrollbar-width:none}
+  .content::-webkit-scrollbar{display:none}
+  .intro{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:14px;background:var(--ever-100);box-shadow:var(--neu-pressed);font-size:12.5px;line-height:1.5;color:var(--fg-muted);margin:8px 2px 16px}
+  .intro svg{flex:none;margin-top:1px;color:var(--ever-500)}
+
+  .mcard{display:flex;gap:13px;align-items:center;padding:11px;border-radius:16px;background:var(--ever-100);box-shadow:var(--neu-raised);margin-bottom:12px;cursor:pointer;transition:transform .14s}
+  .mcard:hover{transform:translateY(-2px)}
+  .mcover{position:relative;width:64px;height:64px;border-radius:13px;flex:none;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.55);filter:grayscale(.55) brightness(.96);box-shadow:var(--neu-raised-sm)}
+  .mcover .rib{position:absolute;left:0;bottom:0;right:0;background:rgba(11,24,18,.55);color:#eaf3ed;font-family:var(--font-mono);font-size:7.5px;letter-spacing:.04em;text-align:center;padding:2px 0;border-radius:0 0 13px 13px}
+  .mtx{flex:1;min-width:0}
+  .mtx .nm{display:flex;align-items:center;gap:7px;font-family:var(--font-display);font-weight:600;font-size:15px;color:var(--ever-900);letter-spacing:-.01em}
+  .mtx .nm svg{color:var(--ever-500)}
+  .mtx .sp{font-family:var(--font-mono);font-size:10px;color:var(--fg-subtle);margin-top:1px}
+  .mtx .with{font-size:11.5px;color:var(--fg-muted);margin-top:5px}
+  .mtx .cause{display:inline-block;font-size:10.5px;color:var(--ever-700);background:var(--accent-tint);padding:2px 8px;border-radius:999px;margin-top:6px}
+
+  .replay{position:fixed;z-index:50;bottom:34px;left:50%;transform:translateX(-50%);display:inline-flex;align-items:center;gap:10px;min-height:var(--hit);padding:0 22px;border-radius:999px;cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:14px;color:var(--ever-700);background:var(--ever-100);box-shadow:var(--neu-raised);border:0;transition:transform .16s,box-shadow .16s}
+  .replay:hover{transform:translateX(-50%) translateY(-2px)}.replay:active{transform:translateX(-50%);box-shadow:var(--neu-pressed)}
+  .replay svg{width:17px;height:17px;stroke:var(--ever-500)}
+  @media (max-width:740px){.iphone{width:290px;height:610px}.iphone .screen{width:272px;height:592px}.pixel{width:286px;height:608px}.pixel .screen{width:270px;height:592px}}
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important}}
+</style>
+</head>
+<body>
+  <header class="studio-head"><span class="kicker">Evergreen · 18 Memorial</span><h1>Plants you’ve said goodbye to — kept, never deleted</h1></header>
+  <div class="gallery">
+    <div class="device"><div class="phone iphone"><div class="island"></div>
+      <div class="screen" data-screen-label="18 Memorial" data-od-id="memorial-ios"><div class="statusbar"><span>9:41</span><span class="icons"><svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4.5" width="3" height="7.5" rx="1" fill="currentColor"/><rect x="10" y="2" width="3" height="10" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor" opacity=".4"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 10.6 9.4 9c-.8-.7-2-.7-2.8 0L8 10.6Z" fill="currentColor"/><path d="M4.6 6.2C6.5 4.4 9.5 4.4 11.4 6.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M2.2 3.6c3.2-3 8.4-3 11.6 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x=".7" y=".7" width="22" height="10.6" rx="3" stroke="currentColor" stroke-opacity=".5"/><rect x="2.4" y="2.4" width="15" height="7.2" rx="1.6" fill="currentColor"/><rect x="24" y="4" width="1.6" height="4" rx=".8" fill="currentColor" opacity=".5"/></svg></span></div><div class="app"></div><div class="home-ind"></div></div></div><span class="device-cap">iPhone 15 Pro</span></div>
+    <div class="device"><div class="phone pixel"><div class="punch"></div>
+      <div class="screen" data-screen-label="18 Memorial" data-od-id="memorial-android"><div class="statusbar"><span>9:41</span><span class="icons"><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M2.2 3.6c3.2-3 8.4-3 11.6 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M4.6 6.2C6.5 4.4 9.5 4.4 11.4 6.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="9.6" r="1.3" fill="currentColor"/></svg><svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4.5" width="3" height="7.5" rx="1" fill="currentColor"/><rect x="10" y="2" width="3" height="10" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor"/></svg><svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x=".7" y="1.4" width="20" height="9.2" rx="2.4" stroke="currentColor" stroke-opacity=".5"/><rect x="2.2" y="2.9" width="14" height="6.2" rx="1.2" fill="currentColor"/><rect x="21.6" y="4.2" width="1.6" height="3.6" rx=".8" fill="currentColor" opacity=".5"/></svg></span></div><div class="app"></div><div class="nav-pill"></div></div></div><span class="device-cap">Pixel 8 Pro</span></div>
+  </div>
+  <button class="replay" id="replay" aria-label="Replay"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v4h4"/></svg>Replay</button>
+<script>
+(function(){
+  const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const I={
+    back:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
+    heart:'<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 20s-7-4.4-9.2-8.2A4.6 4.6 0 0 1 12 6.5a4.6 4.6 0 0 1 9.2 5.3C19 15.6 12 20 12 20Z"/></svg>',
+    leaf:'<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4c-8 0-14 5-14 12a6 6 0 0 0 12 0c1-5 1-8 2-12Z"/><path d="M7 21c0-6 3-10 8-13"/></svg>'
+  };
+  const COV=['linear-gradient(150deg,#48876a,#23503c)','linear-gradient(150deg,#5bb389,#2c6e51)','linear-gradient(150deg,#3a8c66,#1c4d39)'];
+  const PLANTS=[
+    {nm:'Rubber',sp:'Ficus elastica',span:'2023–2024',with:'With you 14 months',cause:'Couldn’t recover from root rot'},
+    {nm:'Sweet basil',sp:'Ocimum basilicum',span:'2024',with:'With you 5 months',cause:'Reached the end of its season'},
+    {nm:'Hedgehog',sp:'Echinopsis',span:'2023–2024',with:'With you 8 months',cause:'Gave it to a good friend'}
+  ];
+  function card(p,i){return `<div class="mcard"><div class="mcover" style="background:${COV[i%COV.length]}">${I.leaf}<span class="rib">${p.span}</span></div>
+    <div class="mtx"><div class="nm">${p.nm} ${I.heart}</div><div class="sp">${p.sp}</div><div class="with">${p.with}</div><div class="cause">${p.cause}</div></div></div>`;}
+  function appHTML(){return `
+    <div class="hd"><button class="iconbtn back">${I.back}</button><h2>Memorial</h2><span class="ct">${PLANTS.length} kept</span></div>
+    <div class="content">
+      <div class="intro">${I.heart}<span>Every plant leaves a mark. Their photos and journals stay here — gently, and forever.</span></div>
+      ${PLANTS.map(card).join('')}
+    </div>`;}
+  const roots=Array.from(document.querySelectorAll('.screen'));
+  roots.forEach(r=>r.querySelector('.app').innerHTML=appHTML());
+  roots.forEach(r=>{r.querySelector('.back').addEventListener('click',()=>{});r.querySelectorAll('.mcard').forEach(c=>c.addEventListener('click',()=>{}));});
+  function animateIn(root){const hd=root.querySelector('.hd'),items=root.querySelectorAll('.intro, .mcard');
+    if(REDUCE){gsap.set([hd,items],{opacity:1,y:0});return;}
+    gsap.set(hd,{opacity:0,y:-8});gsap.set(items,{opacity:0,y:16});
+    gsap.timeline({defaults:{ease:'power3.out'}}).to(hd,{opacity:1,y:0,duration:.45}).to(items,{opacity:1,y:0,duration:.5,stagger:.08},'-=0.2');}
+  function play(){roots.forEach(animateIn);}
+  if(document.fonts&&document.fonts.ready){document.fonts.ready.then(play);}else{play();}
+  setTimeout(()=>{if(getComputedStyle(roots[0].querySelector('.mcard')).opacity==='0')play();},500);
+  document.getElementById('replay').addEventListener('click',play);
+})();
+</script>
+</body>
+</html>

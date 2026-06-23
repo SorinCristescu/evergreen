@@ -69,6 +69,27 @@ export default defineSchema({
     family: v.optional(v.string()),
     origin: v.optional(v.string()),
     funFacts: v.optional(v.array(v.string())),
+    taxonomy: v.optional(
+      v.object({
+        kingdom: v.optional(v.string()),
+        phylum: v.optional(v.string()),
+        class: v.optional(v.string()),
+        order: v.optional(v.string()),
+        family: v.optional(v.string()),
+        genus: v.optional(v.string()),
+      }),
+    ),
+    description: v.optional(
+      v.object({
+        value: v.string(),
+        citation: v.optional(v.string()),
+        licenseName: v.optional(v.string()),
+        licenseUrl: v.optional(v.string()),
+      }),
+    ),
+    lightText: v.optional(v.string()),
+    soilText: v.optional(v.string()),
+    toxicity: v.optional(v.string()),
     careProfile: v.object({
       light: v.union(v.literal('direct'), v.literal('indirect'), v.literal('shade')),
       waterDays: v.number(),

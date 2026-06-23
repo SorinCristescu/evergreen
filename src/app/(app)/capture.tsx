@@ -8,6 +8,7 @@ import { ActivityIndicator, Linking, Platform, Pressable, ScrollView, View } fro
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { CameraReticle } from '@/components/domain/camera-reticle';
+import { EncyclopediaCompare } from '@/components/domain/encyclopedia-compare';
 import { Icon } from '@/components/icon';
 import { NeuPressable, NeuSurface } from '@/components/neu-surface';
 import { AppText } from '@/components/ui/app-text';
@@ -123,6 +124,7 @@ export default function CaptureScreen() {
   const [candidates, setCandidates] = useState<IdentifiedCandidate[] | null>(null);
   const [chosen, setChosen] = useState<IdentifiedCandidate | null>(null);
   const [identifyError, setIdentifyError] = useState<string | null>(null);
+  const [compareOpen, setCompareOpen] = useState(false);
 
   // New-plant form fields (Identify uses just the nickname; Add manually uses all three).
   const [nickname, setNickname] = useState('');
@@ -678,6 +680,18 @@ export default function CaptureScreen() {
                       ))}
                     </View>
                   ) : null}
+
+                  {candidates && candidates.length > 0 ? (
+                    <Pressable
+                      onPress={() => setCompareOpen(true)}
+                      accessibilityRole="button"
+                      accessibilityLabel="Check in encyclopedia"
+                      style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: Spacing.sm, marginTop: 8 }}
+                    >
+                      <Icon name="search" size={16} color={Palette.ever400} />
+                      <AppText variant="small" color={Palette.ever400} style={{ fontSize: 13 }}>Check in encyclopedia</AppText>
+                    </Pressable>
+                  ) : null}
                 </>
               ) : null}
             </ScrollView>
@@ -685,6 +699,15 @@ export default function CaptureScreen() {
           </View>
         </View>
       ) : null}
+
+      <EncyclopediaCompare
+        visible={compareOpen}
+        capturedUri={capturedUri}
+        candidates={candidates ?? []}
+        initialIndex={chosen && candidates ? Math.max(0, candidates.findIndex((c) => c.speciesId === chosen.speciesId)) : 0}
+        onClose={() => setCompareOpen(false)}
+        onChoose={(c) => { setChosen(c); setCompareOpen(false); }}
+      />
     </View>
   );
 }

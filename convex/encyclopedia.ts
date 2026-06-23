@@ -1,0 +1,43 @@
+import { action } from './_generated/server';
+import { v } from 'convex/values';
+import { parseINatTaxon, parseGbifDistributions, type EncyclopediaEntry } from './lib/encyclopedia';
+
+/** Look up reference data for a species from iNaturalist (photo/summary) + GBIF (taxonomy/native range).
+ *  Free, keyless. Each source is best-effort: a failure or empty result simply omits those fields. */
+export const lookupSpecies = action({
+  args: { scientificName: v.string() },
+  handler: async (_ctx, { scientificName }): Promise<EncyclopediaEntry> => {
+    const entry: EncyclopediaEntry = {};
+    const name = encodeURIComponent(scientificName);
+
+    // iNaturalist: representative photo + common name + wiki summary/link.
+    try {
+      const r = await fetch(`https://api.inaturalist.org/v1/taxa?q=${name}&rank=species&per_page=1`);
+      if (r.ok) Object.assign(entry, parseINatTaxon(await r.json()));
+    } catch {
+      /* best-effort */
+    }
+
+    // GBIF: family/genus (reliable) + native range (best-effort).
+    try {
+      const m = await fetch(`https://api.gbif.org/v1/species/match?name=${name}`);
+      if (m.ok) {
+        const match = (await m.json()) as { usageKey?: number; family?: string; genus?: string };
+        if (typeof match.family === 'string') entry.family = match.family;
+        if (typeof match.genus === 'string') entry.genus = match.genus;
+        if (typeof match.usageKey === 'number') {
+          try {
+            const d = await fetch(`https://api.gbif.org/v1/species/${match.usageKey}/distributions?limit=50`);
+            if (d.ok) entry.nativeRange = parseGbifDistributions(await d.json());
+          } catch {
+            /* best-effort */
+          }
+        }
+      }
+    } catch {
+      /* best-effort */
+    }
+
+    return entry;
+  },
+});

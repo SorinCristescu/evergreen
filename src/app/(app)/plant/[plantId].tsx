@@ -521,10 +521,18 @@ export default function PlantDetailScreen() {
                 <AppText variant="small" color={Palette.ever400} style={{ fontSize: 12.5 }}>{plant.about.source.label}</AppText>
               </Pressable>
             ) : null}
-            <NeuPressable onPress={() => {}} elevation="raised-sm" radius={14} stretch style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, height: 46, marginTop: 18 }}>
-              <AppText variant="bodyBold" color={Palette.ever400} style={{ fontSize: 13.5 }}>See full Species page</AppText>
-              <Icon name="chevronRight" size={16} color={Palette.ever400} />
-            </NeuPressable>
+            {plant.species ? (
+              <NeuPressable
+                onPress={() => router.push({ pathname: '/(app)/encyclopedia', params: { name: plant.species!.scientificName, common: plant.species!.commonName ?? '' } })}
+                elevation="raised-sm"
+                radius={14}
+                stretch
+                style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, height: 46, marginTop: 18 }}
+              >
+                <Icon name="search" size={16} color={Palette.ever400} />
+                <AppText variant="bodyBold" color={Palette.ever400} style={{ fontSize: 13.5 }}>See in encyclopedia</AppText>
+              </NeuPressable>
+            ) : null}
           </View>
         ) : tab === 'timeline' ? (
           <View>

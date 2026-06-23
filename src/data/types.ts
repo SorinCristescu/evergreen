@@ -102,6 +102,17 @@ export type PlantDetail = PlantSummary & {
   };
 };
 
+export type EncyclopediaEntry = {
+  imageUrl?: string;
+  commonName?: string;
+  summary?: string;
+  nativeRange?: string;
+  family?: string;
+  genus?: string;
+  sourceUrl?: string;
+  photoAttribution?: string;
+};
+
 export type IdentificationCandidate = { species: SpeciesRef; confidence: number };
 
 export type IdentifiedCandidate = {

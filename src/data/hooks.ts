@@ -18,6 +18,7 @@ import type {
   AccessGrant,
   AccessRole,
   CareTaskItem,
+  EncyclopediaEntry,
   Entitlement,
   GardeningLevel,
   ID,
@@ -298,6 +299,15 @@ export function useIdentifyPlant(): (storageId: ID) => Promise<IdentificationRes
   const run = useAction(api.identify.identifyPlant);
   return useCallback(
     async (storageId: ID) => (await run({ storageId: storageId as Id<'_storage'> })) as IdentificationResult,
+    [run],
+  );
+}
+
+/** Look up reference photo + facts for a species (iNaturalist + GBIF), to confirm an identification. */
+export function useEncyclopediaLookup(): (scientificName: string) => Promise<EncyclopediaEntry> {
+  const run = useAction(api.encyclopedia.lookupSpecies);
+  return useCallback(
+    async (scientificName: string) => (await run({ scientificName })) as EncyclopediaEntry,
     [run],
   );
 }

@@ -466,7 +466,7 @@ export default function PlantDetailScreen() {
             ) : null}
 
             {plant.treatment ? <View style={{ marginBottom: 16 }}><TreatmentBanner treatment={plant.treatment} onPress={() => setSheet('treatment')} /></View> : null}
-            <SectionLabel>Up next</SectionLabel>
+            {plant.careTasks.length > 0 ? <SectionLabel>Up next</SectionLabel> : null}
             <View style={{ gap: 10, marginTop: 10 }}>
               {plant.careTasks.map((task) => (
                 <CarePlanTask key={task.id} task={task} done={completed.has(task.id)} onToggle={() => complete(task.id)} />

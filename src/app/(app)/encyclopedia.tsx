@@ -1,7 +1,7 @@
 /** Full encyclopedia entry for a species (iNaturalist + GBIF). Reached from a plant's About tab. */
 import { Image } from 'expo-image';
 import { useLocalSearchParams } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { ActivityIndicator, Linking, Pressable, ScrollView, View } from 'react-native';
 
 import { Icon } from '@/components/icon';
@@ -31,14 +31,7 @@ export default function EncyclopediaScreen() {
       .finally(() => active && setLoading(false));
     return () => { active = false; };
   };
-  useEffect(load, [name, lookup]);
-
-  const Section = ({ label, children }: { label: string; children: React.ReactNode }) => (
-    <View style={{ marginTop: 20 }}>
-      <AppText variant="meta" tone="subtle" uppercase style={{ marginBottom: 8 }}>{label}</AppText>
-      {children}
-    </View>
-  );
+  useEffect(() => load(), [name, lookup]);
 
   return (
     <View style={{ flex: 1, backgroundColor: t.ever100 }}>
@@ -114,6 +107,15 @@ export default function EncyclopediaScreen() {
           ) : null}
         </ScrollView>
       )}
+    </View>
+  );
+}
+
+function Section({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <View style={{ marginTop: 20 }}>
+      <AppText variant="meta" tone="subtle" uppercase style={{ marginBottom: 8 }}>{label}</AppText>
+      {children}
     </View>
   );
 }

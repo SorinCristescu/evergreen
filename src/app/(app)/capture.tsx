@@ -249,18 +249,11 @@ export default function CaptureScreen() {
           contentFit="cover"
         />
       )}
-      {/* Scrim over the photo: green-tinted glow + darkened edges so the reticle and controls stay legible */}
+      {/* Neutral top/bottom scrim only — keeps the top pill and bottom controls legible while leaving
+          the live camera feed its natural colour (no green tint). */}
       <LinearGradient
-        colors={['rgba(22,53,37,0.35)', 'rgba(10,20,14,0.45)', 'rgba(6,13,9,0.82)']}
-        locations={[0, 0.55, 1]}
-        start={{ x: 0.2, y: 0 }}
-        end={{ x: 0.9, y: 1 }}
-        style={{ position: 'absolute', inset: 0 }}
-      />
-      <LinearGradient
-        colors={['rgba(77,175,130,0.28)', 'transparent']}
-        start={{ x: 0.25, y: 0.2 }}
-        end={{ x: 0.7, y: 0.75 }}
+        colors={['rgba(0,0,0,0.45)', 'transparent', 'transparent', 'rgba(0,0,0,0.6)']}
+        locations={[0, 0.25, 0.7, 1]}
         style={{ position: 'absolute', inset: 0 }}
       />
 

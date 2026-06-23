@@ -259,7 +259,7 @@ export function useCareTaskActions(): {
 }
 
 // ── Plant editing ───────────────────────────────────────────────────────────────
-export type PlantEdit = { nickname?: string; description?: string; scientificName?: string };
+export type PlantEdit = { nickname?: string; description?: string; scientificName?: string; spaceId?: ID };
 
 /** Fields for a brand-new plant added from the Garden capture flow (Identify or Add manually).
  *  `spaceId` is optional — omit to let the server pick the active location's first space. */
@@ -331,7 +331,8 @@ export function usePlantEditor(): {
 
   const updatePlant = useCallback(
     async (plantId: ID, edit: PlantEdit) => {
-      await updateMut({ plantId: plantId as Id<'plants'>, ...edit });
+      const { spaceId, ...rest } = edit;
+      await updateMut({ plantId: plantId as Id<'plants'>, ...rest, spaceId: spaceId as Id<'spaces'> | undefined });
     },
     [updateMut],
   );

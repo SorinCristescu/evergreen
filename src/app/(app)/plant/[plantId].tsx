@@ -1,11 +1,12 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { ActivityIndicator, Linking, Platform, Pressable, ScrollView, useWindowDimensions, View } from 'react-native';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { SpacePicker } from '@/components/domain/space-picker';
 import { TreatmentBanner } from '@/components/domain/treatment-banner';
 import { Icon, type IconName } from '@/components/icon';
 import { NeuPressable, NeuSurface } from '@/components/neu-surface';
@@ -17,7 +18,7 @@ import { Sheet } from '@/components/ui/sheet';
 import { TextField } from '@/components/ui/text-field';
 import { TabBar } from '@/components/tab-bar';
 import { Palette, Spacing } from '@/constants/tokens';
-import { useCareTaskActions, usePlantDetail, usePlantEditor, useTreatmentActions, type CareTaskType, type PlantDetail, type Treatment } from '@/data';
+import { useCareTaskActions, usePlantDetail, usePlantEditor, useTreatmentActions, type CareTaskType, type ID, type PlantDetail, type Treatment } from '@/data';
 import { useTheme } from '@/theme';
 
 const TABS = [
@@ -270,7 +271,9 @@ export default function PlantDetailScreen() {
   const goBack = () => (router.canGoBack() ? router.back() : router.replace('/(app)/(tabs)/garden'));
 
   // Sheets: header ⋯ → options/edit; treatment card → treatment/diagnosis; journal → note.
-  const [sheet, setSheet] = useState<null | 'options' | 'edit' | 'treatment' | 'diagnosis' | 'note'>(null);
+  const [sheet, setSheet] = useState<null | 'options' | 'edit' | 'move' | 'treatment' | 'diagnosis' | 'note'>(null);
+  const [moveSpaceId, setMoveSpaceId] = useState<ID | undefined>(undefined);
+  const onMovePick = useCallback((id: ID | undefined) => setMoveSpaceId(id), []);
   const [noteText, setNoteText] = useState('');
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -628,6 +631,7 @@ export default function PlantDetailScreen() {
           <View style={{ gap: 10 }}>
             <SheetRow icon="pencil" label="Edit details" onPress={openEdit} />
             <SheetRow icon="camera" label="Add photos" onPress={pickAndAddPhotos} busy={busy} />
+            <SheetRow icon="pin" label="Move plant" onPress={() => { setMoveSpaceId(undefined); setSheet('move'); }} />
             <SheetRow icon="trash" label="Delete plant" danger onPress={() => setConfirmDelete(true)} />
           </View>
         )}
@@ -679,6 +683,24 @@ export default function PlantDetailScreen() {
           {busy ? <ActivityIndicator color={Palette.ever400} /> : <Icon name="check" size={18} color={Palette.ever400} strokeWidth={2.6} />}
           <AppText variant="bodyBold" color={Palette.ever400} style={{ fontSize: 15 }}>Save note</AppText>
         </NeuPressable>
+      </Sheet>
+
+      {/* Move plant sheet */}
+      <Sheet visible={sheet === 'move'} onClose={() => setSheet(null)}>
+        <View style={{ gap: 16 }}>
+          <AppText variant="title">Move plant</AppText>
+          <SpacePicker onChange={onMovePick} />
+          <NeuPressable
+            onPress={async () => { if (moveSpaceId) { await updatePlant(plant.id, { spaceId: moveSpaceId }); } setSheet(null); }}
+            elevation="raised"
+            radius={16}
+            stretch
+            backgroundColor={t.ever100}
+            style={{ height: 52, alignItems: 'center', justifyContent: 'center' }}
+          >
+            <AppText variant="bodyBold" color={Palette.ever400} style={{ fontSize: 15 }}>Move here</AppText>
+          </NeuPressable>
+        </View>
       </Sheet>
 
       {/* Treatment steps + Dr. Plant diagnosis sheets */}

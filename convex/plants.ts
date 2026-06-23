@@ -244,15 +244,16 @@ async function getOrCreateSpeciesByName(ctx: MutationCtx, scientificName: string
   });
 }
 
-/** Edit a plant's nickname, description, and/or scientific name (species reassignment). */
+/** Edit a plant's nickname, description, scientific name (species reassignment), and/or space. */
 export const updatePlant = mutation({
   args: {
     plantId: v.id('plants'),
     nickname: v.optional(v.string()),
     description: v.optional(v.string()),
     scientificName: v.optional(v.string()),
+    spaceId: v.optional(v.id('spaces')),
   },
-  handler: async (ctx, { plantId, nickname, description, scientificName }) => {
+  handler: async (ctx, { plantId, nickname, description, scientificName, spaceId }) => {
     const plant = await ownedPlantOrThrow(ctx, plantId);
     const patch: Partial<Doc<'plants'>> = {};
     if (nickname !== undefined) {
@@ -266,6 +267,11 @@ export const updatePlant = mutation({
     if (scientificName !== undefined) {
       const s = scientificName.trim();
       patch.speciesId = s.length ? await getOrCreateSpeciesByName(ctx, s) : undefined;
+    }
+    if (spaceId !== undefined) {
+      const space = await ctx.db.get(spaceId);
+      if (!space || space.userId !== plant.userId) throw new Error('Space not found.');
+      patch.spaceId = spaceId;
     }
     await ctx.db.patch(plant._id, patch);
   },

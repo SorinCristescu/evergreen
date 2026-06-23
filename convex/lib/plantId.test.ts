@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { fnv1aHex, parsePlantIdResult } from './plantId';
+import { fnv1aHex, parsePlantIdResult, petSafetyFromToxicity } from './plantId';
 
 describe('fnv1aHex', () => {
   it('is stable and hex for the same bytes', () => {
@@ -66,5 +66,68 @@ describe('parsePlantIdResult', () => {
     const mk = (text: string) => ({ result: { is_plant: { binary: true }, classification: { suggestions: [{ name: 'X', probability: 0.5, details: { best_light_condition: text } }] } } });
     expect(parsePlantIdResult(mk('Needs full direct sun all day')).candidates[0].careProfile.light).toBe('direct');
     expect(parsePlantIdResult(mk('Tolerates deep shade and low light')).candidates[0].careProfile.light).toBe('shade');
+  });
+});
+
+describe('parsePlantIdResult — rich details', () => {
+  const rich = {
+    result: {
+      is_plant: { binary: true },
+      classification: {
+        suggestions: [
+          {
+            name: 'Monstera deliciosa',
+            probability: 0.96,
+            details: {
+              common_names: ['Swiss cheese plant'],
+              best_light_condition: 'Bright, indirect light.',
+              best_soil_type: 'Well-draining, peat-based potting mix.',
+              toxicity: 'Toxic to cats and dogs if ingested.',
+              taxonomy: { genus: 'Monstera', family: 'Araceae', order: 'Alismatales', class: 'Liliopsida', phylum: 'Tracheophyta', kingdom: 'Plantae' },
+              description: { value: 'A species native to southern Mexico.', citation: 'https://en.wikipedia.org/wiki/Monstera_deliciosa', license_name: 'CC BY-SA 3.0', license_url: 'https://creativecommons.org/licenses/by-sa/3.0/' },
+            },
+          },
+        ],
+      },
+    },
+  };
+
+  it('parses family, taxonomy, description, soil/light/toxicity text', () => {
+    const c = parsePlantIdResult(rich).candidates[0];
+    expect(c.family).toBe('Araceae');
+    expect(c.taxonomy?.genus).toBe('Monstera');
+    expect(c.taxonomy?.kingdom).toBe('Plantae');
+    expect(c.description?.value).toBe('A species native to southern Mexico.');
+    expect(c.description?.licenseName).toBe('CC BY-SA 3.0');
+    expect(c.description?.licenseUrl).toBe('https://creativecommons.org/licenses/by-sa/3.0/');
+    expect(c.lightText).toBe('Bright, indirect light.');
+    expect(c.soilText).toBe('Well-draining, peat-based potting mix.');
+    expect(c.toxicity).toBe('Toxic to cats and dogs if ingested.');
+  });
+
+  it('degrades to undefined when details are missing (no throw)', () => {
+    const c = parsePlantIdResult({ result: { is_plant: { binary: true }, classification: { suggestions: [{ name: 'X', probability: 0.5 }] } } }).candidates[0];
+    expect(c.family).toBeUndefined();
+    expect(c.taxonomy).toBeUndefined();
+    expect(c.description).toBeUndefined();
+    expect(c.lightText).toBeUndefined();
+    expect(c.soilText).toBeUndefined();
+    expect(c.toxicity).toBeUndefined();
+  });
+});
+
+describe('petSafetyFromToxicity', () => {
+  it('returns Yes for explicit non-toxic', () => {
+    expect(petSafetyFromToxicity('This plant is non-toxic to pets.')).toBe('Yes');
+    expect(petSafetyFromToxicity('Not toxic to cats or dogs.')).toBe('Yes');
+  });
+  it('returns Caution for toxic / poisonous', () => {
+    expect(petSafetyFromToxicity('Toxic to cats and dogs.')).toBe('Caution');
+    expect(petSafetyFromToxicity('Poisonous if ingested.')).toBe('Caution');
+  });
+  it('returns undefined when unclear or empty', () => {
+    expect(petSafetyFromToxicity('')).toBeUndefined();
+    expect(petSafetyFromToxicity(undefined)).toBeUndefined();
+    expect(petSafetyFromToxicity('Keep out of direct sun.')).toBeUndefined();
   });
 });

@@ -99,16 +99,26 @@ export type PlantDetail = PlantSummary & {
     lead: string;
     facts: { label: string; value: string }[];
     notes: string[];
+    source?: { label: string; url?: string };
   };
 };
 
+export type EncyclopediaPhoto = { url: string; attribution?: string };
+
 export type EncyclopediaEntry = {
   imageUrl?: string;
+  photos?: EncyclopediaPhoto[];
   commonName?: string;
   summary?: string;
   nativeRange?: string;
+  introducedRange?: string;
   family?: string;
   genus?: string;
+  lineage?: { rank: string; name: string }[];
+  rank?: string;
+  observationsCount?: number;
+  conservationStatus?: string;
+  wikipediaUrl?: string;
   sourceUrl?: string;
   photoAttribution?: string;
 };

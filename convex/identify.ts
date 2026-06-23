@@ -60,6 +60,28 @@ export const saveIdentification = internalMutation({
           difficulty: v.union(v.literal('easy'), v.literal('medium'), v.literal('hard')),
           humidityRange: v.optional(v.object({ min: v.number(), max: v.number() })),
         }),
+        family: v.optional(v.string()),
+        taxonomy: v.optional(
+          v.object({
+            kingdom: v.optional(v.string()),
+            phylum: v.optional(v.string()),
+            class: v.optional(v.string()),
+            order: v.optional(v.string()),
+            family: v.optional(v.string()),
+            genus: v.optional(v.string()),
+          }),
+        ),
+        description: v.optional(
+          v.object({
+            value: v.string(),
+            citation: v.optional(v.string()),
+            licenseName: v.optional(v.string()),
+            licenseUrl: v.optional(v.string()),
+          }),
+        ),
+        lightText: v.optional(v.string()),
+        soilText: v.optional(v.string()),
+        toxicity: v.optional(v.string()),
       }),
     ),
   },
@@ -71,16 +93,34 @@ export const saveIdentification = internalMutation({
         .query('species')
         .withIndex('by_scientificName', (q) => q.eq('scientificName', c.scientificName))
         .unique();
-      const speciesId =
-        existing?._id ??
-        (await ctx.db.insert('species', {
+
+      const richFields = {
+        family: c.taxonomy?.family ?? c.family,
+        taxonomy: c.taxonomy,
+        description: c.description,
+        lightText: c.lightText,
+        soilText: c.soilText,
+        toxicity: c.toxicity,
+      };
+
+      let speciesId;
+      if (existing) {
+        speciesId = existing._id;
+        // Enrich on re-identification: backfill rich details onto an AI species that never got them.
+        if (existing.source === 'ai' && !existing.description && c.description) {
+          await ctx.db.patch(existing._id, richFields);
+        }
+      } else {
+        speciesId = await ctx.db.insert('species', {
           scientificName: c.scientificName,
           commonNames: c.commonName ? [c.commonName] : [],
           careProfile: c.careProfile,
           source: 'ai',
           verified: false,
-        }));
-      const sp = existing ?? (await ctx.db.get(speciesId))!;
+          ...richFields,
+        });
+      }
+      const sp = (await ctx.db.get(speciesId))!;
       resolved.push({
         speciesId,
         scientificName: c.scientificName,

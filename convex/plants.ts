@@ -5,6 +5,7 @@ import { getCurrentUser, getCurrentUserOrThrow } from './lib/auth';
 import { accessiblePlants, canAccessPlant } from './lib/access';
 import { earliestOpenWaterForPlants } from './lib/care';
 import { mapCareTaskItem, mapPlantSummary, mapSpaceRef } from './lib/mappers';
+import { petSafetyFromToxicity } from './lib/plantId';
 import type { MutationCtx, QueryCtx } from './_generated/server';
 import type { Doc, Id } from './_generated/dataModel';
 import type { CareTaskItem, PlantDetail, PlantSummary, SpaceRef, Treatment } from '../src/data/types';
@@ -159,16 +160,36 @@ export const plantDetail = query({
 
     // About tab: the owner's description as the lead, plus any species facts we know.
     const facts: { label: string; value: string }[] = [];
+    const notes: string[] = species?.funFacts ? [...species.funFacts] : [];
+    let source: { label: string; url?: string } | undefined;
     if (species) {
-      if (species.family) facts.push({ label: 'Family', value: species.family });
+      const fam = species.taxonomy?.family ?? species.family;
+      if (fam) facts.push({ label: 'Family', value: fam });
+      if (species.taxonomy?.genus) facts.push({ label: 'Genus', value: species.taxonomy.genus });
       if (species.origin) facts.push({ label: 'Origin', value: species.origin });
       if (careGuide) facts.push({ label: 'Light', value: careGuide.light });
       facts.push({ label: 'Difficulty', value: cap(species.careProfile.difficulty) });
+      const pet =
+        petSafetyFromToxicity(species.toxicity) ??
+        (species.careProfile.petSafe === true ? 'Yes' : species.careProfile.petSafe === false ? 'Caution' : undefined);
+      if (pet) facts.push({ label: 'Pet-safe', value: pet });
+      if (species.soilText) facts.push({ label: 'Soil', value: shorten(species.soilText) });
+
+      if (!species.funFacts?.length) {
+        if (species.lightText) notes.push(species.lightText);
+        if (species.soilText) notes.push(species.soilText);
+        if (species.toxicity) notes.push(species.toxicity);
+      }
+
+      if (species.description) {
+        source = { label: species.description.licenseName ?? 'Source', url: species.description.licenseUrl ?? species.description.citation };
+      }
     }
-    const notes = species?.funFacts ?? [];
+    const aboutLead =
+      species?.description?.value ?? plant.description ?? `Notes about ${summary.nickname ?? 'this plant'} will appear here.`;
     const about =
-      plant.description || facts.length || notes.length
-        ? { lead: plant.description ?? `Notes about ${summary.nickname ?? 'this plant'} will appear here.`, facts, notes }
+      species?.description?.value || plant.description || facts.length || notes.length
+        ? { lead: aboutLead, facts, notes, source }
         : undefined;
 
     return {
@@ -189,6 +210,11 @@ export const plantDetail = query({
 
 function cap(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+function shorten(s: string, max = 48): string {
+  const first = s.split(/[.;]/)[0].trim();
+  return first.length <= max ? first : `${first.slice(0, max - 1).trimEnd()}…`;
 }
 
 // ── Owner edits ──────────────────────────────────────────────────────────────
@@ -218,15 +244,16 @@ async function getOrCreateSpeciesByName(ctx: MutationCtx, scientificName: string
   });
 }
 
-/** Edit a plant's nickname, description, and/or scientific name (species reassignment). */
+/** Edit a plant's nickname, description, scientific name (species reassignment), and/or space. */
 export const updatePlant = mutation({
   args: {
     plantId: v.id('plants'),
     nickname: v.optional(v.string()),
     description: v.optional(v.string()),
     scientificName: v.optional(v.string()),
+    spaceId: v.optional(v.id('spaces')),
   },
-  handler: async (ctx, { plantId, nickname, description, scientificName }) => {
+  handler: async (ctx, { plantId, nickname, description, scientificName, spaceId }) => {
     const plant = await ownedPlantOrThrow(ctx, plantId);
     const patch: Partial<Doc<'plants'>> = {};
     if (nickname !== undefined) {
@@ -240,6 +267,11 @@ export const updatePlant = mutation({
     if (scientificName !== undefined) {
       const s = scientificName.trim();
       patch.speciesId = s.length ? await getOrCreateSpeciesByName(ctx, s) : undefined;
+    }
+    if (spaceId !== undefined) {
+      const space = await ctx.db.get(spaceId);
+      if (!space || space.userId !== plant.userId) throw new Error('Space not found.');
+      patch.spaceId = spaceId;
     }
     await ctx.db.patch(plant._id, patch);
   },

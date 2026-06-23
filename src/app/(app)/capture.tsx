@@ -3,11 +3,12 @@ import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { ActivityIndicator, Linking, Platform, Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { CameraReticle } from '@/components/domain/camera-reticle';
+import { SpacePicker } from '@/components/domain/space-picker';
 import { EncyclopediaCompare } from '@/components/domain/encyclopedia-compare';
 import { Icon } from '@/components/icon';
 import { NeuPressable, NeuSurface } from '@/components/neu-surface';
@@ -131,6 +132,10 @@ export default function CaptureScreen() {
   const [scientificName, setScientificName] = useState('');
   const [description, setDescription] = useState('');
 
+  // Space picker — stable callback so the picker's effect doesn't loop.
+  const [pickedSpaceId, setPickedSpaceId] = useState<ID | undefined>(spaceId as ID | undefined);
+  const onPickSpace = useCallback((id: ID | undefined) => setPickedSpaceId(id), []);
+
   const [tip, hint] = HINTS[mode];
   const close = () => (router.canGoBack() ? router.back() : router.replace('/(app)/(tabs)/garden'));
 
@@ -142,7 +147,7 @@ export default function CaptureScreen() {
       if (!cover && capturedUri) {
         try { cover = await uploadImage(capturedUri); } catch { cover = null; }
       }
-      await createPlant({ ...input, spaceId, coverStorageId: cover ?? undefined });
+      await createPlant({ ...input, spaceId: pickedSpaceId ?? spaceId, coverStorageId: cover ?? undefined });
       router.replace('/(app)/(tabs)/garden');
     } finally {
       setBusy(false);
@@ -562,6 +567,7 @@ export default function CaptureScreen() {
                     <TextField label="Nickname" value={nickname} onChangeText={setNickname} placeholder="e.g. Mara" autoFocus />
                     <TextField label="Scientific name" value={scientificName} onChangeText={setScientificName} placeholder="e.g. Ficus lyrata" />
                     <TextField label="Description" value={description} onChangeText={setDescription} placeholder="A note about this plant…" multiline maxLength={500} />
+                    <SpacePicker initialSpaceId={spaceId as ID | undefined} onChange={onPickSpace} />
                   </View>
                   {(() => {
                     const disabled = busy || (!nickname.trim() && !scientificName.trim());
@@ -647,6 +653,9 @@ export default function CaptureScreen() {
                     </NeuSurface>
                   </View>
 
+                  <View style={{ marginBottom: 14 }}>
+                    <SpacePicker initialSpaceId={spaceId as ID | undefined} onChange={onPickSpace} />
+                  </View>
                   <View style={{ marginBottom: 14 }}>
                     <TextField label="Nickname (optional)" value={nickname} onChangeText={setNickname} placeholder="Give it a name…" />
                   </View>

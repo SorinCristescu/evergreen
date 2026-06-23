@@ -103,13 +103,22 @@ export type PlantDetail = PlantSummary & {
   };
 };
 
+export type EncyclopediaPhoto = { url: string; attribution?: string };
+
 export type EncyclopediaEntry = {
   imageUrl?: string;
+  photos?: EncyclopediaPhoto[];
   commonName?: string;
   summary?: string;
   nativeRange?: string;
+  introducedRange?: string;
   family?: string;
   genus?: string;
+  lineage?: { rank: string; name: string }[];
+  rank?: string;
+  observationsCount?: number;
+  conservationStatus?: string;
+  wikipediaUrl?: string;
   sourceUrl?: string;
   photoAttribution?: string;
 };

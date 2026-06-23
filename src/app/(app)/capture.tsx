@@ -136,7 +136,11 @@ export default function CaptureScreen() {
     if (busy) return;
     setBusy(true);
     try {
-      await createPlant({ ...input, spaceId, coverStorageId: capturedStorageId ?? undefined });
+      let cover = capturedStorageId;
+      if (!cover && capturedUri) {
+        try { cover = await uploadImage(capturedUri); } catch { cover = null; }
+      }
+      await createPlant({ ...input, spaceId, coverStorageId: cover ?? undefined });
       router.replace('/(app)/(tabs)/garden');
     } finally {
       setBusy(false);

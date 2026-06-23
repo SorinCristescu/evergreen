@@ -11,10 +11,12 @@
 import type * as access from "../access.js";
 import type * as careTasks from "../careTasks.js";
 import type * as community from "../community.js";
+import type * as identify from "../identify.js";
 import type * as lib_access from "../lib/access.js";
 import type * as lib_auth from "../lib/auth.js";
 import type * as lib_care from "../lib/care.js";
 import type * as lib_mappers from "../lib/mappers.js";
+import type * as lib_plantId from "../lib/plantId.js";
 import type * as locations from "../locations.js";
 import type * as plants from "../plants.js";
 import type * as seed from "../seed.js";
@@ -32,10 +34,12 @@ declare const fullApi: ApiFromModules<{
   access: typeof access;
   careTasks: typeof careTasks;
   community: typeof community;
+  identify: typeof identify;
   "lib/access": typeof lib_access;
   "lib/auth": typeof lib_auth;
   "lib/care": typeof lib_care;
   "lib/mappers": typeof lib_mappers;
+  "lib/plantId": typeof lib_plantId;
   locations: typeof locations;
   plants: typeof plants;
   seed: typeof seed;

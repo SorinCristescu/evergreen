@@ -1,6 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, Platform, Pressable, ScrollView, useWindowDimensions, View } from 'react-native';
+import { ActivityIndicator, Linking, Platform, Pressable, ScrollView, useWindowDimensions, View } from 'react-native';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -510,6 +510,17 @@ export default function PlantDetailScreen() {
                 </View>
               ))}
             </View>
+            {plant.about.source ? (
+              <Pressable
+                onPress={() => plant.about?.source?.url && Linking.openURL(plant.about.source.url)}
+                disabled={!plant.about.source.url}
+                accessibilityRole="link"
+                style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 16 }}
+              >
+                <AppText variant="meta" tone="subtle">Source:</AppText>
+                <AppText variant="small" color={Palette.ever400} style={{ fontSize: 12.5 }}>{plant.about.source.label}</AppText>
+              </Pressable>
+            ) : null}
             <NeuPressable onPress={() => {}} elevation="raised-sm" radius={14} stretch style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, height: 46, marginTop: 18 }}>
               <AppText variant="bodyBold" color={Palette.ever400} style={{ fontSize: 13.5 }}>See full Species page</AppText>
               <Icon name="chevronRight" size={16} color={Palette.ever400} />

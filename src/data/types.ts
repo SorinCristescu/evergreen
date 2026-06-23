@@ -99,6 +99,7 @@ export type PlantDetail = PlantSummary & {
     lead: string;
     facts: { label: string; value: string }[];
     notes: string[];
+    source?: { label: string; url?: string };
   };
 };
 

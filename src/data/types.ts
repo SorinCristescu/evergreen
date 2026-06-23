@@ -104,6 +104,20 @@ export type PlantDetail = PlantSummary & {
 
 export type IdentificationCandidate = { species: SpeciesRef; confidence: number };
 
+export type IdentifiedCandidate = {
+  speciesId: ID;
+  scientificName: string;
+  commonName?: string;
+  confidence: number; // 0..1
+  careProfile: {
+    light: 'direct' | 'indirect' | 'shade';
+    waterDays: number;
+    difficulty: 'easy' | 'medium' | 'hard';
+    humidityRange?: { min: number; max: number };
+  };
+};
+export type IdentificationResult = { notAPlant: boolean; candidates: IdentifiedCandidate[] };
+
 export type Post = {
   id: ID;
   author: GardenerRef;

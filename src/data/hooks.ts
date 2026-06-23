@@ -10,7 +10,7 @@
  * never see Convex types.
  */
 import { useCallback, useMemo } from 'react';
-import { useMutation, useQuery } from 'convex/react';
+import { useAction, useMutation, useQuery } from 'convex/react';
 
 import { api } from '@/convex/_generated/api';
 import type { Id } from '@/convex/_generated/dataModel';
@@ -21,6 +21,7 @@ import type {
   Entitlement,
   GardeningLevel,
   ID,
+  IdentificationResult,
   IssueType,
   LocationRef,
   Place,
@@ -261,15 +262,43 @@ export type PlantEdit = { nickname?: string; description?: string; scientificNam
 
 /** Fields for a brand-new plant added from the Garden capture flow (Identify or Add manually).
  *  `spaceId` is optional — omit to let the server pick the active location's first space. */
-export type NewPlant = { nickname?: string; scientificName?: string; description?: string; spaceId?: ID };
+export type NewPlant = { nickname?: string; scientificName?: string; description?: string; spaceId?: ID; speciesId?: ID; coverStorageId?: ID };
 
 /** Create a plant in the garden; returns the new plant id (for navigation). */
 export function useCreatePlant(): (input: NewPlant) => Promise<ID> {
   const createMut = useMutation(api.plants.createPlant);
   return useCallback(
-    async ({ nickname, scientificName, description, spaceId }: NewPlant) =>
-      (await createMut({ nickname, scientificName, description, spaceId: spaceId as Id<'spaces'> | undefined })) as ID,
+    async ({ nickname, scientificName, description, spaceId, speciesId, coverStorageId }: NewPlant) =>
+      (await createMut({
+        nickname,
+        scientificName,
+        description,
+        spaceId: spaceId as Id<'spaces'> | undefined,
+        speciesId: speciesId as Id<'species'> | undefined,
+        coverStorageId: coverStorageId as Id<'_storage'> | undefined,
+      })) as ID,
     [createMut],
+  );
+}
+
+/** Upload a local file URI to Convex storage (no plant attachment) → storageId. */
+export function useUploadImage(): (fileUri: string, contentType?: string) => Promise<ID> {
+  const uploadUrlMut = useMutation(api.plants.generatePlantUploadUrl);
+  return useCallback(
+    async (fileUri: string, contentType = 'image/jpeg') => {
+      const uploadUrl = await uploadUrlMut({});
+      return (await uploadFileToStorage(uploadUrl, fileUri, contentType)) as unknown as ID;
+    },
+    [uploadUrlMut],
+  );
+}
+
+/** Identify a previously-uploaded photo via Plant.id. */
+export function useIdentifyPlant(): (storageId: ID) => Promise<IdentificationResult> {
+  const run = useAction(api.identify.identifyPlant);
+  return useCallback(
+    async (storageId: ID) => (await run({ storageId: storageId as Id<'_storage'> })) as IdentificationResult,
+    [run],
   );
 }
 

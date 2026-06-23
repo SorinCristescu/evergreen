@@ -256,8 +256,10 @@ export const createPlant = mutation({
     scientificName: v.optional(v.string()),
     description: v.optional(v.string()),
     spaceId: v.optional(v.id('spaces')),
+    speciesId: v.optional(v.id('species')),
+    coverStorageId: v.optional(v.id('_storage')),
   },
-  handler: async (ctx, { nickname, scientificName, description, spaceId }): Promise<Id<'plants'>> => {
+  handler: async (ctx, { nickname, scientificName, description, spaceId, speciesId, coverStorageId }): Promise<Id<'plants'>> => {
     const user = await getCurrentUserOrThrow(ctx);
 
     let space: Doc<'spaces'> | null = null;
@@ -281,15 +283,28 @@ export const createPlant = mutation({
     const nick = nickname?.trim();
     const desc = description?.trim();
 
-    return ctx.db.insert('plants', {
+    // Prefer an explicitly-resolved species (from identify); else resolve by name; else none.
+    let resolvedSpeciesId = speciesId;
+    if (!resolvedSpeciesId && sci) resolvedSpeciesId = await getOrCreateSpeciesByName(ctx, sci);
+    if (resolvedSpeciesId) {
+      const sp = await ctx.db.get(resolvedSpeciesId);
+      if (!sp) throw new Error('Species not found');
+    }
+
+    const plantId = await ctx.db.insert('plants', {
       userId: user._id,
       spaceId: space._id,
-      speciesId: sci ? await getOrCreateSpeciesByName(ctx, sci) : undefined,
+      speciesId: resolvedSpeciesId,
       nickname: nick || undefined,
       description: desc || undefined,
+      coverStorageId: coverStorageId ?? undefined,
       tags: [],
       status: 'alive',
     });
+    if (coverStorageId) {
+      await ctx.db.insert('plantPhotos', { plantId, userId: user._id, storageId: coverStorageId, takenAt: Date.now() });
+    }
+    return plantId;
   },
 });
 

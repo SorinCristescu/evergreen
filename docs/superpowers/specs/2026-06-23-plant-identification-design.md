@@ -20,6 +20,7 @@ This is a vertical slice: prove the full camera → AI → species → garden pi
 ## Non-goals (this round)
 
 - Diagnose (stays mocked).
+- **Today care-task generation.** Care tasks are stored rows tied to a `carePlan`, created only by seeding today; generating them is a separate deferred (Claude-based) feature. This slice links the species so the **care guide** shows on plant detail, but does not create Today watering tasks.
 - Botanical verification / human review of AI species (`species.verified` stays `false`).
 - Client-side image downscaling (see Open Risks).
 - A polished multi-candidate browser beyond a simple "other matches" list.
@@ -30,7 +31,7 @@ This is a vertical slice: prove the full camera → AI → species → garden pi
 |---|---|---|
 | Feature scope | Identify only | Vertical slice; Diagnose reuses the pipeline later |
 | Provider | Plant.id (Kindwise) v3, single vendor | Most precise consumer ID + built-in health for later; schema already has `externalIds.plantId` |
-| Persistence | Full: upsert species + careProfile + link plant→species | Uses the schema as designed; unlocks care cards + care tasks |
+| Persistence | Upsert species + careProfile + link plant→species + cover photo | Uses the schema as designed; surfaces the care guide on plant detail. Today care-task generation is a separate deferred feature (see Non-goals) |
 | Image >2MP | Accept Plant.id tolerance for now (no `expo-image-manipulator`) | Avoids another native rebuild; revisit only if accuracy/errors demand |
 | Caching | Dedupe by image hash via `identifications` table | Saves API credits |
 
@@ -69,7 +70,7 @@ All AI work lives in Convex; the UI stays data-driven.
 1. **Identify shutter** → upload the captured frame to storage: reuse `generatePlantUploadUrl` + the `uploadFileToStorage` XHR helper in `src/data/hooks.ts` → `storageId`.
 2. Call `identifyPlant({ storageId })`; show a **loading state** in the result sheet (reuse the existing `ActivityIndicator`).
 3. Render the **real** result: top match scientific + common name, real confidence pill, and the light/water care cards populated from the matched `species.careProfile` (replacing the hardcoded "Bright indirect / Every 7 days").
-4. **Add to Garden** → `createPlant({ speciesId, nickname, coverStorageId, spaceId })`. Linking a species with a `careProfile` is what drives the care guide and care tasks (the exact watering-task generation path is to be confirmed during planning).
+4. **Add to Garden** → `createPlant({ speciesId, nickname, coverStorageId, spaceId })`. Linking a species with a `careProfile` surfaces the **care guide** on plant detail ("Every X days", light, humidity). Automatic Today care tasks are out of scope (separate care-plan-generation feature — see Non-goals).
 5. **"Not quite right? See other matches"** → list stored candidates; selecting one sets it as the chosen species for Add to Garden.
 
 ## New code seams (small, isolated)
@@ -96,12 +97,12 @@ All AI work lives in Convex; the UI stays data-driven.
 
 - **Image size:** captured frames may exceed Plant.id's recommended 2MP. Mitigation if needed: `expo-image-manipulator` to downscale before upload — but that is a **new native module requiring another EAS dev build**, so deferred unless real-world results require it.
 - **Care-profile mapping fidelity:** Plant.id's `watering`/light fields don't map 1:1 to `careProfile` (`waterDays`, `light` enum, `difficulty`). We map what's available and default the rest; `verified:false` flags these for later refinement.
-- **Care-task generation:** the design assumes linking `speciesId` produces Today watering tasks; the exact derivation path must be confirmed during planning.
+- **Care-task generation (resolved → descoped):** confirmed during planning that Today tasks are stored `careTasks` rows tied to a `carePlan`, created only by seeding. Linking `speciesId` surfaces the care *guide* but not tasks. Generating a care plan is a separate deferred feature; excluded from this slice (see Non-goals).
 
 ## Verification
 
 1. `npx convex env set PLANTID_API_KEY <key>`.
 2. On the device dev build, open Identify, capture a real houseplant → real species + common name + confidence + care cards from the care profile.
-3. Add to Garden → confirm a `species` row exists, `plant.speciesId` is set, the cover photo is the captured frame, and care tasks/guide appear on plant detail / Today.
+3. Add to Garden → confirm a `species` row exists, `plant.speciesId` is set, the cover photo is the captured frame, and the **care guide** (light / "Every X days" / humidity) shows on plant detail. (No Today tasks expected — out of scope.)
 4. Capture a non-plant (e.g., a mug) → "couldn't identify" state, no garden write.
 5. Re-identify the same image → served from the `identifications` cache (no new credit spent).

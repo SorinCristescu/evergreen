@@ -15,7 +15,7 @@ import { TextField } from '@/components/ui/text-field';
 import { fontFamily } from '@/constants/fonts';
 import { plantPhotoForSeed, Palette, Radius, ScreenTopExtra, Spacing } from '@/constants/tokens';
 import { useTheme } from '@/theme';
-import { useCreatePlant, usePlantEditor, useTreatmentActions, type IssueType, type Severity } from '@/data';
+import { useCreatePlant, useIdentifyPlant, usePlantEditor, useTreatmentActions, useUploadImage, type ID, type IdentifiedCandidate, type IssueType, type Severity } from '@/data';
 
 type Mode = 'identify' | 'diagnose' | 'photo' | 'manual';
 
@@ -27,9 +27,6 @@ const HINTS: Record<Mode, [string, string]> = {
 };
 
 const MODE_LABELS: Record<Mode, string> = { identify: 'Identify', diagnose: 'Diagnose', photo: 'Add photo', manual: 'Add manually' };
-
-/** Mocked AI identification result (no real Plant.id/Anthropic call in this build). */
-const IDENTIFIED = { scientificName: 'Monstera deliciosa', common: 'Swiss cheese plant' };
 
 /** A mock Dr. Plant diagnosis (no real API in this build) with a recommended treatment plan. */
 type Diagnosis = {
@@ -102,6 +99,8 @@ export default function CaptureScreen() {
   const { plantId, mode: modeParam, spaceId } = useLocalSearchParams<{ plantId?: string; mode?: string; spaceId?: string }>();
   const { createTreatment } = useTreatmentActions();
   const createPlant = useCreatePlant();
+  const uploadImage = useUploadImage();
+  const identifyPlant = useIdentifyPlant();
   const { addPhoto } = usePlantEditor();
   const cameraRef = useRef<CameraView>(null);
   const [permission, requestPermission] = useCameraPermissions();
@@ -119,6 +118,11 @@ export default function CaptureScreen() {
   const [phase, setPhase] = useState<'camera' | 'result'>('camera');
   const [dx, setDx] = useState<Diagnosis | null>(null);
   const [busy, setBusy] = useState(false);
+  const [capturedStorageId, setCapturedStorageId] = useState<ID | null>(null);
+  const [identifying, setIdentifying] = useState(false);
+  const [candidates, setCandidates] = useState<IdentifiedCandidate[] | null>(null);
+  const [chosen, setChosen] = useState<IdentifiedCandidate | null>(null);
+  const [identifyError, setIdentifyError] = useState<string | null>(null);
 
   // New-plant form fields (Identify uses just the nickname; Add manually uses all three).
   const [nickname, setNickname] = useState('');
@@ -128,20 +132,12 @@ export default function CaptureScreen() {
   const [tip, hint] = HINTS[mode];
   const close = () => (router.canGoBack() ? router.back() : router.replace('/(app)/(tabs)/garden'));
 
-  const addPlant = async (input: { nickname?: string; scientificName?: string; description?: string }) => {
+  const addPlant = async (input: { nickname?: string; scientificName?: string; description?: string; speciesId?: ID }) => {
     if (busy) return;
     setBusy(true);
     try {
-      const newId = await createPlant({ ...input, spaceId }); // spaceId set when adding to a freshly-created location
-      // If we captured/picked a photo, make it the new plant's cover (non-fatal if the upload fails).
-      if (capturedUri) {
-        try {
-          await addPhoto(newId, capturedUri, 'image/jpeg', true);
-        } catch {
-          /* plant is created regardless */
-        }
-      }
-      router.replace('/(app)/(tabs)/garden'); // land back in the garden with the new plant
+      await createPlant({ ...input, spaceId, coverStorageId: capturedStorageId ?? undefined });
+      router.replace('/(app)/(tabs)/garden');
     } finally {
       setBusy(false);
     }
@@ -165,8 +161,34 @@ export default function CaptureScreen() {
     }
     if (mode === 'diagnose') {
       setDx(MOCK_DIAGNOSES[Math.floor(Math.random() * MOCK_DIAGNOSES.length)]);
+      setPhase('result');
+      return;
     }
-    setPhase('result');
+    if (mode === 'identify') {
+      setPhase('result');
+      if (!uri) return;
+      setIdentifying(true);
+      setIdentifyError(null);
+      setCandidates(null);
+      setChosen(null);
+      try {
+        const storageId = await uploadImage(uri);
+        setCapturedStorageId(storageId);
+        const result = await identifyPlant(storageId);
+        if (result.notAPlant || result.candidates.length === 0) {
+          setIdentifyError('notAPlant');
+        } else {
+          setCandidates(result.candidates);
+          setChosen(result.candidates[0]);
+        }
+      } catch {
+        setIdentifyError('failed');
+      } finally {
+        setIdentifying(false);
+      }
+      return;
+    }
+    setPhase('result'); // manual
   };
 
   // Shutter → grab a real frame from the live camera (no-op viewfinder on web).
@@ -570,34 +592,40 @@ export default function CaptureScreen() {
                     <AppText variant="small" color={Palette.ever400}>Retake photo</AppText>
                   </Pressable>
                 </>
-              ) : (
+              ) : identifying ? (
+                /* ── AI identification loading ───────────────────────────────── */
+                <View style={{ alignItems: 'center', paddingVertical: 36, gap: 12 }}>
+                  <ActivityIndicator color={Palette.ever400} />
+                  <AppText variant="small" tone="muted">Identifying your plant…</AppText>
+                </View>
+              ) : identifyError ? (
+                /* ── AI identification error ─────────────────────────────────── */
+                <View style={{ alignItems: 'center', paddingVertical: 28, gap: 10 }}>
+                  <Icon name="image" size={30} color={Palette.ever400} />
+                  <AppText variant="subtitle" align="center">
+                    {identifyError === 'notAPlant' ? "Hmm, that doesn't look like a plant" : "Couldn't identify that"}
+                  </AppText>
+                  <AppText variant="small" tone="subtle" align="center">Try a clearer, closer photo of the leaves.</AppText>
+                  <Pressable onPress={() => setPhase('camera')} style={{ paddingVertical: Spacing.sm }}>
+                    <AppText variant="small" color={Palette.ever400}>Retake photo</AppText>
+                  </Pressable>
+                </View>
+              ) : chosen ? (
                 /* ── AI identification result ─────────────────────────────────── */
                 <>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 13, marginBottom: 14 }}>
-                    <Image source={capturedUri ? { uri: capturedUri } : plantPhotoForSeed(IDENTIFIED.scientificName)} style={{ width: 58, height: 58, borderRadius: 14 }} contentFit="cover" transition={150} />
+                    <Image source={capturedUri ? { uri: capturedUri } : plantPhotoForSeed(chosen.scientificName)} style={{ width: 58, height: 58, borderRadius: 14 }} contentFit="cover" transition={150} />
                     <View style={{ flex: 1 }}>
                       <AppText variant="meta" tone="subtle" uppercase>We found a match</AppText>
-                      <AppText variant="title" style={{ marginTop: 2 }}>{IDENTIFIED.scientificName}</AppText>
-                      <AppText variant="small" tone="muted" style={{ marginTop: 1 }}>{IDENTIFIED.common}</AppText>
+                      <AppText variant="title" style={{ marginTop: 2 }}>{chosen.scientificName}</AppText>
+                      {chosen.commonName ? <AppText variant="small" tone="muted" style={{ marginTop: 1 }}>{chosen.commonName}</AppText> : null}
                     </View>
                   </View>
 
-                  <View
-                    style={{
-                      alignSelf: 'flex-start',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      gap: 6,
-                      height: 26,
-                      paddingHorizontal: 11,
-                      borderRadius: 999,
-                      backgroundColor: 'rgba(62,124,79,0.14)',
-                      marginBottom: 13,
-                    }}
-                  >
+                  <View style={{ alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', gap: 6, height: 26, paddingHorizontal: 11, borderRadius: 999, backgroundColor: 'rgba(62,124,79,0.14)', marginBottom: 13 }}>
                     <Icon name="star" size={13} color={Palette.leaf} filled />
                     <AppText style={{ fontFamily: fontFamily('mono', '500'), fontSize: 11.5 }} color={Palette.leaf}>
-                      96% confident
+                      {Math.round(chosen.confidence * 100)}% confident
                     </AppText>
                   </View>
 
@@ -606,25 +634,26 @@ export default function CaptureScreen() {
                       <Icon name="sun" size={17} tone="accent" />
                       <View>
                         <AppText style={{ fontFamily: fontFamily('mono', '500'), fontSize: 9 }} tone="subtle" uppercase>Light</AppText>
-                        <AppText variant="bodyBold" style={{ fontSize: 12.5, marginTop: 1 }}>Bright indirect</AppText>
+                        <AppText variant="bodyBold" style={{ fontSize: 12.5, marginTop: 1 }}>
+                          {chosen.careProfile.light === 'direct' ? 'Direct sun' : chosen.careProfile.light === 'shade' ? 'Low light' : 'Bright indirect'}
+                        </AppText>
                       </View>
                     </NeuSurface>
                     <NeuSurface elevation="pressed" radius={14} style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10, padding: 11 }}>
                       <Icon name="droplet" size={17} tone="accent" />
                       <View>
                         <AppText style={{ fontFamily: fontFamily('mono', '500'), fontSize: 9 }} tone="subtle" uppercase>Water</AppText>
-                        <AppText variant="bodyBold" style={{ fontSize: 12.5, marginTop: 1 }}>Every 7 days</AppText>
+                        <AppText variant="bodyBold" style={{ fontSize: 12.5, marginTop: 1 }}>Every {chosen.careProfile.waterDays} days</AppText>
                       </View>
                     </NeuSurface>
                   </View>
 
-                  {/* nickname for the plant we're about to add */}
                   <View style={{ marginBottom: 14 }}>
                     <TextField label="Nickname (optional)" value={nickname} onChangeText={setNickname} placeholder="Give it a name…" />
                   </View>
 
                   <NeuPressable
-                    onPress={() => addPlant({ nickname, scientificName: IDENTIFIED.scientificName })}
+                    onPress={() => addPlant({ nickname, speciesId: chosen.speciesId })}
                     disabled={busy}
                     radius={Radius.md}
                     elevation="raised"
@@ -633,20 +662,27 @@ export default function CaptureScreen() {
                     accessibilityLabel="Add to Garden"
                     style={{ height: 52, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, opacity: busy ? 0.5 : 1 }}
                   >
-                    {busy ? (
-                      <ActivityIndicator color={Palette.ever400} />
-                    ) : (
+                    {busy ? <ActivityIndicator color={Palette.ever400} /> : (
                       <>
                         <AppText variant="bodyBold" color={Palette.ever400} style={{ fontSize: 15 }}>Add to Garden</AppText>
                         <Icon name="arrowUpRight" size={18} color={Palette.ever400} />
                       </>
                     )}
                   </NeuPressable>
-                  <Pressable onPress={() => setPhase('camera')} style={{ alignItems: 'center', paddingVertical: Spacing.sm, marginTop: 2 }}>
-                    <AppText variant="small" color={Palette.ever400}>Not quite right? See other matches</AppText>
-                  </Pressable>
+
+                  {candidates && candidates.length > 1 ? (
+                    <View style={{ marginTop: 10, gap: 6 }}>
+                      <AppText variant="meta" tone="subtle" uppercase>Other matches</AppText>
+                      {candidates.filter((c) => c.speciesId !== chosen.speciesId).map((c) => (
+                        <Pressable key={c.speciesId} onPress={() => setChosen(c)} style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 8 }}>
+                          <AppText variant="small" style={{ flex: 1 }} numberOfLines={1}>{c.scientificName}</AppText>
+                          <AppText variant="small" tone="subtle">{Math.round(c.confidence * 100)}%</AppText>
+                        </Pressable>
+                      ))}
+                    </View>
+                  ) : null}
                 </>
-              )}
+              ) : null}
             </ScrollView>
           </NeuSurface>
           </View>
